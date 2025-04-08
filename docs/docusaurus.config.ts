@@ -207,6 +207,7 @@ const config: Config = {
             }
             return `https://github.com/apache/superset/edit/master/docs/${versionDocsDirPath}/${docPath}`;
           },
+          path: 'docs.ja',
         },
         blog: {
           showReadingTime: true,
