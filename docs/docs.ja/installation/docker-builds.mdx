@@ -5,121 +5,72 @@ sidebar_position: 6
 version: 1
 ---
 
-# Docker builds, images and tags
+# Docker ビルド、イメージ、タグ
 
-The Apache Superset community extensively uses Docker for development, release,
-and productionizing Superset. This page details our Docker builds and tag naming
-schemes to help users navigate our offerings.
+Apache Superset コミュニティは、Superset の開発、リリース、および実稼働化に Docker を広く使用しています。このページでは、ユーザーが当社の製品を理解するのに役立つ Docker ビルドとタグ命名スキームについて詳しく説明します。
 
-Images are built and pushed to the [Superset Docker Hub repository](
-https://hub.docker.com/r/apache/superset) using GitHub Actions.
-Different sets of images are built and/or published at different times:
+イメージは GitHub Actions を使用してビルドされ、[Superset Docker Hub リポジトリ](https://hub.docker.com/r/apache/superset) にプッシュされます。
+異なるイメージ セットは、異なるタイミングでビルドおよび/または公開されます:
 
-- **Published releases** (`release`): published using
-  tags like `3.0.0` and the `latest` tag.
-- **Pull request iterations** (`pull_request`): for each pull request, while
-  we actively build the docker to validate the build, we do
-  not publish those images for security reasons, we simply `docker build --load`
-- **Merges to the main branch** (`push`): resulting in new SHAs, with tags
-  prefixed with `master` for the latest `master` version.
+- **公開されたリリース** (`release`): `3.0.0` や `latest` タグなどのタグを使用して公開されます。
+- **プル リクエストの反復** (`pull_request`): 各プル リクエストでは、ビルドを検証するために Docker をアクティブにビルドしますが、セキュリティ上の理由からそれらのイメージを公開せず、単に `docker build --load` を実行します。
+- **メイン ブランチにマージ** (`push`): 最新の `master` バージョンを表す `master` というプレフィックスが付いた新しい SHA が生成されます。
 
-## Build presets
+## ビルドプリセット
 
-We have a set of build "presets" that each represent a combination of
-parameters for the build, mostly pointing to either different target layer
-for the build, and/or base image.
+ビルドのパラメータの組み合わせを表すビルド「プリセット」のセットがあり、ほとんどの場合、ビルドの異なるターゲット レイヤーまたはベース イメージのいずれかを指します。
 
-Here are the build presets that are exposed through the `supersetbot docker` utility:
+`supersetbot docker` ユーティリティを通じて公開されるビルド プリセットは次のとおりです:
 
-- `lean`: The default Docker image, including both frontend and backend. Tags
-  without a build_preset are lean builds (ie: `latest`, `4.0.0`, `3.0.0`, ...). `lean`
-  builds do not contain database
-  drivers, meaning you need to install your own. That applies to analytics databases **AND
-  the metadata database**. You'll likely want to layer either `mysqlclient` or `psycopg2-binary`
-  depending on the metadata database you choose for your installation, plus the required
-  drivers to connect to your analytics database(s).
-- `dev`: For development, with a headless browser, dev-related utilities and root access. This
-  includes some commonly used database drivers like `mysqlclient`, `psycopg2-binary` and
-  some other used for development/CI
-- `py311`, e.g., Py311: Similar to lean but with a different Python version (in this example, 3.11).
-- `ci`: For certain CI workloads.
-- `websocket`: For Superset clusters supporting advanced features.
-- `dockerize`: Used by Helm.
+- `lean`: フロントエンドとバックエンドの両方を含むデフォルトの Docker イメージ。build_preset のないタグは lean ビルドです (つまり、`latest`、`4.0.0`、`3.0.0` など)。`lean` ビルドにはデータベース ドライバーが含まれていないため、独自のドライバーをインストールする必要があります。これは、分析データベース ** とメタデータ データベース** に適用されます。インストール用に選択したメタデータ データベースに応じて、`mysqlclient` または `psycopg2-binary` のいずれかをレイヤー化し、分析データベースに接続するために必要なドライバーを追加すると良いでしょう。
+- `dev`: ヘッドレス ブラウザー、開発関連のユーティリティ、およびルート アクセスを備えた開発用。これには、`mysqlclient`、`psycopg2-binary` などの一般的に使用されるデータベース ドライバーや、開発/CI に使用されるその他のドライバーが含まれます - `py311` (例: Py311): lean に似ていますが、Python のバージョンが異なります (この例では 3.11)。
+- `ci`: 特定の CI ワークロード用。
+- `websocket`: 高度な機能をサポートするスーパーセット クラスター用。
+- `dockerize`: Helm によって使用されます。
 
-## Key tags examples
+## キータグの例
 
-- `latest`: The latest official release build
-- `latest-dev`: the `-dev` image of the latest official release build, with a
-  headless browser and root access.
-- `master`: The latest build from the `master` branch, implicitly the lean build
-  preset
-- `master-dev`: Similar to `master` but includes a headless browser and root access.
-- `pr-5252`: The latest commit in PR 5252.
-- `30948dc401b40982cb7c0dbf6ebbe443b2748c1b-dev`: A build for
-  this specific SHA, which could be from a `master` merge, or release.
-- `websocket-latest`: The WebSocket image for use in a Superset cluster.
+- `latest`: 最新の公式リリース ビルド
+- `latest-dev`: 最新の公式リリース ビルドの `-dev` イメージ。ヘッドレス ブラウザーとルート アクセスが含まれます。
+- `master`: `master` ブランチの最新ビルド。暗黙的にリーン ビルド プリセットになります
+- `master-dev`: `master` に似ていますが、ヘッドレス ブラウザーとルート アクセスが含まれます。
+- `pr-5252`: PR 5252 の最新のコミット。
+- `30948dc401b40982cb7c0dbf6ebbe443b2748c1b-dev`: この特定の SHA のビルド。`master` マージまたはリリースからのものである可能性があります。
+- `websocket-latest`: スーパーセット クラスターで使用する WebSocket イメージ。
 
-For insights or modifications to the build matrix and tagging conventions,
-check the [supersetbot docker](https://github.com/apache-superset/supersetbot)
-subcommand and the [docker.yml](https://github.com/apache/superset/blob/master/.github/workflows/docker.yml)
-GitHub action.
+ビルド マトリックスとタグ付け規則の詳細や変更については、[supersetbot docker](https://github.com/apache-superset/supersetbot) サブコマンドと [docker.yml](https://github.com/apache/superset/blob/master/.github/workflows/docker.yml) GitHub アクションを確認してください。
 
-## Key ARGs in Dockerfile
+## Dockerfile 内の主要な ARG
 
-- `BUILD_TRANSLATIONS`: whether to build the translations into the image. For the
-  frontend build this tells webpack to strip out all locales other than `en` from
-  the `moment-timezone` library. For the backendthis skips compiling the
-  `*.po` translation files
-- `DEV_MODE`: whether to skip the frontend build, this is used by our `docker-compose` dev setup
-  where we mount the local volume and build using `webpack` in `--watch` mode, meaning as you
-  alter the code in the local file system, webpack, from within a docker image used for this
-  purpose, will constantly rebuild the frontend as you go. This ARG enables the initial
-  `docker-compose` build to take much less time and resources
-- `INCLUDE_CHROMIUM`: whether to include chromium in the backend build so that it can be
-  used as a headless browser for workloads related to "Alerts & Reports" and thumbnail generation
-- `INCLUDE_FIREFOX`: same as above, but for firefox
-- `PY_VER`: specifying the base image for the python backend, we don't recommend altering
-  this setting if you're not working on forwards or backwards compatibility
+- `BUILD_TRANSLATIONS`: 翻訳をイメージに組み込むかどうか。フロントエンド ビルドの場合、これは webpack に `moment-timezone` ライブラリから `en` 以外のすべてのロケールを削除するように指示します。バックエンドの場合、これは `*.po` 翻訳ファイルのコンパイルをスキップします
+- `DEV_MODE`: フロントエンド ビルドをスキップするかどうか。これは、ローカル ボリュームをマウントし、`webpack` を `--watch` モードで使用してビルドする `docker-compose` 開発セットアップで使用されます。つまり、ローカル ファイル システムでコードを変更すると、この目的で使用される docker イメージ内の webpack が、進行中にフロントエンドを継続的に再構築します。この ARG により、初期の `docker-compose` ビルドにかかる時間とリソースが大幅に削減されます
+- `INCLUDE_CHROMIUM`: バックエンド ビルドに Chromium を含めるかどうかを指定します。これにより、"アラートとレポート" やサムネイル生成に関連するワークロードのヘッドレス ブラウザーとして使用できるようになります
+- `INCLUDE_FIREFOX`: 上記と同じですが、Firefox 用です
+- `PY_VER`: Python バックエンドのベース イメージを指定します。前方互換性または後方互換性に取り組んでいない場合は、この設定を変更することはお勧めしません
 
-## Caching
+## キャッシング
 
-To accelerate builds, we follow Docker best practices and use `apache/superset-cache`.
+ビルドを高速化するために、Docker のベスト プラクティスに従い、`apache/superset-cache` を使用します。
 
-## About database drivers
+## データベースドライバーについて
 
-Our docker images come with little to zero database driver support since
-each environment requires different drivers, and maintaining a build with
-wide database support would be both challenging (dozens of databases,
-python drivers, and os dependencies) and inefficient (longer
-build times, larger images, lower layer cache hit rate, ...).
+各環境では異なるドライバーが必要なため、当社の Docker イメージにはデータベース ドライバーのサポートがほとんどまたはまったくありません。また、幅広いデータベース サポートを備えたビルドを維持することは困難 (多数のデータベース、Python ドライバー、OS 依存関係) かつ非効率的 (ビルド時間が長く、イメージが大きくなり、レイヤー キャッシュ ヒット率が低くなるなど) です。
 
-For production use cases, we recommend that you derive our `lean` image(s) and
-add database support for the database you need.
+本番環境での使用例では、当社の「リーン」イメージを派生させて、必要なデータベースのデータベース サポートを追加することをお勧めします。
 
-## On supporting different platforms (namely arm64 AND amd64)
+## 異なるプラットフォーム（arm64とamd64）のサポートについて
 
-Currently all automated builds are multi-platform, supporting both `linux/arm64`
-and `linux/amd64`. This enables higher level constructs like `helm` and
-`docker compose` to point to these images and effectively be multi-platform
-as well.
+現在、すべての自動ビルドはマルチプラットフォームであり、`linux/arm64` と `linux/amd64` の両方をサポートしています。これにより、`helm` や `docker compose` などの高レベル構造がこれらのイメージを指し示すことができ、事実上マルチプラットフォームにもなります。
 
-Pull requests and master builds
-are one-image-per-platform so that they can be parallelized and the
-build matrix for those is more sparse as we don't need to build every
-build preset on every platform, and generally can be more selective here.
-For those builds, we suffix tags with `-arm` where it applies.
+プル リクエストとマスター ビルドはプラットフォームごとに 1 つのイメージであるため、並列化が可能で、すべてのプラットフォームですべてのビルド プリセットをビルドする必要がないため、それらのビルド マトリックスはよりスパースであり、一般的にここでより選択的になります。
+これらのビルドでは、該当する場合にタグに `-arm` をサフィックスとして付けます。
 
-### Working with Apple silicon
+### Appleシリコンの活用
 
-Apple's current generation of computers uses ARM-based CPUs, and Docker
-running on MACs seem to require `linux/arm64/v8` (at least one user's M2 was
-configured in that way). Setting the environment
-variable `DOCKER_DEFAULT_PLATFORM` to `linux/amd64` seems to function in
-term of leveraging, and building upon the Superset builds provided here.
+Apple の現在の世代のコンピューターは ARM ベースの CPU を使用しており、MAC で実行される Docker には `linux/arm64/v8` が必要であるようです (少なくとも 1 人のユーザーの M2 がそのように構成されていました)。環境変数 `DOCKER_DEFAULT_PLATFORM` を `linux/amd64` に設定すると、ここで提供されているスーパーセット ビルドを活用して構築する点で機能するようです。
 
 ```bash
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 ```
 
-Presumably, `linux/arm64/v8` would be more optimized for this generation
-of chips, but less compatible across the ARM ecosystem.
+おそらく、`linux/arm64/v8` はこの世代のチップに対してより最適化されますが、ARM エコシステム全体での互換性は低くなります。

@@ -1,5 +1,5 @@
 ---
-title: Architecture
+title: アーキテクチャ
 hide_title: true
 sidebar_position: 1
 version: 1
@@ -7,66 +7,66 @@ version: 1
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
-# Architecture
+# アーキテクチャ
 
-This page is meant to give new administrators an understanding of Superset's components.
+このページは、新しい管理者に Superset のコンポーネントを理解してもらうことを目的としています。
 
-## Components
+## コンポーネント
 
-A Superset installation is made up of these components:
+Superset のインストールは、次のコンポーネントで構成されます:
 
-1. The Superset application itself
-2. A metadata database
-3. A caching layer (optional, but necessary for some features)
-4. A worker & beat (optional, but necessary for some features)
+1. Superset アプリケーション自体
+2. メタデータ データベース
+3. キャッシュ レイヤー (オプションですが、一部の機能には必要です)
+4. ワーカーとビート (オプションですが、一部の機能には必要です)
 
-### Optional components and associated features
+### オプションのコンポーネントと関連機能
 
-The optional components above are necessary to enable these features:
+これらの機能を有効にするには、上記のオプション コンポーネントが必要です:
 
-- [Alerts and Reports](/docs/configuration/alerts-reports)
-- [Caching](/docs/configuration/cache)
-- [Async Queries](/docs/configuration/async-queries-celery/)
-- [Dashboard Thumbnails](/docs/configuration/cache/#caching-thumbnails)
+- [アラートとレポート](/docs/configuration/alerts-reports)
+- [キャッシュ](/docs/configuration/cache)
+- [非同期クエリ](/docs/configuration/async-queries-celery/)
+- [ダッシュボード サムネイル](/docs/configuration/cache/#caching-thumbnails)
 
-If you install with Kubernetes or Docker Compose, all of these components will be created.
+Kubernetes または Docker Compose を使用してインストールすると、これらのコンポーネントがすべて作成されます。
 
-However, installing from PyPI only creates the application itself. Users installing from PyPI will need to configure a caching layer, worker, and beat on their own if they wish to enable the above features. Configuration of those components for a PyPI install is not currently covered in this documentation.
+ただし、PyPI からインストールすると、アプリケーション自体のみが作成されるだけです。PyPI からインストールするユーザーは、上記の機能を有効にする場合、キャッシュ レイヤー、ワーカー、およびビートを独自に構成する必要があります。PyPI インストールのこれらのコンポーネントの構成については、現在このドキュメントでは説明されていません。
 
-Here are further details on each component.
+各コンポーネントの詳細については、以下を参照してください。
 
-### The Superset Application
+### Superset アプリケーション
 
-This is the core application. Superset operates like this:
+これがコア アプリケーションです。Superset は次のように動作します:
 
-- A user visits a chart or dashboard
-- That triggers a SQL query to the data warehouse holding the underlying dataset
-- The resulting data is served up in a data visualization
-- The Superset application is comprised of the Python (Flask) backend application (server), API layer, and the React frontend, built via Webpack, and static assets needed for the application to work
+- ユーザーがチャートまたはダッシュボードにアクセスする
+- これによって、基礎となるデータセットを保持するデータ ウェアハウスへの SQL クエリがトリガーされる
+- 結果のデータはデータ視覚化で提供される
+- Superset アプリケーションは、Webpack 経由で構築された Python (Flask) バックエンド アプリケーション (サーバー)、API レイヤー、React フロントエンド、およびアプリケーションの動作に必要な静的アセットで構成されています
 
-### Metadata Database
+### メタデータデータベース
 
-This is where chart and dashboard definitions, user information, logs, etc. are stored. Superset is tested to work with PostgreSQL and MySQL databases as the metadata database (not be confused with a data source like your data warehouse, which could be a much greater variety of options like Snowflake, Redshift, etc.).
+ここには、チャートとダッシュボードの定義、ユーザー情報、ログなどが保存されます。Superset は、メタデータ データベースとして PostgreSQL および MySQL データベースで動作するようにテストされています (データ ウェアハウスなどのデータ ソースと混同しないでください。データ ソースには、Snowflake、Redshift などのさまざまなオプションがあります)。
 
-Some installation methods like our Quickstart and PyPI come configured by default to use a SQLite on-disk database. And in a Docker Compose installation, the data would be stored in a PostgreSQL container volume. Neither of these cases are recommended for production instances of Superset.
+クイックスタートや PyPI などの一部のインストール方法は、デフォルトで SQLite オンディスク データベースを使用するように構成されています。また、Docker Compose インストールでは、データは PostgreSQL コンテナー ボリュームに保存されます。どちらの場合も、Superset の運用インスタンスには推奨されません。
 
-For production, a properly-configured, managed, standalone database is recommended. No matter what database you use, you should plan to back it up regularly.
+運用には、適切に構成され、管理されたスタンドアロン データベースが推奨されます。使用するデータベースに関係なく、定期的にバックアップすることを計画する必要があります。
 
-### Caching Layer
+### キャッシュ層
 
-The caching layer serves two main functions:
+キャッシュ レイヤーには、主に次の 2 つの機能があります。
 
-- Store the results of queries to your data warehouse so that when a chart is loaded twice, it pulls from the cache the second time, speeding up the application and reducing load on your data warehouse.
-- Act as a message broker for the worker, enabling the Alerts & Reports, async queries, and thumbnail caching features.
+- クエリの結果をデータ ウェアハウスに保存します。これにより、チャートが 2 回読み込まれると、2 回目にキャッシュから取得され、アプリケーションが高速化され、データ ウェアハウスの負荷が軽減されます。
+- ワーカーのメッセージ ブローカーとして機能し、アラートとレポート、非同期クエリ、サムネイル キャッシュ機能を有効にします。
 
-Most people use Redis for their cache, but Superset supports other options too. See the [cache docs](/docs/configuration/cache/) for more.
+ほとんどのユーザーはキャッシュに Redis を使用しますが、Superset は他のオプションもサポートしています。詳細については、[キャッシュ ドキュメント](/docs/configuration/cache/) を参照してください。
 
-### Worker and Beat
+### Worker と Beat
 
-This is one or more workers who execute tasks like run async queries or take snapshots of reports and send emails, and a "beat" that acts as the scheduler and tells workers when to perform their tasks. Most installations use Celery for these components.
+これは、非同期クエリの実行、レポートのスナップショットの取得、電子メールの送信などのタスクを実行する 1 人以上のワーカーと、スケジューラとして機能し、ワーカーにタスクを実行するタイミングを指示する「ビート」です。ほとんどのインストールでは、これらのコンポーネントに Celery を使用します。
 
-## Other components
+## その他のコンポーネント
 
-Other components can be incorporated into Superset. The best place to learn about additional configurations is the [Configuration page](/docs/configuration/configuring-superset). For instance, you could set up a load balancer or reverse proxy to implement HTTPS in front of your Superset application, or specify a Mapbox URL to enable geospatial charts, etc.
+他のコンポーネントを Superset に組み込むこともできます。追加の構成について学習するのに最適な場所は、[構成ページ](/docs/configuration/configuring-superset) です。たとえば、ロード バランサーまたはリバース プロキシを設定して Superset アプリケーションの前に HTTPS を実装したり、Mapbox URL を指定して地理空間チャートを有効にしたりすることができます。
 
-Superset won't even start without certain configuration settings established, so it's essential to review that page.
+特定の構成設定が確立されていないと Superset は起動しないため、このページを確認することが重要です。

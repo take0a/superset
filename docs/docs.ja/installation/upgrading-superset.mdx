@@ -5,45 +5,43 @@ sidebar_position: 5
 version: 1
 ---
 
-# Upgrading Superset
+# Superset のアップグレード
 
 ## Docker Compose
 
-First, make sure to shut down the running containers in Docker Compose:
+まず、Docker Compose で実行中のコンテナをシャットダウンしてください:
 
 ```bash
 docker compose down
 ```
 
-Next, update the folder that mirrors the `superset` repo through git:
+次に、git を介して `superset` リポジトリをミラーリングするフォルダーを更新します:
 
 ```bash
 git pull origin master
 ```
 
-Then, restart the containers and any changed Docker images will be automatically pulled down:
+次に、コンテナを再起動すると、変更された Docker イメージが自動的にプルダウンされます:
 
 ```bash
 docker compose up
 ```
 
-## Updating Superset Manually
+## Superset を手動で更新する
 
-To upgrade superset in a native installation, run the following commands:
+ネイティブ インストールでスーパーセットをアップグレードするには、次のコマンドを実行します:
 
 ```bash
 pip install apache_superset --upgrade
 ```
 
-## Upgrading the Metadata Database
+## メタデータ データベースのアップグレード
 
-Migrate the metadata database by running:
+次のコマンドを実行してメタデータ データベースを移行します:
 
 ```bash
 superset db upgrade
 superset init
 ```
 
-While upgrading superset should not delete your charts and dashboards, we recommend following best
-practices and to backup your metadata database before upgrading. Before upgrading production, we
-recommend upgrading in a staging environment and upgrading production finally during off-peak usage.
+スーパーセットをアップグレードしてもチャートやダッシュボードは削除されませんが、アップグレードする前にベスト プラクティスに従い、メタデータ データベースをバックアップすることをお勧めします。本番環境をアップグレードする前に、ステージング環境でアップグレードし、ピーク時以外の使用時に最終的に本番環境をアップグレードすることをお勧めします。

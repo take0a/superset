@@ -1,31 +1,22 @@
 ---
-title: Quickstart
+title: クイックスタート
 hide_title: false
 sidebar_position: 2
 ---
 
-**Ready to try Apache Superset?** This quickstart guide will help you
-get up and running on your local machine in **3 simple steps**. Note that
-it assumes that you have [Docker](https://www.docker.com),
-[Docker Compose](https://docs.docker.com/compose/), and
-[Git](https://git-scm.com/) installed.
+**Apache Superset を試す準備はできましたか?** このクイックスタート ガイドは、**3 つの簡単な手順** でローカル マシン上で起動して実行するのに役立ちます。[Docker](https://www.docker.com)、[Docker Compose](https://docs.docker.com/compose/)、[Git](https://git-scm.com/) がインストールされていることを前提としています。
 
 :::caution
-Although we recommend using `Docker Compose` for a quick start in a sandbox-type
-environment and for other development-type use cases, **we
-do not recommend this setup for production**. For this purpose please
-refer to our
-[Installing on Kubernetes](/docs/installation/kubernetes/)
-page.
+サンドボックス型環境での迅速な開始やその他の開発型ユースケースには `Docker Compose` の使用をお勧めしますが、**本番環境でのこの設定はお勧めしません**。この目的については、[Kubernetes へのインストール](/docs/installation/kubernetes/) ページを参照してください。
 :::
 
-### 1. Get Superset
+### 1. Superset を入手
 
 ```bash
 git clone https://github.com/apache/superset
 ```
 
-### 2. Start the latest official release of Superset
+### 2. Superset の最新公式リリースで開始する
 
 ```bash
 # Enter the repository you just cloned
@@ -38,45 +29,41 @@ $ git checkout tags/4.1.1
 $ docker compose -f docker-compose-image-tag.yml up
 ```
 
-This may take a moment as Docker Compose will fetch the underlying
-container images and will load up some examples. Once all containers
-are downloaded and the output settles, you're ready to log in.
+Docker Compose が基盤となるコンテナ イメージを取得し、いくつかの例を読み込むため、少し時間がかかる場合があります。すべてのコンテナがダウンロードされ、出力が安定したら、ログインする準備が整います。
 
-⚠️ If you get an error message like `validating superset\docker-compose-image-tag.yml: services.superset-worker-beat.env_file.0 must be a string`, you need to update your version of `docker-compose`.
-Note that `docker-compose` is on the path to deprecation and you should now use `docker compose` instead.
+⚠️ 「validating superset\docker-compose-image-tag.yml: services.superset-worker-beat.env_file.0 must be a string」のようなエラー メッセージが表示される場合は、`docker-compose` のバージョンを更新する必要があります。`docker-compose` は廃止予定であるため、代わりに `docker compose` を使用する必要があります。
 
-### 3. Log into Superset
+### 3. Superset にログイン
 
-Now head over to [http://localhost:8088](http://localhost:8088) and log in with the default created account:
+次に、[http://localhost:8088](http://localhost:8088) にアクセスし、デフォルトで作成されたアカウントでログインします:
 
 ```bash
 username: admin
 password: admin
 ```
 
-#### 🎉 Congratulations! Superset is now up and running on your machine! 🎉
+#### 🎉 おめでとうございます! これで、Superset がマシン上で起動し、実行されました。 🎉
 
-### Wrapping Up
+### まとめ
 
-Once you're done with Superset, you can stop and delete just like any other container environment:
+Superset の使用が完了したら、他のコンテナ環境と同様に停止して削除できます:
 
 ```bash
 docker compose down
 ```
 
 :::tip
-You can use the same environment more than once, as Superset will persist data locally. However, make sure to properly stop all
-processes by running Docker Compose `stop` command. By doing so, you can avoid data corruption and/or loss of data.
+Superset はデータをローカルに保持するため、同じ環境を複数回使用できます。ただし、Docker Compose の `stop` コマンドを実行して、すべてのプロセスを適切に停止してください。そうすることで、データの破損や損失を回避できます。
 :::
 
-## What's next?
+## 次は？
 
-From this point on, you can head on to:
+ここからは、次の作業に進むことができます。
 
-- [Create your first Dashboard](/docs/using-superset/creating-your-first-dashboard)
-- [Connect to a Database](/docs/configuration/databases)
-- [Using Docker Compose](/docs/installation/docker-compose)
-- [Configure Superset](/docs/configuration/configuring-superset/)
-- [Installing on Kubernetes](/docs/installation/kubernetes/)
+- [最初のダッシュボードを作成する](/docs/using-superset/creating-your-first-dashboard)
+- [データベースに接続する](/docs/configuration/databases)
+- [Docker Compose を使用する](/docs/installation/docker-compose)
+- [Superset を構成する](/docs/configuration/configuring-superset/)
+- [Kubernetes にインストールする](/docs/installation/kubernetes/)
 
-Or just explore our [Documentation](https://superset.apache.org/docs/intro)!
+または、[ドキュメント](https://superset.apache.org/docs/intro) をご覧ください。

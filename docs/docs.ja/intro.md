@@ -46,34 +46,34 @@ under the License.
   />
 </picture>
 
-A modern, enterprise-ready business intelligence web application.
+最新のエンタープライズ対応ビジネス インテリジェンス Web アプリケーション。
 
-[**Why Superset?**](#why-superset) |
-[**Supported Databases**](#supported-databases) |
-[**Installation and Configuration**](#installation-and-configuration) |
-[**Release Notes**](https://github.com/apache/superset/blob/master/RELEASING/README.md#release-notes-for-recent-releases) |
-[**Get Involved**](#get-involved) |
-[**Contributor Guide**](#contributor-guide) |
-[**Resources**](#resources) |
-[**Organizations Using Superset**](https://github.com/apache/superset/blob/master/RESOURCES/INTHEWILD.md)
+[**Superset を選ぶ理由**](#why-superset) |
+[**サポートされているデータベース**](#supported-databases) |
+[**インストールと構成**](#installation-and-configuration) |
+[**リリース ノート**](https://github.com/apache/superset/blob/master/RELEASING/README.md#release-notes-for-recent-releases) |
+[**参加する**](#get-involved) |
+[**貢献者ガイド**](#contributor-guide) |
+[**リソース**](#resources) |
+[**Superset を使用している組織**](https://github.com/apache/superset/blob/master/RESOURCES/INTHEWILD.md)
 
-## Why Superset?
+## Superset を選ぶ理由 {#why-superset}
 
-Superset is a modern data exploration and data visualization platform. Superset can replace or augment proprietary business intelligence tools for many teams. Superset integrates well with a variety of data sources.
+Superset は、最新のデータ探索およびデータ視覚化プラットフォームです。Superset は、多くのチームの独自のビジネス インテリジェンス ツールを置き換えたり、強化したりできます。Superset は、さまざまなデータ ソースと適切に統合されます。
 
-Superset provides:
+Superset は以下を提供します:
 
-- A **no-code interface** for building charts quickly
-- A powerful, web-based **SQL Editor** for advanced querying
-- A **lightweight semantic layer** for quickly defining custom dimensions and metrics
-- Out of the box support for **nearly any SQL** database or data engine
-- A wide array of **beautiful visualizations** to showcase your data, ranging from simple bar charts to geospatial visualizations
-- Lightweight, configurable **caching layer** to help ease database load
-- Highly extensible **security roles and authentication** options
-- An **API** for programmatic customization
-- A **cloud-native architecture** designed from the ground up for scale
+- グラフをすばやく作成するための **コード不要のインターフェース**
+- 高度なクエリを実行するための強力な Web ベースの **SQL エディター**
+- カスタム ディメンションとメトリックをすばやく定義するための **軽量のセマンティック レイヤー**
+- **ほぼすべての SQL** データベースまたはデータ エンジンをすぐにサポート
+- シンプルな棒グラフから地理空間の視覚化まで、データを展示するための幅広い **美しい視覚化**
+- データベースの負荷を軽減する軽量で構成可能な **キャッシュ レイヤー**
+- 高度に拡張可能な **セキュリティ ロールと認証** オプション
+- プログラムによるカスタマイズのための **API**
+- 拡張性を考慮してゼロから設計された **クラウド ネイティブ アーキテクチャ**
 
-## Screenshots & Gifs
+## スクリーンショットとGIF画像
 
 **Video Overview**
 
@@ -99,11 +99,11 @@ Superset provides:
 
 <kbd><img title="SQL Lab" src="https://superset.apache.org/img/screenshots/sql_lab.jpg"/></kbd><br/>
 
-## Supported Databases
+## サポートされているデータベース {#supported-databases}
 
-Superset can query data from any SQL-speaking datastore or data engine (Presto, Trino, Athena, [and more](https://superset.apache.org/docs/configuration/databases)) that has a Python DB-API driver and a SQLAlchemy dialect.
+Superset は、Python DB-API ドライバーと SQLAlchemy 方言を備えた、SQL 対応のデータストアまたはデータ エンジン (Presto、Trino、Athena など) からデータをクエリできます。
 
-Here are some of the major database solutions that are supported:
+サポートされている主要なデータベース ソリューションの一部を以下に示します:
 
 <p align="center">
   <img src="https://superset.apache.org/img/databases/redshift.png" alt="redshift" border="0" width="200"/>
@@ -146,74 +146,70 @@ Here are some of the major database solutions that are supported:
   <img src="https://superset.apache.org/img/databases/tdengine.png" alt="TDengine" border="0" width="200" />
 </p>
 
-**A more comprehensive list of supported databases** along with the configuration instructions can be found [here](https://superset.apache.org/docs/configuration/databases).
+**サポートされているデータベースのより包括的なリスト** と構成手順については、[こちら](https://superset.apache.org/docs/configuration/databases) をご覧ください。
 
-Want to add support for your datastore or data engine? Read more [here](https://superset.apache.org/docs/frequently-asked-questions#does-superset-work-with-insert-database-engine-here) about the technical requirements.
+データストアまたはデータ エンジンのサポートを追加したいですか? 技術的な要件については、[こちら](https://superset.apache.org/docs/frequently-asked-questions#does-superset-work-with-insert-database-engine-here) をご覧ください。
 
-## Installation and Configuration
+## インストールと構成 {#installation-and-configuration}
 
-Try out Superset's [quickstart](https://superset.apache.org/docs/quickstart/) guide or learn about [the options for production deployments](https://superset.apache.org/docs/installation/architecture/).
+Superset の [クイックスタート](https://superset.apache.org/docs/quickstart/) ガイドを試すか、[本番環境への展開のオプション](https://superset.apache.org/docs/installation/architecture/) について学んでください。
 
-## Get Involved
+## 参加する {#get-involved}
 
-- Ask and answer questions on [StackOverflow](https://stackoverflow.com/questions/tagged/apache-superset) using the **apache-superset** tag
-- [Join our community's Slack](http://bit.ly/join-superset-slack)
-  and please read our [Slack Community Guidelines](https://github.com/apache/superset/blob/master/CODE_OF_CONDUCT.md#slack-community-guidelines)
-- [Join our dev@superset.apache.org Mailing list](https://lists.apache.org/list.html?dev@superset.apache.org). To join, simply send an email to [dev-subscribe@superset.apache.org](mailto:dev-subscribe@superset.apache.org)
-- If you want to help troubleshoot GitHub Issues involving the numerous database drivers that Superset supports, please consider adding your name and the databases you have access to on the [Superset Database Familiarity Rolodex](https://docs.google.com/spreadsheets/d/1U1qxiLvOX0kBTUGME1AHHi6Ywel6ECF8xk_Qy-V9R8c/edit#gid=0)
-- Join Superset's Town Hall and [Operational Model](https://preset.io/blog/the-superset-operational-model-wants-you/) recurring meetings. Meeting info is available on the [Superset Community Calendar](https://superset.apache.org/community)
+- [StackOverflow](https://stackoverflow.com/questions/tagged/apache-superset) で **apache-superset** タグを使用して質問したり回答したりしてください
+- [コミュニティの Slack に参加してください](http://bit.ly/join-superset-slack)
+また、[Slack コミュニティ ガイドライン](https://github.com/apache/superset/blob/master/CODE_OF_CONDUCT.md#slack-community-guidelines) をお読みください
+- [dev@superset.apache.org メーリング リストに参加してください](https://lists.apache.org/list.html?dev@superset.apache.org)。参加するには、[dev-subscribe@superset.apache.org](mailto:dev-subscribe@superset.apache.org) にメールを送信するだけです。
+- Superset がサポートする多数のデータベース ドライバーに関連する GitHub の問題のトラブルシューティングに協力したい場合は、[Superset データベース ファミリアビリティ ロロデックス](https://docs.google.com/spreadsheets/d/1U1qxiLvOX0kBTUGME1AHHi6Ywel6ECF8xk_Qy-V9R8c/edit#gid=0) に自分の名前とアクセスできるデータベースを追加することを検討してください。
+- Superset のタウン ホールと [運用モデル](https://preset.io/blog/the-superset-operational-model-wants-you/) の定期ミーティングに参加してください。ミーティング情報は、[Superset コミュニティ カレンダー](https://superset.apache.org/community) で確認できます。
 
-## Contributor Guide
+## 貢献者ガイド {#contributor-guide}
 
-Interested in contributing? Check out our
-[CONTRIBUTING.md](https://github.com/apache/superset/blob/master/CONTRIBUTING.md)
-to find resources around contributing along with a detailed guide on
-how to set up a development environment.
+貢献に興味がありますか? [CONTRIBUTING.md](https://github.com/apache/superset/blob/master/CONTRIBUTING.md) をチェックして、貢献に関するリソースと開発環境の設定方法に関する詳細なガイドを見つけてください。
 
-## Resources
+## リソース {#resources}
 
-- [Superset "In the Wild"](https://github.com/apache/superset/blob/master/RESOURCES/INTHEWILD.md) - open a PR to add your org to the list!
-- [Feature Flags](https://github.com/apache/superset/blob/master/RESOURCES/FEATURE_FLAGS.md) - the status of Superset's Feature Flags.
-- [Standard Roles](https://github.com/apache/superset/blob/master/RESOURCES/STANDARD_ROLES.md) - How RBAC permissions map to roles.
-- [Superset Wiki](https://github.com/apache/superset/wiki) - Tons of additional community resources: best practices, community content and other information.
-- [Superset SIPs](https://github.com/orgs/apache/projects/170) - The status of Superset's SIPs (Superset Improvement Proposals) for both consensus and implementation status.
+- [Superset "In the Wild"](https://github.com/apache/superset/blob/master/RESOURCES/INTHEWILD.md) - PR を開いて、組織をリストに追加してください。
+- [機能フラグ](https://github.com/apache/superset/blob/master/RESOURCES/FEATURE_FLAGS.md) - Superset の機能フラグのステータス。
+- [標準ロール](https://github.com/apache/superset/blob/master/RESOURCES/STANDARD_ROLES.md) - RBAC 権限がロールにマップされる方法。
+- [Superset Wiki](https://github.com/apache/superset/wiki) - ベスト プラクティス、コミュニティ コンテンツ、その他の情報など、多数の追加コミュニティ リソース。
+- [Superset SIP](https://github.com/orgs/apache/projects/170) - Superset の SIP (Superset 改善提案) のコンセンサスと実装ステータスの両方のステータス。
 
-Understanding the Superset Points of View
+スーパーセットの視点を理解する
 
-- [The Case for Dataset-Centric Visualization](https://preset.io/blog/dataset-centric-visualization/)
-- [Understanding the Superset Semantic Layer](https://preset.io/blog/understanding-superset-semantic-layer/)
+- [データセット中心の視覚化の事例](https://preset.io/blog/dataset-centric-visualization/)
+- [スーパーセット セマンティック レイヤーの理解](https://preset.io/blog/understanding-superset-semantic-layer/)
 
-- Getting Started with Superset
-  - [Superset in 2 Minutes using Docker Compose](https://superset.apache.org/docs/installation/docker-compose#installing-superset-locally-using-docker-compose)
-  - [Installing Database Drivers](https://superset.apache.org/docs/configuration/databases#installing-database-drivers)
-  - [Building New Database Connectors](https://preset.io/blog/building-database-connector/)
-  - [Create Your First Dashboard](https://superset.apache.org/docs/using-superset/creating-your-first-dashboard/)
-  - [Comprehensive Tutorial for Contributing Code to Apache Superset
-    ](https://preset.io/blog/tutorial-contributing-code-to-apache-superset/)
-- [Resources to master Superset by Preset](https://preset.io/resources/)
+- Superset を使い始める
+  - [Docker Compose を使用して 2 分で Superset を作成する](https://superset.apache.org/docs/installation/docker-compose#installing-superset-locally-using-docker-compose)
+  - [データベース ドライバーのインストール](https://superset.apache.org/docs/configuration/databases#installing-database-drivers)
+  - [新しいデータベース コネクタの構築](https://preset.io/blog/building-database-connector/)
+  - [最初のダッシュボードの作成](https://superset.apache.org/docs/using-superset/creating-your-first-dashboard/)
+  - [Apache Superset へのコード提供に関する包括的なチュートリアル](https://preset.io/blog/tutorial-contributing-code-to-apache-superset/)
+- [Preset による Superset の習得に役立つリソース](https://preset.io/resources/)
 
-- Deploying Superset
+- Superset のデプロイ
 
-  - [Official Docker image](https://hub.docker.com/r/apache/superset)
+  - [公式 Docker イメージ](https://hub.docker.com/r/apache/superset)
   - [Helm Chart](https://github.com/apache/superset/tree/master/helm/superset)
 
-- Recordings of Past [Superset Community Events](https://preset.io/events)
+- 過去の[Supersetコミュニティイベント](https://preset.io/events)の録画
 
-  - [Mixed Time Series Charts](https://preset.io/events/mixed-time-series-visualization-in-superset-workshop/)
-  - [How the Bing Team Customized Superset for the Internal Self-Serve Data & Analytics Platform](https://preset.io/events/how-the-bing-team-heavily-customized-superset-for-their-internal-data/)
-  - [Live Demo: Visualizing MongoDB and Pinot Data using Trino](https://preset.io/events/2021-04-13-visualizing-mongodb-and-pinot-data-using-trino/)
-  - [Introduction to the Superset API](https://preset.io/events/introduction-to-the-superset-api/)
-  - [Building a Database Connector for Superset](https://preset.io/events/2021-02-16-building-a-database-connector-for-superset/)
+  - [混合時系列チャート](https://preset.io/events/mixed-time-series-visualization-in-superset-workshop/)
+  - [Bing チームが社内セルフサービス データ & アナリティクス プラットフォーム用に Superset をカスタマイズした方法](https://preset.io/events/how-the-bing-team-heavily-customized-superset-for-their-internal-data/)
+  - [ライブ デモ: Trino を使用して MongoDB と Pinot のデータを視覚化する](https://preset.io/events/2021-04-13-visualizing-mongodb-and-pinot-data-using-trino/)
+  - [Superset API の概要](https://preset.io/events/introduction-to-the-superset-api/)
+  - [Superset 用のデータベース コネクタの構築](https://preset.io/events/2021-02-16-building-a-database-connector-for-superset/)
 
-- Visualizations
+- 視覚化
 
-  - [Creating Viz Plugins](https://superset.apache.org/docs/contributing/creating-viz-plugins/)
-  - [Managing and Deploying Custom Viz Plugins](https://medium.com/nmc-techblog/apache-superset-manage-custom-viz-plugins-in-production-9fde1a708e55)
-  - [Why Apache Superset is Betting on Apache ECharts](https://preset.io/blog/2021-4-1-why-echarts/)
+  - [Viz プラグインの作成](https://superset.apache.org/docs/contributing/creating-viz-plugins/)
+  - [カスタム Viz プラグインの管理と展開](https://medium.com/nmc-techblog/apache-superset-manage-custom-viz-plugins-in-production-9fde1a708e55)
+  - [Apache Superset が Apache ECharts に賭ける理由](https://preset.io/blog/2021-4-1-why-echarts/)
 
-- [Superset API](https://superset.apache.org/docs/rest-api)
+- [スーパーセット API](https://superset.apache.org/docs/rest-api)
 
-## Repo Activity
+## リポジトリアクティビティ
 
 <a href="https://next.ossinsight.io/widgets/official/compose-last-28-days-stats?repo_id=39464018" target="_blank" align="center">
   <picture>

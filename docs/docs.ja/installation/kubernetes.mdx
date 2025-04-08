@@ -7,35 +7,32 @@ version: 1
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
-# Installing on Kubernetes
+# Kubernetes にインストール
 
 <img src={useBaseUrl("/img/k8s.png" )} width="150" />
 <br /><br />
 
-Running Superset on Kubernetes is supported with the provided [Helm](https://helm.sh/) chart
-found in the official [Superset helm repository](https://apache.github.io/superset/index.yaml).
+Kubernetes 上での Superset の実行は、公式の [Superset helm リポジトリ](https://apache.github.io/superset/index.yaml) にある提供されている [Helm](https://helm.sh/) チャートによってサポートされています。
 
-## Prerequisites
+## 前提条件
 
 - A Kubernetes cluster
 - Helm installed
 
 :::note
-For simpler, single host environments, we recommend using
-[minikube](https://minikube.sigs.k8s.io/docs/start/) which is easy to setup on many platforms
-and works fantastically well with the Helm chart referenced here.
+よりシンプルな単一ホスト環境の場合は、[minikube](https://minikube.sigs.k8s.io/docs/start/) の使用をお勧めします。これは多くのプラットフォームで簡単にセットアップでき、ここで参照されている Helm チャートと非常にうまく連携します。
 :::
 
-## Running
+## 実行
 
-1. Add the Superset helm repository
+1. Superset Helmリポジトリを追加する
 
 ```sh
 helm repo add superset https://apache.github.io/superset
 "superset" has been added to your repositories
 ```
 
-2. View charts in repo
+2. リポジトリ内のチャートを表示する
 
 ```sh
 helm search repo superset
@@ -43,22 +40,22 @@ NAME                    CHART VERSION   APP VERSION     DESCRIPTION
 superset/superset       0.1.1           1.0             Apache Superset is a modern, enterprise-ready b...
 ```
 
-3. Configure your setting overrides
+3. 設定のオーバーライドを構成する
 
-Just like any typical Helm chart, you'll need to craft a `values.yaml` file that would define/override any of the values exposed into the default [values.yaml](https://github.com/apache/superset/tree/master/helm/superset/values.yaml), or from any of the dependent charts it depends on:
+一般的な Helm チャートと同様に、デフォルトの [values.yaml](https://github.com/apache/superset/tree/master/helm/superset/values.yaml) に公開されている値、またはそれが依存する依存チャートのいずれかから値を定義/オーバーライドする `values.yaml` ファイルを作成する必要があります:
 
 - [bitnami/redis](https://artifacthub.io/packages/helm/bitnami/redis)
 - [bitnami/postgresql](https://artifacthub.io/packages/helm/bitnami/postgresql)
 
-More info down below on some important overrides you might need.
+必要になる可能性のある重要なオーバーライドの詳細については、以下を参照してください。
 
-4. Install and run
+4. インストールして実行する
 
 ```sh
 helm upgrade --install --values my-values.yaml superset superset/superset
 ```
 
-You should see various pods popping up, such as:
+次のようなさまざまなポッドがポップアップ表示されます:
 
 ```sh
 kubectl get pods
@@ -73,41 +70,40 @@ superset-worker-75b48bbcc-jmmjr         1/1     Running     0          4m8s
 superset-worker-75b48bbcc-qrq49         1/1     Running     0          4m12s
 ```
 
-The exact list will depend on some of your specific configuration overrides but you should generally expect:
+正確なリストは、特定の構成オーバーライドによって異なりますが、一般的には次のようになります:
 
-- N `superset-xxxx-yyyy` and `superset-worker-xxxx-yyyy` pods (depending on your `supersetNode.replicaCount` and `supersetWorker.replicaCount` values)
-- 1 `superset-postgresql-0` depending on your postgres settings
-- 1 `superset-redis-master-0` depending on your redis settings
-- 1 `superset-celerybeat-xxxx-yyyy` pod if you have `supersetCeleryBeat.enabled = true` in your values overrides
+- N 個の `superset-xxxx-yyyy` および `superset-worker-xxxx-yyyy` ポッド (`supersetNode.replicaCount` および `supersetWorker.replicaCount` の値によって異なります)
+- 1 個の `superset-postgresql-0` (postgres 設定によって異なります)
+- 1 個の `superset-redis-master-0` (redis 設定によって異なります)
+- 1 個の `superset-celerybeat-xxxx-yyyy` ポッド (値のオーバーライドで `supersetCeleryBeat.enabled = true` が指定されている場合)
 
-1. Access it
+5. アクセスする
 
-The chart will publish appropriate services to expose the Superset UI internally within your k8s cluster. To access it externally you will have to either:
+チャートは適切なサービスを公開し、k8s クラスター内で Superset UI を内部的に公開します。外部からアクセスするには、次のいずれかを行う必要があります。
 
-- Configure the Service as a `LoadBalancer` or `NodePort`
-- Set up an `Ingress` for it - the chart includes a definition, but will need to be tuned to your needs (hostname, tls, annotations etc...)
-- Run `kubectl port-forward superset-xxxx-yyyy :8088` to directly tunnel one pod's port into your localhost
+- サービスを `LoadBalancer` または `NodePort` として構成する
+- それに `Ingress` を設定する - チャートには定義が含まれていますが、ニーズに合わせて調整する必要があります (ホスト名、tls、注釈など)
+- `kubectl port-forward superset-xxxx-yyyy :8088` を実行して、1 つのポッドのポートをローカルホストに直接トンネルする
 
-Depending how you configured external access, the URL will vary. Once you've identified the appropriate URL you can log in with:
+外部アクセスの構成方法に応じて、URL は異なります。適切な URL を特定したら、次の方法でログインできます。
 
 - user: `admin`
 - password: `admin`
 
-## Important settings
+## 重要な設定
 
-### Security settings
+### セキュリティ設定
 
-Default security settings and passwords are included but you **MUST** update them to run `prod` instances, in particular:
+デフォルトのセキュリティ設定とパスワードが含まれていますが、特に `prod` インスタンスを実行するには、それらを更新する必要があります。
 
 ```yaml
 postgresql:
   postgresqlPassword: superset
 ```
 
-Make sure, you set a unique strong complex alphanumeric string for your SECRET_KEY and use a tool to help you generate
-a sufficiently random sequence.
+SECRET_KEY には、一意で強力な複雑な英数字文字列を設定し、十分にランダムなシーケンスを生成するツールを使用してください。
 
-- To generate a good key you can run, `openssl rand -base64 42`
+- 適切なキーを生成するには、`openssl rand -base64 42` を実行します。
 
 ```yaml
 configOverrides:
@@ -115,8 +111,8 @@ configOverrides:
     SECRET_KEY = 'YOUR_OWN_RANDOM_GENERATED_SECRET_KEY'
 ```
 
-If you want to change the previous secret key then you should rotate the keys.
-Default secret key for kubernetes deployment is `thisISaSECRET_1234`
+以前の秘密鍵を変更する場合は、鍵をローテーションする必要があります。
+Kubernetes デプロイメントのデフォルトの秘密鍵は `thisISaSECRET_1234` です。
 
 ```yaml
 configOverrides:
@@ -134,29 +130,27 @@ init:
 ```
 
 :::note
-Superset uses [Scarf Gateway](https://about.scarf.sh/scarf-gateway) to collect telemetry data.  Knowing the installation counts for different Superset versions informs the  project's decisions about patching and long-term support. Scarf purges personally identifiable information (PII) and provides only aggregated statistics.
+Superset は [Scarf Gateway](https://about.scarf.sh/scarf-gateway) を使用してテレメトリ データを収集します。さまざまな Superset バージョンのインストール数を把握することで、パッチ適用や長期サポートに関するプロジェクトの決定に役立ちます。Scarf は個人を特定できる情報 (PII) を削除し、集計された統計情報のみを提供します。
 
-To opt-out of this data collection in your Helm-based installation, edit the `repository:` line in your `helm/superset/values.yaml` file, replacing `apachesuperset.docker.scarf.sh/apache/superset` with `apache/superset` to pull the image directly from Docker Hub.
+Helm ベースのインストールでこのデータ収集をオプトアウトするには、`helm/superset/values.yaml` ファイルの `repository:` 行を編集し、`apachesuperset.docker.scarf.sh/apache/superset` を `apache/superset` に置き換えて、Docker Hub から直接イメージをプルします。
 :::
 
-### Dependencies
+### 依存関係
 
-Install additional packages and do any other bootstrap configuration in the bootstrap script.
-For production clusters it's recommended to build own image with this step done in CI.
+追加のパッケージをインストールし、ブートストラップ スクリプトでその他のブートストラップ構成を実行します。
+本番環境のクラスターの場合は、この手順を CI で実行して独自のイメージを構築することをお勧めします。
 
 :::note
 
-Superset requires a Python DB-API database driver and a SQLAlchemy
-dialect to be installed for each datastore you want to connect to.
+Superset では、接続するデータストアごとに Python DB-API データベース ドライバーと SQLAlchemy 方言がインストールされている必要があります。
 
-See [Install Database Drivers](/docs/configuration/databases) for more information.
-It is recommended that you refer to versions listed in
-[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml)
-instead of hard-coding them in your bootstrap script, as seen below.
+詳細については、[データベース ドライバーのインストール](/docs/configuration/databases) を参照してください。
+
+以下に示すように、ブートストラップ スクリプトにハードコーディングするのではなく、[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml) にリストされているバージョンを参照することをお勧めします。
 
 :::
 
-The following example installs the drivers for BigQuery and Elasticsearch, allowing you to connect to these data sources within your Superset setup:
+次の例では、BigQuery および Elasticsearch のドライバーがインストールされ、Superset セットアップ内でこれらのデータ ソースに接続できるようになります:
 
 ```yaml
 bootstrapScript: |
@@ -169,7 +163,7 @@ bootstrapScript: |
 
 ### superset_config.py
 
-The default `superset_config.py` is fairly minimal and you will very likely need to extend it. This is done by specifying one or more key/value entries in `configOverrides`, e.g.:
+デフォルトの `superset_config.py` は非常に最小限であるため、拡張する必要がある可能性が非常に高くなります。これは、`configOverrides` で 1 つ以上のキー/値エントリを指定することによって行われます。例:
 
 ```yaml
 configOverrides:
@@ -181,15 +175,15 @@ configOverrides:
     }
 ```
 
-Those will be evaluated as Helm templates and therefore will be able to reference other `values.yaml` variables e.g. `{{ .Values.ingress.hosts[0] }}` will resolve to your ingress external domain.
+これらは Helm テンプレートとして評価されるため、他の `values.yaml` 変数を参照できます。たとえば、`{{ .Values.ingress.hosts[0] }}` は Ingress 外部ドメインに解決されます。
 
-The entire `superset_config.py` will be installed as a secret, so it is safe to pass sensitive parameters directly... however it might be more readable to use secret env variables for that.
+`superset_config.py` 全体がシークレットとしてインストールされるため、機密パラメータを直接渡しても安全です...ただし、そのためにはシークレット環境変数を使用する方が読みやすい場合があります。
 
-Full python files can be provided by running `helm upgrade --install --values my-values.yaml --set-file configOverrides.oauth=set_oauth.py`
+完全な Python ファイルは、`helm upgrade --install --values my-values.yaml --set-file configOverrides.oauth=set_oauth.py` を実行することで提供できます。
 
-### Environment Variables
+### 環境変数
 
-Those can be passed as key/values either with `extraEnv` or `extraSecretEnv` if they're sensitive. They can then be referenced from `superset_config.py` using e.g. `os.environ.get("VAR")`.
+これらは機密情報である場合、`extraEnv` または `extraSecretEnv` を使用してキー/値として渡すことができます。その後、`os.environ.get("VAR")` などを使用して `superset_config.py` から参照できます。
 
 ```yaml
 extraEnv:
@@ -212,9 +206,9 @@ configOverrides:
     SMTP_PASSWORD = os.getenv("SMTP_PASSWORD","superset")
 ```
 
-### System packages
+### システムパッケージ
 
-If new system packages are required, they can be installed before application startup by overriding the container's `command`, e.g.:
+新しいシステム パッケージが必要な場合は、コンテナーの `command` をオーバーライドすることで、アプリケーションの起動前にインストールできます。例:
 
 ```yaml
 supersetWorker:
@@ -231,9 +225,9 @@ supersetWorker:
       . {{ .Values.configMountPath }}/superset_bootstrap.sh; celery --app=superset.tasks.celery_app:app worker
 ```
 
-### Data sources
+### データソース
 
-Data source definitions can be automatically declared by providing key/value yaml definitions in `extraConfigs`:
+データ ソース定義は、`extraConfigs` でキー/値の yaml 定義を提供することで自動的に宣言できます:
 
 ```yaml
 extraConfigs:
@@ -250,17 +244,15 @@ extraConfigs:
       tables: []
 ```
 
-Those will also be mounted as secrets and can include sensitive parameters.
+それらもシークレットとしてマウントされ、機密パラメータが含まれる可能性があります。
 
-## Configuration Examples
+## 設定例
 
-### Setting up OAuth
+### OAuthの設定
 
 :::note
 
-OAuth setup requires that the [authlib](https://authlib.org/) Python library is installed. This can
-be done using `pip` by updating the `bootstrapScript`. See the [Dependencies](#dependencies) section
-for more information.
+OAuth のセットアップには、[authlib](https://authlib.org/) Python ライブラリがインストールされている必要があります。これは、`pip` を使用して `bootstrapScript` を更新することで実行できます。詳細については、[依存関係](#dependencies) セクションを参照してください。
 
 :::
 
@@ -308,13 +300,13 @@ configOverrides:
     AUTH_USER_REGISTRATION_ROLE = "Admin"
 ```
 
-### Enable Alerts and Reports
+### アラートとレポートを有効にする
 
-For this, as per the [Alerts and Reports doc](/docs/configuration/alerts-reports), you will need to:
+このためには、[アラートとレポートのドキュメント](/docs/configuration/alerts-reports)に従って、次の操作を行う必要があります:
 
-#### Install a supported webdriver in the Celery worker
+#### CeleryワーカーにサポートされているWebドライバーをインストールする
 
-This is done either by using a custom image that has the webdriver pre-installed, or installing at startup time by overriding the `command`. Here's a working example for `chromedriver`:
+これは、Web ドライバーがプリインストールされているカスタム イメージを使用するか、起動時に `command` をオーバーライドしてインストールすることによって行われます。`chromedriver` の動作例を次に示します:
 
 ```yaml
 supersetWorker:
@@ -341,16 +333,16 @@ supersetWorker:
       . {{ .Values.configMountPath }}/superset_bootstrap.sh; celery --app=superset.tasks.celery_app:app worker
 ```
 
-#### Run the Celery beat
+#### Celery beat を実行する
 
-This pod will trigger the scheduled tasks configured in the alerts and reports UI section:
+このポッドは、アラートとレポートの UI セクションで構成されたスケジュールされたタスクをトリガーします:
 
 ```yaml
 supersetCeleryBeat:
   enabled: true
 ```
 
-#### Configure the appropriate Celery jobs and SMTP/Slack settings
+#### 適切な Celery ジョブと SMTP/Slack 設定を構成する
 
 ```yaml
 extraEnv:
@@ -435,10 +427,10 @@ configOverrides:
     ]
 ```
 
-### Load the Examples data and dashboards
+### サンプルデータとダッシュボードをロードする
 
-If you are trying Superset out and want some data and dashboards to explore, you can load some examples by creating a `my_values.yaml` and deploying it as described above in the **Configure your setting overrides** step of the **Running** section.
-To load the examples, add the following to the `my_values.yaml` file:
+Superset を試していて、いくつかのデータとダッシュボードを調べたい場合は、`my_values.yaml` を作成し、**実行** セクションの **設定のオーバーライドを構成する** ステップで説明したようにデプロイすることで、いくつかの例を読み込むことができます。
+例を読み込むには、`my_values.yaml` ファイルに次の内容を追加します:
 
 ```yaml
 init:

@@ -7,48 +7,46 @@ version: 1
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
-# Installing Superset from PyPI
+# PyPI から Superset をインストールする
 
 <img src={useBaseUrl("/img/pypi.png" )} width="150" />
 <br /><br />
 
-This page describes how to install Superset using the `apache_superset` package [published on PyPI](https://pypi.org/project/apache_superset/).
+このページでは、[PyPI で公開](https://pypi.org/project/apache_superset/) の `apache_superset` パッケージを使用して Superset をインストールする方法について説明します。
 
-## OS Dependencies
+## OS の依存関係
 
-Superset stores database connection information in its metadata database. For that purpose, we use
-the cryptography Python library to encrypt connection passwords. Unfortunately, this library has OS
-level dependencies.
+Superset は、データベース接続情報をメタデータ データベースに保存します。そのために、接続パスワードを暗号化するために暗号化 Python ライブラリを使用します。残念ながら、このライブラリには OS レベルの依存関係があります。
 
-**Debian and Ubuntu**
+**Debian と Ubuntu**
 
-In Ubuntu **20.04 and 22.04** the following command will ensure that the required dependencies are installed:
+Ubuntu **20.04 および 22.04** では、次のコマンドを実行すると、必要な依存関係がインストールされていることが確認されます:
 
 ```bash
 sudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev
 ```
 
-In Ubuntu **before 20.04** the following command will ensure that the required dependencies are installed:
+Ubuntu **20.04 より前** では、次のコマンドを実行すると、必要な依存関係がインストールされていることが保証されます:
 
 ```bash
 sudo apt-get install build-essential libssl-dev libffi-dev python-dev python-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev
 ```
 
-**Fedora and RHEL-derivative Linux distributions**
+**Fedora および RHEL 派生の Linux ディストリビューション**
 
-Install the following packages using the `yum` package manager:
+`yum` パッケージ マネージャーを使用して次のパッケージをインストールします:
 
 ```bash
 sudo yum install gcc gcc-c++ libffi-devel python-devel python-pip python-wheel openssl-devel cyrus-sasl-devel openldap-devel
 ```
 
-In more recent versions of CentOS and Fedora, you may need to install a slightly different set of packages using `dnf`:
+CentOS および Fedora の最近のバージョンでは、`dnf` を使用して若干異なるパッケージ セットをインストールする必要がある場合があります:
 
 ```bash
 sudo dnf install gcc gcc-c++ libffi-devel python3-devel python3-pip python3-wheel openssl-devel cyrus-sasl-devel openldap-devel
 ```
 
-Also, on CentOS, you may need to upgrade pip for the install to work:
+また、CentOS では、インストールを機能させるために pip をアップグレードする必要がある場合があります:
 
 ```bash
 pip3 install --upgrade pip
@@ -56,52 +54,44 @@ pip3 install --upgrade pip
 
 **Mac OS X**
 
-If you're not on the latest version of OS X, we recommend upgrading because we've found that many
-issues people have run into are linked to older versions of Mac OS X. After updating, install the
-latest version of XCode command line tools:
+最新バージョンの OS X を使用していない場合は、アップグレードすることをお勧めします。これは、ユーザーが遭遇した多くの問題が古いバージョンの Mac OS X に関連していることが判明しているためです。更新後、最新バージョンの XCode コマンドライン ツールをインストールします:
 
 ```bash
 xcode-select --install
 ```
 
-We don't recommend using the system installed Python. Instead, first install the
-[homebrew](https://brew.sh/) manager and then run the following commands:
+システムにインストールされた Python の使用はお勧めしません。代わりに、まず [homebrew](https://brew.sh/) マネージャーをインストールしてから、次のコマンドを実行してください:
 
 ```bash
 brew install readline pkg-config libffi openssl mysql postgresql@14
 ```
 
-You should install a recent version of Python. Refer to the
-[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml) file for a list of Python
-versions officially supported by Superset. We'd recommend using a Python version manager
-like [pyenv](https://github.com/pyenv/pyenv)
-(and also [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv)).
+最新バージョンの Python をインストールする必要があります。Superset で公式にサポートされている Python バージョンのリストについては、[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml) ファイルを参照してください。[pyenv](https://github.com/pyenv/pyenv) (および [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv)) などの Python バージョン マネージャーを使用することをお勧めします。
 
-Let's also make sure we have the latest version of `pip` and `setuptools`:
+また、`pip` と `setuptools` の最新バージョンがインストールされていることも確認しましょう:
 
 ```bash
 pip install --upgrade setuptools pip
 ```
 
-Lastly, you may need to set LDFLAGS and CFLAGS for certain Python packages to properly build. You can export these variables with:
+最後に、特定の Python パッケージを適切にビルドするには、LDFLAGS と CFLAGS を設定する必要がある場合があります。これらの変数は次のようにエクスポートできます:
 
 ```bash
 export LDFLAGS="-L$(brew --prefix openssl)/lib"
 export CFLAGS="-I$(brew --prefix openssl)/include"
 ```
 
-These will now be available when pip installing requirements.
+これらは、pip インストール要件時に利用できるようになります。
 
-## Python Virtual Environment
+## Python 仮想環境
 
-We highly recommend installing Superset inside of a virtual environment. Python ships with
-`virtualenv` out of the box. If you're using [pyenv](https://github.com/pyenv/pyenv), you can install [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv). Or you can install it with `pip`:
+Superset を仮想環境内にインストールすることを強くお勧めします。Python には、`virtualenv` が同梱されています。[pyenv](https://github.com/pyenv/pyenv) を使用している場合は、[pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv) をインストールできます。または、`pip` を使用してインストールすることもできます:
 
 ```bash
 pip install virtualenv
 ```
 
-You can create and activate a virtual environment using:
+以下の方法を使用して仮想環境を作成し、アクティブ化できます:
 
 ```bash
 # virtualenv is shipped in Python 3.6+ as venv instead of pyvenv.
@@ -110,7 +100,7 @@ python3 -m venv venv
 . venv/bin/activate
 ```
 
-Or with pyenv-virtualenv:
+または、pyenv-virtualenv を使用する場合:
 
 ```bash
 # Here we name the virtual env 'superset'
@@ -118,31 +108,29 @@ pyenv virtualenv superset
 pyenv activate superset
 ```
 
-Once you activated your virtual environment, all of the Python packages you install or uninstall
-will be confined to this environment. You can exit the environment by running `deactivate` on the
-command line.
+仮想環境をアクティブ化すると、インストールまたはアンインストールしたすべての Python パッケージはこの環境に限定されます。コマンド ラインで `deactivate` を実行すると、この環境を終了できます。
 
-### Installing and Initializing Superset
+### Supersetのインストールと初期化
 
-First, start by installing `apache_superset`:
+まず、`apache_superset` をインストールします。
 
 ```bash
 pip install apache_superset
 ```
 
-Then, define mandatory configurations, SECRET_KEY and FLASK_APP:
+次に、必須構成 SECRET_KEY と FLASK_APP を定義します:
 ```bash
 export SUPERSET_SECRET_KEY=YOUR-SECRET-KEY
 export FLASK_APP=superset
 ```
 
-Then, you need to initialize the database:
+次に、データベースを初期化する必要があります:
 
 ```bash
 superset db upgrade
 ```
 
-Finish installing by running through the following commands:
+次のコマンドを実行してインストールを完了します:
 
 ```bash
 # Create an admin user in your metadata database (use `admin` as username to be able to load the examples)
@@ -158,5 +146,4 @@ superset init
 superset run -p 8088 --with-threads --reload --debugger
 ```
 
-If everything worked, you should be able to navigate to `hostname:port` in your browser (e.g.
-locally by default at `localhost:8088`) and login using the username and password you created.
+すべてがうまくいけば、ブラウザで `hostname:port` (たとえば、デフォルトではローカルでは `localhost:8088`) に移動し、作成したユーザー名とパスワードを使用してログインできるはずです。
