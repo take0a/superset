@@ -9,9 +9,13 @@ version: 1
 
 ## superset_config.py
 
-Superset は、[config.py モジュール](https://github.com/apache/superset/blob/master/superset/config.py) を通じて、数百もの構成可能なパラメータを公開しています。公開されている変数とオブジェクトは、構成、変更、インターフェイスする可能性のあるほとんどのもののパブリック インターフェイスとして機能します。この Python モジュールには、これらすべてのパラメータ、適切なデフォルト、およびコメント形式の豊富なドキュメントが含まれています。
+Superset は、[config.py モジュール](https://github.com/apache/superset/blob/master/superset/config.py) を通じて、数百もの構成可能なパラメータを公開しています。
+公開されている変数とオブジェクトは、構成、変更、インターフェイスする可能性のあるほとんどのもののパブリック インターフェイスとして機能します。
+この Python モジュールには、これらすべてのパラメータ、適切なデフォルト、およびコメント形式の豊富なドキュメントが含まれています。
 
-アプリケーションを構成するには、独自の構成モジュールを作成する必要があります。これにより、これらのパラメータの一部または多くをオーバーライドできます。コア モジュールを変更する代わりに、独自のモジュール (通常は `superset_config.py` という名前のファイル) を定義します。
+アプリケーションを構成するには、独自の構成モジュールを作成する必要があります。
+これにより、これらのパラメータの一部または多くをオーバーライドできます。
+コア モジュールを変更する代わりに、独自のモジュール (通常は `superset_config.py` という名前のファイル) を定義します。
 
 このファイルを `PYTHONPATH` に追加するか、`superset_config.py` のフル パスを指定する環境変数 `SUPERSET_CONFIG_PATH` を作成します。
 
@@ -70,19 +74,25 @@ MAPBOX_API_KEY = ''
 通常は、コアの [superset/config.py](https://github.com/apache/superset/blob/master/superset/config.py) から変更したい部分のみを、関連するコメントとともにコピーして、独自の `superset_config.py` ファイルに貼り付けることに注意してください。
 :::
 
-[superset/config.py](https://github.com/apache/superset/blob/master/superset/config.py) で定義されているすべてのパラメータとデフォルト値は、ローカルの `superset_config.py` で変更できます。管理者は、ローカルで構成できる内容と、設定されているデフォルト値を理解するために、このファイルを読む必要があります。
+[superset/config.py](https://github.com/apache/superset/blob/master/superset/config.py) で定義されているすべてのパラメータとデフォルト値は、ローカルの `superset_config.py` で変更できます。
+管理者は、ローカルで構成できる内容と、設定されているデフォルト値を理解するために、このファイルを読む必要があります。
 
-`superset_config.py` は Flask 構成モジュールとして機能するため、Flask 自体の設定だけでなく、Superset がバンドルする `flask-wtf`、`flask-caching`、`flask-migrate`、`flask-appbuilder` などの Flask 拡張機能の設定も変更できます。これらの拡張機能はそれぞれ、複雑な構成が可能です。
+`superset_config.py` は Flask 構成モジュールとして機能するため、Flask 自体の設定だけでなく、Superset がバンドルする `flask-wtf`、`flask-caching`、`flask-migrate`、`flask-appbuilder` などの Flask 拡張機能の設定も変更できます。
+これらの拡張機能はそれぞれ、複雑な構成が可能です。
 
-Superset が使用する Web フレームワークである Flask App Builder にも、多くの構成設定が用意されています。設定方法の詳細については、[Flask App Builder ドキュメント](https://flask-appbuilder.readthedocs.org/en/latest/config.html) を参照してください。
+Superset が使用する Web フレームワークである Flask App Builder にも、多くの構成設定が用意されています。
+設定方法の詳細については、[Flask App Builder ドキュメント](https://flask-appbuilder.readthedocs.org/en/latest/config.html) を参照してください。
 
-少なくとも、`SECRET_KEY` と `SQLALCHEMY_DATABASE_URI` を変更する必要があります。それぞれの詳細については、引き続きお読みください。
+少なくとも、`SECRET_KEY` と `SQLALCHEMY_DATABASE_URI` を変更する必要があります。
+それぞれの詳細については、引き続きお読みください。
 
-## SECRET_KEYの指定
+## SECRET_KEY の指定
 
-### 初期SECRET_KEYの追加
+### 初期 SECRET_KEY の追加
 
-Superset を起動するには、ユーザーが指定した SECRET_KEY が必要です。この要件は、[安全な構成を強制するためにバージョン 2.1.0 で追加されました](https://preset.io/blog/superset-security-update-default-secret_key-vulnerability/)。次のように、強力な SECRET_KEY を `superset_config.py` ファイルに追加します:
+Superset を起動するには、ユーザーが指定した SECRET_KEY が必要です。
+この要件は、[安全な構成を強制するためにバージョン 2.1.0 で追加されました](https://preset.io/blog/superset-security-update-default-secret_key-vulnerability/)。
+次のように、強力な SECRET_KEY を `superset_config.py` ファイルに追加します:
 
 ```python
 SECRET_KEY = 'YOUR_OWN_RANDOM_GENERATED_SECRET_KEY'
@@ -92,12 +102,13 @@ SECRET_KEY = 'YOUR_OWN_RANDOM_GENERATED_SECRET_KEY'
 
 :::caution 強力な秘密鍵を使用する
 このキーは、セッション Cookie に安全に署名し、Superset のアプリケーション メタデータ データベースに保存されている機密情報を暗号化するために使用されます。
-展開では、複雑で一意のキーを使用する必要があります。
+デプロイメントでは、複雑で一意のキーを使用する必要があります。
 :::
 
 ### 新しい SECRET_KEY へのローテーション
 
-既存の SECRET_KEY を変更する場合は、既存の SECRET_KEY を `superset_config.py` ファイルに `PREVIOUS_SECRET_KEY =` として追加し、新しいキーを `SECRET_KEY =` として指定します。現在の SECRET_KEY は次のコマンドで確認できます。Superset を Docker で実行している場合は、Superset アプリケーション コンテナー内から実行します:
+既存の SECRET_KEY を変更する場合は、既存の SECRET_KEY を `superset_config.py` ファイルに `PREVIOUS_SECRET_KEY =` として追加し、新しいキーを `SECRET_KEY =` として指定します。
+現在の SECRET_KEY は次のコマンドで確認できます。Superset を Docker で実行している場合は、Superset アプリケーション コンテナー内から実行します:
 
 ```python
 superset shell
@@ -110,7 +121,9 @@ from flask import current_app; print(current_app.config["SECRET_KEY"])
 
 Superset には、チャートの定義、ダッシュボード、その他多くのものなど、管理する情報を格納するためのデータベースが必要です。
 
-デフォルトでは、Superset は [SQLite](https://www.sqlite.org/) を使用するように構成されています。これは、インストールを必要とせずに簡単にすばやく開始できる自己完結型の単一ファイル データベースです。ただし、実稼働環境では、セキュリティ、スケーラビリティ、およびデータ整合性の理由から、SQLite の使用は強く推奨されません。
+デフォルトでは、Superset は [SQLite](https://www.sqlite.org/) を使用するように構成されています。
+これは、インストールを必要とせずに簡単にすばやく開始できる自己完結型の単一ファイル データベースです。
+ただし、実稼働環境では、セキュリティ、スケーラビリティ、およびデータ整合性の理由から、SQLite の使用は強く推奨されません。
 サポートされているデータベース エンジンのみを使用し、別のホストまたはコンテナーで別のデータベース エンジンを使用することを検討することが重要です。
 
 Superset は次のデータベース エンジン/バージョンをサポートしています:
@@ -135,7 +148,10 @@ Superset メタストアを構成するには、`superset_config` の `SQLALCHEM
 
 ## WSGI HTTP サーバー上で実行
 
-Superset は NGINX または Apache で実行できますが、非同期モードで Gunicorn を使用することをお勧めします。これにより、優れた同時実行性を実現でき、インストールと構成も非常に簡単です。この Flask WSGI アプリケーションを自分の環境で適切に動作するように設定するには、好みのテクノロジのドキュメントを参照してください。以下は、本番環境で適切に動作することがわかっている非同期設定です:
+Superset は NGINX または Apache で実行できますが、非同期モードで Gunicorn を使用することをお勧めします。
+これにより、優れた同時実行性を実現でき、インストールと構成も非常に簡単です。
+この Flask WSGI アプリケーションを自分の環境で適切に動作するように設定するには、好みのテクノロジのドキュメントを参照してください。
+以下は、本番環境で適切に動作することがわかっている非同期設定です:
 
 ```
       -w 10 \
@@ -149,7 +165,8 @@ Superset は NGINX または Apache で実行できますが、非同期モー�
       "superset.app:create_app()"
 ```
 
-詳細については、[Gunicorn のドキュメント](https://docs.gunicorn.org/en/stable/design.html)を参照してください。_開発用 Web サーバー (`superset run` または `flask run`) は、本番環境での使用を目的としたものではないことに注意してください。_
+詳細については、[Gunicorn のドキュメント](https://docs.gunicorn.org/en/stable/design.html)を参照してください。
+_開発用 Web サーバー (`superset run` または `flask run`) は、本番環境での使用を目的としたものではないことに注意してください。_
 
 Gunicorn を使用していない場合は、`superset_config.py` で `COMPRESS_REGISTER = False` を設定して `flask-compress` の使用を無効にすることをお勧めします。
 
@@ -158,16 +175,19 @@ Gunicorn を使用していない場合は、`superset_config.py` で `COMPRESS_
 
 ## HTTPS 構成
 
-ロードバランサーまたはリバースプロキシ (nginx など) を介して HTTPS アップストリームを構成し、トラフィックが Superset アプリケーションに到達する前に SSL/TLS オフロードを行うことができます。この設定では、アラートとレポートのチャートのスナップショットを作成する Celery ワーカーからのローカルトラフィックは、イングレスポイントの背後から `http://` URL で Superset にアクセスできます。
+ロードバランサーまたはリバースプロキシ (nginx など) を介して HTTPS アップストリームを構成し、トラフィックが Superset アプリケーションに到達する前に SSL/TLS オフロードを行うことができます。
+この設定では、アラートとレポートのチャートのスナップショットを作成する Celery ワーカーからのローカルトラフィックは、イングレスポイントの背後から `http://` URL で Superset にアクセスできます。
 公式の Superset Docker イメージを使用している場合は、[Gunicorn で SSL](https://docs.gunicorn.org/en/stable/settings.html#ssl) (Python Web サーバー) を構成することもできます。
 
 ## ロードバランサーの背後の構成
 
-ロードバランサーまたはリバースプロキシ (AWS 上の NGINX や ELB など) の背後で superset を実行している場合は、ロードバランサーが superset インスタンスが実行中であるかどうかを認識できるように、ヘルスチェックエンドポイントを利用する必要がある場合があります。これは `/health` で提供され、Web サーバーが実行中の場合は「OK」を含む 200 応答を返します。
+ロードバランサーまたはリバースプロキシ (AWS 上の NGINX や ELB など) の背後で superset を実行している場合は、ロードバランサーが superset インスタンスが実行中であるかどうかを認識できるように、ヘルスチェックエンドポイントを利用する必要がある場合があります。
+これは `/health` で提供され、Web サーバーが実行中の場合は「OK」を含む 200 応答を返します。
 
 ロード バランサが `X-Forwarded-For/X-Forwarded-Proto` ヘッダーを挿入している場合は、ヘッダーを抽出して使用するには、superset 構成ファイル (`superset_config.py`) で `ENABLE_PROXY_FIX = True` を設定する必要があります。
 
-SSL 暗号化を提供するためにリバース プロキシを使用する場合は、`X-Forwarded-Proto` の明示的な定義が必要になることがあります。Apache Web サーバーの場合は、次のように設定できます:
+SSL 暗号化を提供するためにリバース プロキシを使用する場合は、`X-Forwarded-Proto` の明示的な定義が必要になることがあります。
+Apache Web サーバーの場合は、次のように設定できます:
 
 ```
 RequestHeader set X-Forwarded-Proto "https"
@@ -175,7 +195,8 @@ RequestHeader set X-Forwarded-Proto "https"
 
 ## カスタム OAuth2 構成
 
-Superset は Flask-AppBuilder (FAB) 上に構築されており、多くのプロバイダー (GitHub、Twitter、LinkedIn、Google、Azure など) をすぐにサポートします。さらに、Superset は、「コード」認証をサポートする他の OAuth2 認証サーバー実装に接続するように構成できます。
+Superset は Flask-AppBuilder (FAB) 上に構築されており、多くのプロバイダー (GitHub、Twitter、LinkedIn、Google、Azure など) をすぐにサポートします。
+さらに、Superset は、「コード」認証をサポートする他の OAuth2 認証サーバー実装に接続するように構成できます。
 
 pip パッケージ [`Authlib`](https://authlib.org/) が Web サーバーにインストールされていることを確認してください。
 
@@ -238,7 +259,8 @@ class CustomSsoSecurityManager(SupersetSecurityManager):
     ...
 ```
 
-このファイルは、`custom_sso_security_manager.py` という名前で、`superset_config.py` と同じディレクトリに配置する必要があります。最後に、`superset_config.py` に次の 2 行を追加します:
+このファイルは、`custom_sso_security_manager.py` という名前で、`superset_config.py` と同じディレクトリに配置する必要があります。
+最後に、`superset_config.py` に次の 2 行を追加します:
 
 ```
 from custom_sso_security_manager import CustomSsoSecurityManager
@@ -247,7 +269,8 @@ CUSTOM_SECURITY_MANAGER = CustomSsoSecurityManager
 
 **Notes**
 
-- 必要に応じて OAuth2 認証プロバイダーを構成する場合、リダイレクト URL は `https://<superset-webserver>/oauth-authorized/<provider-name>` になります。たとえば、上記の構成の場合、リダイレクト URL は `https://<superset-webserver>/oauth-authorized/egaSSO` になります。
+- 必要に応じて OAuth2 認証プロバイダーを構成する場合、リダイレクト URL は `https://<superset-webserver>/oauth-authorized/<provider-name>` になります。
+たとえば、上記の構成の場合、リダイレクト URL は `https://<superset-webserver>/oauth-authorized/egaSSO` になります。
 
 - OAuth2 認証サーバーが OpenID Connect 1.0 をサポートしている場合は、`api_base_url`、`access_token_url`、`authorize_url` およびユーザー情報エンドポイント、jwks uri などのその他の必要なオプションを指定せずに、その構成ドキュメント URL のみを構成できます。たとえば、次のようになります。
 
@@ -267,11 +290,14 @@ CUSTOM_SECURITY_MANAGER = CustomSsoSecurityManager
 
 ### Flask-OIDC を使用した Keycloak 固有の設定
 
-Keycloak を OpenID Connect 1.0 プロバイダーとして使用している場合、[`Authlib`](https://authlib.org/) に基づく上記の構成は機能しない可能性があります。この場合、[`Flask-OIDC`](https://pypi.org/project/flask-oidc/) を使用するのが実行可能なオプションです。
+Keycloak を OpenID Connect 1.0 プロバイダーとして使用している場合、[`Authlib`](https://authlib.org/) に基づく上記の構成は機能しない可能性があります。
+この場合、[`Flask-OIDC`](https://pypi.org/project/flask-oidc/) を使用するのが実行可能なオプションです。
 
-pip パッケージ [`Flask-OIDC`](https://pypi.org/project/flask-oidc/) が Web サーバーにインストールされていることを確認してください。これはバージョン 2.2.0 を使用して正常にテストされました。このパッケージには、依存関係として [`Flask-OpenID`](https://pypi.org/project/Flask-OpenID/) が必要です。
+pip パッケージ [`Flask-OIDC`](https://pypi.org/project/flask-oidc/) が Web サーバーにインストールされていることを確認してください。
+これはバージョン 2.2.0 を使用して正常にテストされました。このパッケージには、依存関係として [`Flask-OpenID`](https://pypi.org/project/Flask-OpenID/) が必要です。
 
-次のコードは、新しいセキュリティ マネージャーを定義します。これを、`superset_config.py` ファイルと同じディレクトリにある `keycloak_security_manager.py` という名前の新しいファイルに追加します。
+次のコードは、新しいセキュリティ マネージャーを定義します。
+これを、`superset_config.py` ファイルと同じディレクトリにある `keycloak_security_manager.py` という名前の新しいファイルに追加します。
 
 ```python
 from flask_appbuilder.security.manager import AUTH_OID
@@ -350,7 +376,8 @@ AUTH_USER_REGISTRATION = True
 AUTH_USER_REGISTRATION_ROLE = 'Public'
 ```
 
-クライアント固有の OpenID 情報を `client_secret.json` というファイルに保存します。このファイルを `superset_config.py` と同じディレクトリに作成します:
+クライアント固有の OpenID 情報を `client_secret.json` というファイルに保存します。
+このファイルを `superset_config.py` と同じディレクトリに作成します:
 
 ```json
 {
@@ -402,15 +429,19 @@ AUTH_ROLES_MAPPING = {
 }
 ```
 
-注意: これには `AUTH_LDAP_SEARCH` を設定する必要があります。詳細については、[FAB セキュリティ ドキュメント](https://flask-appbuilder.readthedocs.io/en/latest/security.html)を参照してください。
+注意: これには `AUTH_LDAP_SEARCH` を設定する必要があります。
+詳細については、[FAB セキュリティ ドキュメント](https://flask-appbuilder.readthedocs.io/en/latest/security.html)を参照してください。
 
 ### ログイン時にロールを同期する
 
-また、`AUTH_ROLES_SYNC_AT_LOGIN` 構成変数を使用して、Flask-AppBuilder がユーザーのロールを LDAP/OAUTH グループと同期する頻度を制御することもできます。`AUTH_ROLES_SYNC_AT_LOGIN` が True に設定されている場合、Flask-AppBuilder はユーザーがログインするたびにそのロールを同期します。`AUTH_ROLES_SYNC_AT_LOGIN` が False に設定されている場合、Flask-AppBuilder はユーザーが最初に登録したときにのみそのロールを同期します。
+また、`AUTH_ROLES_SYNC_AT_LOGIN` 構成変数を使用して、Flask-AppBuilder がユーザーのロールを LDAP/OAUTH グループと同期する頻度を制御することもできます。
+`AUTH_ROLES_SYNC_AT_LOGIN` が True に設定されている場合、Flask-AppBuilder はユーザーがログインするたびにそのロールを同期します。
+`AUTH_ROLES_SYNC_AT_LOGIN` が False に設定されている場合、Flask-AppBuilder はユーザーが最初に登録したときにのみそのロールを同期します。
 
 ## Flask アプリ構成フック
 
-`FLASK_APP_MUTATOR` は、環境に提供できる設定関数で、アプリ オブジェクトを受け取って、任意の方法で変更できます。たとえば、`FLASK_APP_MUTATOR` を `superset_config.py` に追加して、セッション クッキーの有効期限を 24 時間に設定します:
+`FLASK_APP_MUTATOR` は、環境に提供できる設定関数で、アプリ オブジェクトを受け取って、任意の方法で変更できます。
+たとえば、`FLASK_APP_MUTATOR` を `superset_config.py` に追加して、セッション クッキーの有効期限を 24 時間に設定します:
 
 ```python
 from flask import session
@@ -431,7 +462,10 @@ def FLASK_APP_MUTATOR(app: Flask) -> None:
 
 ## 機能フラグ
 
-多様なユーザーをサポートするために、Superset にはデフォルトで有効になっていない機能がいくつかあります。たとえば、一部のユーザーにはより強力なセキュリティ制限が適用されますが、他のユーザーには適用されない場合があります。そのため、Superset では、ユーザーが構成によって一部の機能を有効または無効にすることができます。機能の所有者は、Superset にオプションの機能を追加できますが、影響を受けるのは一部のユーザーのみです。
+多様なユーザーをサポートするために、Superset にはデフォルトで有効になっていない機能がいくつかあります。
+たとえば、一部のユーザーにはより強力なセキュリティ制限が適用されますが、他のユーザーには適用されない場合があります。
+そのため、Superset では、ユーザーが構成によって一部の機能を有効または無効にすることができます。
+機能の所有者は、Superset にオプションの機能を追加できますが、影響を受けるのは一部のユーザーのみです。
 
 `superset_config.py` のフラグを使用して機能を有効または無効にできます:
 

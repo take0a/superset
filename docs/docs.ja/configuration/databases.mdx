@@ -6,7 +6,8 @@ version: 1
 ---
 # データベースへの接続
 
-Superset には、データベースへの接続機能がバンドルされていません。Superset をデータベースに接続するための主な手順は、**適切なデータベース ドライバーを環境にインストールする** ことです。
+Superset には、データベースへの接続機能がバンドルされていません。
+Superset をデータベースに接続するための主な手順は、**適切なデータベース ドライバーを環境にインストールする** ことです。
 
 :::note
 メタデータ データベースとして使用するデータベースに必要なパッケージと、Superset 経由でアクセスするデータベースに接続するために必要なパッケージをインストールする必要があります。
@@ -77,9 +78,12 @@ Superset 構成に新しいデータベース ドライバーをインストー�
 
 ---
 
-他にも多くのデータベースがサポートされていることに注意してください。主な基準は、機能的な SQLAlchemy 方言と Python ドライバーの存在です。キーワード「sqlalchemy + (データベース名)」を検索すると、適切な場所にたどり着くことができます。
+他にも多くのデータベースがサポートされていることに注意してください。
+主な基準は、機能的な SQLAlchemy 方言と Python ドライバーの存在です。
+キーワード「sqlalchemy + (データベース名)」を検索すると、適切な場所にたどり着くことができます。
 
-データベースまたはデータ エンジンがリストにないけれども、SQL インターフェイスが存在する場合は、[Superset GitHub リポジトリ](https://github.com/apache/superset/issues) に問題を報告してください。そうすれば、ドキュメント化とサポートに取り組むことができます。
+データベースまたはデータ エンジンがリストにないけれども、SQL インターフェイスが存在する場合は、[Superset GitHub リポジトリ](https://github.com/apache/superset/issues) に問題を報告してください。
+そうすれば、ドキュメント化とサポートに取り組むことができます。
 
 Superset 統合用のデータベース コネクタを構築する場合は、[次のチュートリアル](https://preset.io/blog/building-database-connector/) をお読みください。
 
@@ -92,11 +96,13 @@ Superset では、接続する追加のデータベースの種類ごとに Pyth
 
 #### 1. 必要なドライバーを決定する
 
-[データベースドライバ一覧](/docs/configuration/databases)を参照し、データベースへの接続に必要なPyPIパッケージを見つけてください。この例ではMySQLデータベースに接続するため、`mysqlclient`コネクタライブラリが必要になります。
+[データベースドライバ一覧](/docs/configuration/databases)を参照し、データベースへの接続に必要なPyPIパッケージを見つけてください。
+この例ではMySQLデータベースに接続するため、`mysqlclient`コネクタライブラリが必要になります。
 
 #### 2. コンテナにドライバーをインストールする
 
-`mysqlclient` ライブラリを Superset Docker コンテナにインストールする必要があります (ホスト マシンにインストールされているかどうかは関係ありません)。`docker exec -it <container_name> bash` を使用して実行中のコンテナに入り、そこで `pip install mysqlclient` を実行することもできますが、永続的に保持されるわけではありません。
+`mysqlclient` ライブラリを Superset Docker コンテナにインストールする必要があります (ホスト マシンにインストールされているかどうかは関係ありません)。
+`docker exec -it <container_name> bash` を使用して実行中のコンテナに入り、そこで `pip install mysqlclient` を実行することもできますが、永続的に保持されるわけではありません。
 
 この問題に対処するために、Superset `docker compose` デプロイメントでは `requirements-local.txt` ファイルの規則を使用します。
 このファイルにリストされているすべてのパッケージは、実行時に PyPI からコンテナにインストールされます。
@@ -119,7 +125,8 @@ echo "mysqlclient" >> ./docker/requirements-local.txt
 **標準の（カスタマイズされていない）Superset イメージを実行している場合**、これで完了です。
 `docker compose -f docker-compose-non-dev.yml up` で Superset を起動すると、ドライバーがインストールされているはずです。
 
-`docker exec -it <container_name> bash` で実行中のコンテナに入り、`pip freeze` を実行することで、ドライバーの存在を確認できます。表示されるリストに PyPI パッケージが含まれているはずです。
+`docker exec -it <container_name> bash` で実行中のコンテナに入り、`pip freeze` を実行することで、ドライバーの存在を確認できます。
+表示されるリストに PyPI パッケージが含まれているはずです。
 
 **カスタマイズされた Docker イメージを実行している場合**、新しいドライバーを組み込んだローカルイメージを再構築します:
 
@@ -143,7 +150,10 @@ Superset ドキュメントで、ご利用のデータベースの種類に応�
 
 #### 4. トラブルシューティング
 
-テストが失敗した場合は、Docker ログでエラー メッセージを確認してください。Superset は SQLAlchemy を使用してデータベースに接続します。データベースの接続文字列のトラブルシューティングを行うには、Superset アプリケーション コンテナーまたはホスト環境で Python を起動し、目的のデータベースに直接接続してデータを取得してみてください。これにより、問題を切り分けるために Superset が排除されます。
+テストが失敗した場合は、Docker ログでエラー メッセージを確認してください。
+Superset は SQLAlchemy を使用してデータベースに接続します。
+データベースの接続文字列のトラブルシューティングを行うには、Superset アプリケーション コンテナーまたはホスト環境で Python を起動し、目的のデータベースに直接接続してデータを取得してみてください。
+これにより、問題を切り分けるために Superset が排除されます。
 
 Superset が接続するデータベースの種類ごとにこのプロセスを繰り返します。
 
@@ -389,7 +399,8 @@ databend://user:password@localhost:8000/default?secure=false
 
 #### Databricks
 
-Databricks は現在、ネイティブ DB API 2.0 ドライバ「databricks-sql-connector」を提供しています。これは「sqlalchemy-databricks」方言で使用できます。どちらも以下のコマンドでインストールできます:
+Databricks は現在、ネイティブ DB API 2.0 ドライバ「databricks-sql-connector」を提供しています。
+これは「sqlalchemy-databricks」方言で使用できます。どちらも以下のコマンドでインストールできます:
 
 ```bash
 pip install "apache-superset[databricks]"
@@ -421,13 +432,16 @@ databricks+connector://token:{access_token}@{server_hostname}:{port}/{database_n
 
 ##### Older driver
 
-元々、SupersetはDatabricksへの接続に`databricks-dbapi`を使用していました。公式のDatabricksコネクタで問題が発生している場合は、こちらを試してみると良いかもしれません:
+元々、SupersetはDatabricksへの接続に`databricks-dbapi`を使用していました。
+公式のDatabricksコネクタで問題が発生している場合は、こちらを試してみると良いかもしれません:
 
 ```bash
 pip install "databricks-dbapi[sqlalchemy]"
 ```
 
-`databricks-dbapi` を使用する場合、Databricks に接続する方法は 2 つあります。Hive コネクタを使用する方法と ODBC コネクタを使用する方法です。どちらの方法も動作は似ていますが、[SQL エンドポイント](https://docs.databricks.com/sql/admin/sql-endpoints.html) への接続には ODBC のみを使用できます。
+`databricks-dbapi` を使用する場合、Databricks に接続する方法は 2 つあります。
+Hive コネクタを使用する方法と ODBC コネクタを使用する方法です。
+どちらの方法も動作は似ていますが、[SQL エンドポイント](https://docs.databricks.com/sql/admin/sql-endpoints.html) への接続には ODBC のみを使用できます。
 
 #### Hive
 
@@ -502,7 +516,8 @@ dremio+flight://{username}:{password}@{host}:{port}/dremio
 
 ##### SQLAlchemy
 
-Apache Drillへの接続には、SQLAlchemy経由の接続が推奨されます。[sqlalchemy-drill](https://github.com/JohnOmernik/sqlalchemy-drill) パッケージを使用できます。
+Apache Drillへの接続には、SQLAlchemy経由の接続が推奨されます。
+[sqlalchemy-drill](https://github.com/JohnOmernik/sqlalchemy-drill) パッケージを使用できます。
 
 インストールが完了すると、RESTインターフェース経由またはJDBC経由の2つの方法でDrillに接続できるようになります。
 JDBC経由で接続する場合は、Drill JDBCドライバーがインストールされている必要があります。
@@ -578,13 +593,17 @@ engine_params:
 
 Superset では、一般的な集計や Druid メトリクスを定義・使用できます。最初の、そしてよりシンプルなユースケースは、データソースの編集ビューに表示されるチェックボックスマトリックスを使用することです (**Sources -> Druid Datasources -> [your datasource] -> Edit -> [tab] [List Druid Column]**)。
 
-[GroupBy] および [Filterable] チェックボックスをオンにすると、Explore ビューで関連するドロップダウンに列が表示されます。[Count Distinct]、[Min]、[Max]、または [Sum] をオンにすると、新しいメトリクスが作成され、データソースの保存時に **List Druid Metric** タブに表示されます。
+[GroupBy] および [Filterable] チェックボックスをオンにすると、Explore ビューで関連するドロップダウンに列が表示されます。
+[Count Distinct]、[Min]、[Max]、または [Sum] をオンにすると、新しいメトリクスが作成され、データソースの保存時に **List Druid Metric** タブに表示されます。
 
-これらのメトリクスを編集すると、その JSON 要素が Druid 集計定義に対応していることがわかります。**List Druid Metric** タブから、Druid ドキュメントに従って独自の集計を手動で作成することもできます。
+これらのメトリクスを編集すると、その JSON 要素が Druid 集計定義に対応していることがわかります。
+**List Druid Metric** タブから、Druid ドキュメントに従って独自の集計を手動で作成することもできます。
 
 ##### 集約後
 
-Druidは集約後をサポートし、これはSuperSetで機能します。あなたがしなければならないのは、あなたが手動で集約を作成するのと同じようにメトリックを作成することですが、「Postagg」を「メトリックタイプ」として指定します。次に、JSONフィールドで有効なJSON後の凝集後定義（ドルイドドキュメントで指定）を提供する必要があります。
+Druidは集約後をサポートし、これはSuperSetで機能します。
+あなたがしなければならないのは、あなたが手動で集約を作成するのと同じようにメトリックを作成することですが、「Postagg」を「メトリックタイプ」として指定します。
+次に、JSONフィールドで有効なJSON後の凝集後定義（ドルイドドキュメントで指定）を提供する必要があります。
 
 #### Elasticsearch
 
@@ -629,7 +648,8 @@ POST /_aliases
 
 **タイムゾーン**
 
-デフォルトでは、SuperSetはElasticSearchクエリにUTCタイムゾーンを使用します。タイムゾーンを指定する必要がある場合は、データベースを編集し、指定されたタイムゾーンの設定を Other > ENGINE PARAMETERS に入力してください:
+デフォルトでは、SuperSetはElasticSearchクエリにUTCタイムゾーンを使用します。
+タイムゾーンを指定する必要がある場合は、データベースを編集し、指定されたタイムゾーンの設定を Other > ENGINE PARAMETERS に入力してください:
 
 ```json
 {
@@ -639,7 +659,8 @@ POST /_aliases
 }
 ```
 
-タイムゾーンの問題について注意すべきもう1つの問題は、Elasticsearch7.8の前に、文字列を「datetime」オブジェクトに変換する場合、「cast」関数を使用する必要があるが、この関数は「time_zone」設定をサポートしないことです。したがって、ElasticSearch7.8の後にバージョンにアップグレードすることをお勧めします。
+タイムゾーンの問題について注意すべきもう1つの問題は、Elasticsearch7.8の前に、文字列を「datetime」オブジェクトに変換する場合、「cast」関数を使用する必要があるが、この関数は「time_zone」設定をサポートしないことです。
+したがって、ElasticSearch7.8の後にバージョンにアップグレードすることをお勧めします。
 ElasticSearch7.8の後、「datetime_parse`関数を使用してこの問題を解決できます。
 DateTime_Parse関数は、「time_zone」設定をサポートすることであり、ここでは、他の>バージョン設定でElasticSearchバージョン番号を入力する必要があります。
 superset は、変換に「datetime_parse」関数を使用します。
@@ -807,7 +828,8 @@ hive://hive@{hostname}:{port}/{database}
 
 #### Hologres
 
-Hologres は、Alibaba Cloud が開発したリアルタイムのインタラクティブな分析サービスです。 PostgreSQL 11 と完全に互換性があり、BigData エコシステムとシームレスに統合します。
+Hologres は、Alibaba Cloud が開発したリアルタイムのインタラクティブな分析サービスです。
+PostgreSQL 11 と完全に互換性があり、BigData エコシステムとシームレスに統合します。
 
 Hologres サンプル接続パラメーター：
 
@@ -833,7 +855,8 @@ postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}
 db2+ibm_db://{username}:{passport}@{hostname}:{port}/{database}
 ```
 
-Sqlalchemyに実装されている2つのDB2方言バージョンがあります。 `limit [n]` syntaxなしでdb2バージョンに接続している場合、SQLラボを使用できるように推奨される接続文字列は次のとおりです:
+Sqlalchemyに実装されている2つのDB2方言バージョンがあります。
+`limit [n]` syntaxなしでdb2バージョンに接続している場合、SQLラボを使用できるように推奨される接続文字列は次のとおりです:
 
 ```
 ibm_db_sa://{username}:{passport}@{hostname}:{port}/{database}
@@ -895,7 +918,8 @@ Host:
 - For Docker running in OSX: `docker.for.mac.host.internal`
   Port: `3306` by default
 
-「mysqlclient」の問題の1つは、プラグインがクライアントに含まれていないため、認証用に「caching_sha2_password」を使用して新しいmysqlデータベースに接続できないことです。この場合、[mysql-connector-python](https://pypi.org/project/mysql-connector-python/) を使用する必要があります。
+「mysqlclient」の問題の1つは、プラグインがクライアントに含まれていないため、認証用に「caching_sha2_password」を使用して新しいmysqlデータベースに接続できないことです。
+この場合、[mysql-connector-python](https://pypi.org/project/mysql-connector-python/) を使用する必要があります。
 
 ```
 mysql+mysqlconnector://{username}:{password}@{host}/{database}
@@ -951,7 +975,8 @@ oracle://<username>:<password>@<hostname>:<port>
 
 #### Parseable
 
-[Parsable](https://www.parsable.io) は、ログデータに SQL のようなクエリインターフェイスを提供する分散ログ分析データベースです。推奨されるコネクタライブラリは [sqlalchemy-parsable](https://github.com/parsablehq/sqlalchemy-parsable) です。
+[Parsable](https://www.parsable.io) は、ログデータに SQL のようなクエリインターフェイスを提供する分散ログ分析データベースです。
+推奨されるコネクタライブラリは [sqlalchemy-parsable](https://github.com/parsablehq/sqlalchemy-parsable) です。
 
 接続文字列は次のようにフォーマットされます:
 
@@ -965,7 +990,8 @@ parseable://<username>:<password>@<hostname>:<port>/<stream_name>
 parseable://admin:admin@demo.parseable.com:443/ingress-nginx
 ```
 
-注：URI の stream_name は、クエリする断続的なログストリームを表します。 HTTP（ポート80）とHTTPS（ポート443）接続の両方を使用できます。
+注：URI の stream_name は、クエリする断続的なログストリームを表します。
+HTTP（ポート80）とHTTPS（ポート443）接続の両方を使用できます。
 
 >>>>>>>
 #### Apache Pinot

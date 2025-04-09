@@ -59,7 +59,9 @@ under the License.
 
 ## Superset を選ぶ理由 {#why-superset}
 
-Superset は、最新のデータ探索およびデータ視覚化プラットフォームです。Superset は、多くのチームの独自のビジネス インテリジェンス ツールを置き換えたり、強化したりできます。Superset は、さまざまなデータ ソースと適切に統合されます。
+Superset は、最新のデータ探索およびデータ視覚化プラットフォームです。
+Superset は、多くのチームの独自のビジネス インテリジェンス ツールを置き換えたり、強化したりできます。
+Superset は、さまざまなデータ ソースと適切に統合されます。
 
 Superset は以下を提供します:
 
@@ -148,7 +150,8 @@ Superset は、Python DB-API ドライバーと SQLAlchemy 方言を備えた、
 
 **サポートされているデータベースのより包括的なリスト** と構成手順については、[こちら](https://superset.apache.org/docs/configuration/databases) をご覧ください。
 
-データストアまたはデータ エンジンのサポートを追加したいですか? 技術的な要件については、[こちら](https://superset.apache.org/docs/frequently-asked-questions#does-superset-work-with-insert-database-engine-here) をご覧ください。
+データストアまたはデータ エンジンのサポートを追加したいですか? 
+技術的な要件については、[こちら](https://superset.apache.org/docs/frequently-asked-questions#does-superset-work-with-insert-database-engine-here) をご覧ください。
 
 ## インストールと構成 {#installation-and-configuration}
 
@@ -159,9 +162,11 @@ Superset の [クイックスタート](https://superset.apache.org/docs/quickst
 - [StackOverflow](https://stackoverflow.com/questions/tagged/apache-superset) で **apache-superset** タグを使用して質問したり回答したりしてください
 - [コミュニティの Slack に参加してください](http://bit.ly/join-superset-slack)
 また、[Slack コミュニティ ガイドライン](https://github.com/apache/superset/blob/master/CODE_OF_CONDUCT.md#slack-community-guidelines) をお読みください
-- [dev@superset.apache.org メーリング リストに参加してください](https://lists.apache.org/list.html?dev@superset.apache.org)。参加するには、[dev-subscribe@superset.apache.org](mailto:dev-subscribe@superset.apache.org) にメールを送信するだけです。
+- [dev@superset.apache.org メーリング リストに参加してください](https://lists.apache.org/list.html?dev@superset.apache.org)。
+  参加するには、[dev-subscribe@superset.apache.org](mailto:dev-subscribe@superset.apache.org) にメールを送信するだけです。
 - Superset がサポートする多数のデータベース ドライバーに関連する GitHub の問題のトラブルシューティングに協力したい場合は、[Superset データベース ファミリアビリティ ロロデックス](https://docs.google.com/spreadsheets/d/1U1qxiLvOX0kBTUGME1AHHi6Ywel6ECF8xk_Qy-V9R8c/edit#gid=0) に自分の名前とアクセスできるデータベースを追加することを検討してください。
-- Superset のタウン ホールと [運用モデル](https://preset.io/blog/the-superset-operational-model-wants-you/) の定期ミーティングに参加してください。ミーティング情報は、[Superset コミュニティ カレンダー](https://superset.apache.org/community) で確認できます。
+- Superset のタウン ホールと [運用モデル](https://preset.io/blog/the-superset-operational-model-wants-you/) の定期ミーティングに参加してください。
+  ミーティング情報は、[Superset コミュニティ カレンダー](https://superset.apache.org/community) で確認できます。
 
 ## 貢献者ガイド {#contributor-guide}
 
@@ -193,7 +198,7 @@ Superset の [クイックスタート](https://superset.apache.org/docs/quickst
   - [公式 Docker イメージ](https://hub.docker.com/r/apache/superset)
   - [Helm Chart](https://github.com/apache/superset/tree/master/helm/superset)
 
-- 過去の[Supersetコミュニティイベント](https://preset.io/events)の録画
+- 過去の [Superset コミュニティイベント](https://preset.io/events)の録画
 
   - [混合時系列チャート](https://preset.io/events/mixed-time-series-visualization-in-superset-workshop/)
   - [Bing チームが社内セルフサービス データ & アナリティクス プラットフォーム用に Superset をカスタマイズした方法](https://preset.io/events/how-the-bing-team-heavily-customized-superset-for-their-internal-data/)
@@ -207,7 +212,7 @@ Superset の [クイックスタート](https://superset.apache.org/docs/quickst
   - [カスタム Viz プラグインの管理と展開](https://medium.com/nmc-techblog/apache-superset-manage-custom-viz-plugins-in-production-9fde1a708e55)
   - [Apache Superset が Apache ECharts に賭ける理由](https://preset.io/blog/2021-4-1-why-echarts/)
 
-- [スーパーセット API](https://superset.apache.org/docs/rest-api)
+- [Superset API](https://superset.apache.org/docs/rest-api)
 
 ## リポジトリアクティビティ
 

@@ -20,7 +20,8 @@ Kubernetes 上での Superset の実行は、公式の [Superset helm リポジ�
 - Helm installed
 
 :::note
-よりシンプルな単一ホスト環境の場合は、[minikube](https://minikube.sigs.k8s.io/docs/start/) の使用をお勧めします。これは多くのプラットフォームで簡単にセットアップでき、ここで参照されている Helm チャートと非常にうまく連携します。
+よりシンプルな単一ホスト環境の場合は、[minikube](https://minikube.sigs.k8s.io/docs/start/) の使用をお勧めします。
+これは多くのプラットフォームで簡単にセットアップでき、ここで参照されている Helm チャートと非常にうまく連携します。
 :::
 
 ## 実行
@@ -79,7 +80,8 @@ superset-worker-75b48bbcc-qrq49         1/1     Running     0          4m12s
 
 5. アクセスする
 
-チャートは適切なサービスを公開し、k8s クラスター内で Superset UI を内部的に公開します。外部からアクセスするには、次のいずれかを行う必要があります。
+チャートは適切なサービスを公開し、k8s クラスター内で Superset UI を内部的に公開します。
+外部からアクセスするには、次のいずれかを行う必要があります。
 
 - サービスを `LoadBalancer` または `NodePort` として構成する
 - それに `Ingress` を設定する - チャートには定義が含まれていますが、ニーズに合わせて調整する必要があります (ホスト名、tls、注釈など)
@@ -130,7 +132,9 @@ init:
 ```
 
 :::note
-Superset は [Scarf Gateway](https://about.scarf.sh/scarf-gateway) を使用してテレメトリ データを収集します。さまざまな Superset バージョンのインストール数を把握することで、パッチ適用や長期サポートに関するプロジェクトの決定に役立ちます。Scarf は個人を特定できる情報 (PII) を削除し、集計された統計情報のみを提供します。
+Superset は [Scarf Gateway](https://about.scarf.sh/scarf-gateway) を使用してテレメトリ データを収集します。
+さまざまな Superset バージョンのインストール数を把握することで、パッチ適用や長期サポートに関するプロジェクトの決定に役立ちます。
+Scarf は個人を特定できる情報 (PII) を削除し、集計された統計情報のみを提供します。
 
 Helm ベースのインストールでこのデータ収集をオプトアウトするには、`helm/superset/values.yaml` ファイルの `repository:` 行を編集し、`apachesuperset.docker.scarf.sh/apache/superset` を `apache/superset` に置き換えて、Docker Hub から直接イメージをプルします。
 :::
@@ -163,7 +167,9 @@ bootstrapScript: |
 
 ### superset_config.py
 
-デフォルトの `superset_config.py` は非常に最小限であるため、拡張する必要がある可能性が非常に高くなります。これは、`configOverrides` で 1 つ以上のキー/値エントリを指定することによって行われます。例:
+デフォルトの `superset_config.py` は非常に最小限であるため、拡張する必要がある可能性が非常に高くなります。
+これは、`configOverrides` で 1 つ以上のキー/値エントリを指定することによって行われます。
+例:
 
 ```yaml
 configOverrides:
@@ -183,7 +189,8 @@ configOverrides:
 
 ### 環境変数
 
-これらは機密情報である場合、`extraEnv` または `extraSecretEnv` を使用してキー/値として渡すことができます。その後、`os.environ.get("VAR")` などを使用して `superset_config.py` から参照できます。
+これらは機密情報である場合、`extraEnv` または `extraSecretEnv` を使用してキー/値として渡すことができます。
+その後、`os.environ.get("VAR")` などを使用して `superset_config.py` から参照できます。
 
 ```yaml
 extraEnv:
@@ -208,7 +215,8 @@ configOverrides:
 
 ### システムパッケージ
 
-新しいシステム パッケージが必要な場合は、コンテナーの `command` をオーバーライドすることで、アプリケーションの起動前にインストールできます。例:
+新しいシステム パッケージが必要な場合は、コンテナーの `command` をオーバーライドすることで、アプリケーションの起動前にインストールできます。
+例:
 
 ```yaml
 supersetWorker:
@@ -252,7 +260,9 @@ extraConfigs:
 
 :::note
 
-OAuth のセットアップには、[authlib](https://authlib.org/) Python ライブラリがインストールされている必要があります。これは、`pip` を使用して `bootstrapScript` を更新することで実行できます。詳細については、[依存関係](#dependencies) セクションを参照してください。
+OAuth のセットアップには、[authlib](https://authlib.org/) Python ライブラリがインストールされている必要があります。
+これは、`pip` を使用して `bootstrapScript` を更新することで実行できます。
+詳細については、[依存関係](#dependencies) セクションを参照してください。
 
 :::
 
@@ -429,7 +439,7 @@ configOverrides:
 
 ### サンプルデータとダッシュボードをロードする
 
-Superset を試していて、いくつかのデータとダッシュボードを調べたい場合は、`my_values.yaml` を作成し、**実行** セクションの **設定のオーバーライドを構成する** ステップで説明したようにデプロイすることで、いくつかの例を読み込むことができます。
+Superset を試していて、いくつかのデータとダッシュボードを調べたい場合は、`my_values.yaml` を作成し、**Running** セクションの **設定のオーバーライドを構成する** ステップで説明したようにデプロイすることで、いくつかの例を読み込むことができます。
 例を読み込むには、`my_values.yaml` ファイルに次の内容を追加します:
 
 ```yaml

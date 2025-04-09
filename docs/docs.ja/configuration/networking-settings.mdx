@@ -22,7 +22,8 @@ pip install apache_superset[cors]
 
 ## HTTP ヘッダー
 
-Superset には [flask-talisman](https://pypi.org/project/talisman/) がバンドルされていることに注意してください。これは、一般的な Web アプリケーションのセキュリティ問題から保護するのに役立つ HTTP ヘッダーの設定を処理する小さな Flask 拡張機能であると自称されています。
+Superset には [flask-talisman](https://pypi.org/project/talisman/) がバンドルされていることに注意してください。
+これは、一般的な Web アプリケーションのセキュリティ問題から保護するのに役立つ HTTP ヘッダーの設定を処理する小さな Flask 拡張機能であると自称されています。
 
 ## ダッシュボードとチャートの HTML 埋め込み
 
@@ -30,7 +31,8 @@ Superset には [flask-talisman](https://pypi.org/project/talisman/) がバン�
 
 ### ダッシュボードへの公開直接リンクを埋め込む
 
-これはまず、[flask-talisman](https://github.com/GoogleCloudPlatform/flask-talisman) のコンテンツセキュリティポリシー（CSP）を変更し、特定のドメインでスーパーセットコンテンツの表示を許可することで機能します。次に、ダッシュボードを一般公開（つまり、**認証をバイパス**）します。公開後、ダッシュボードのURLを他のウェブサイトのHTMLコード内のiframeに追加できます。
+これはまず、[flask-talisman](https://github.com/GoogleCloudPlatform/flask-talisman) のコンテンツセキュリティポリシー（CSP）を変更し、特定のドメインでスーパーセットコンテンツの表示を許可することで機能します。
+次に、ダッシュボードを一般公開（つまり、**認証をバイパス**）します。公開後、ダッシュボードのURLを他のウェブサイトのHTMLコード内のiframeに追加できます。
 
 #### flask-talisman CSP の変更
 
@@ -97,7 +99,8 @@ SUPERSET_FEATURE_EMBEDDED_SUPERSET=true
 2. SSHトンネルを有効にしてデータベースを作成する
     - 機能フラグを有効にすると、SSHトンネルのトグルが表示されます。
     - トグルをクリックしてSSHトンネリングを有効にし、認証情報を入力してください。
-      - Supersetでは、2種類の認証方法（基本認証と秘密鍵認証）が利用可能です。これらの認証情報は、サービスプロバイダから提供される必要があります。
+      - Supersetでは、2種類の認証方法（基本認証と秘密鍵認証）が利用可能です。
+      これらの認証情報は、サービスプロバイダから提供される必要があります。
 
 3. データが流れていることを確認する
     - SSH トンネリングが有効になったら、SQL Lab に移動し、データが適切に流れていることを確認するクエリを作成します。
@@ -105,18 +108,21 @@ SUPERSET_FEATURE_EMBEDDED_SUPERSET=true
 ## ドメインシャーディング
 
 :::note
-ドメインシャーディングはSuperset 5.0.0以降非推奨となり、Superset 6.0.0では削除される予定です。ドメインあたりの接続数を増やすには、HTTP2を有効にしてください。
+ドメインシャーディングはSuperset 5.0.0以降非推奨となり、Superset 6.0.0では削除される予定です。
+ドメインあたりの接続数を増やすには、HTTP2を有効にしてください。
 :::
 
 Chrome では、ドメインごとに最大 6 つの接続を同時に開くことができます。
 ダッシュボードに 6 つ以上のスライスがある場合、多くのフェッチリクエストがキューに入れられ、次の利用可能なソケットを待機することになります。
-[PR 5039](https://github.com/apache/superset/pull/5039) により、Superset にドメインシャーディングが追加されました。この機能は設定のみで有効化できます（デフォルトでは、Superset はクロスドメインリクエストを許可していません）。
+[PR 5039](https://github.com/apache/superset/pull/5039) により、Superset にドメインシャーディングが追加されました。
+この機能は設定のみで有効化できます（デフォルトでは、Superset はクロスドメインリクエストを許可していません）。
 
 `superset_config.py` ファイルに次の設定を追加します:
 
 - `SUPERSET_WEBSERVER_DOMAINS`: ドメイン シャーディング機能で許可されるホスト名のリスト。
 
-新しいドメインで認証が正しく機能するには、メインドメインのサブドメインとしてドメインシャードを作成してください。例：
+新しいドメインで認証が正しく機能するには、メインドメインのサブドメインとしてドメインシャードを作成してください。
+例：
 
 - `SUPERSET_WEBSERVER_DOMAINS=['superset-1.mydomain.com','superset-2.mydomain.com','superset-3.mydomain.com','superset-4.mydomain.com']`
 

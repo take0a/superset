@@ -16,7 +16,9 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 
 ## OS の依存関係
 
-Superset は、データベース接続情報をメタデータ データベースに保存します。そのために、接続パスワードを暗号化するために暗号化 Python ライブラリを使用します。残念ながら、このライブラリには OS レベルの依存関係があります。
+Superset は、データベース接続情報をメタデータ データベースに保存します。
+そのために、接続パスワードを暗号化するために暗号化 Python ライブラリを使用します。
+残念ながら、このライブラリには OS レベルの依存関係があります。
 
 **Debian と Ubuntu**
 
@@ -54,19 +56,24 @@ pip3 install --upgrade pip
 
 **Mac OS X**
 
-最新バージョンの OS X を使用していない場合は、アップグレードすることをお勧めします。これは、ユーザーが遭遇した多くの問題が古いバージョンの Mac OS X に関連していることが判明しているためです。更新後、最新バージョンの XCode コマンドライン ツールをインストールします:
+最新バージョンの OS X を使用していない場合は、アップグレードすることをお勧めします。
+これは、ユーザーが遭遇した多くの問題が古いバージョンの Mac OS X に関連していることが判明しているためです。
+更新後、最新バージョンの XCode コマンドライン ツールをインストールします:
 
 ```bash
 xcode-select --install
 ```
 
-システムにインストールされた Python の使用はお勧めしません。代わりに、まず [homebrew](https://brew.sh/) マネージャーをインストールしてから、次のコマンドを実行してください:
+システムにインストールされた Python の使用はお勧めしません。
+代わりに、まず [homebrew](https://brew.sh/) マネージャーをインストールしてから、次のコマンドを実行してください:
 
 ```bash
 brew install readline pkg-config libffi openssl mysql postgresql@14
 ```
 
-最新バージョンの Python をインストールする必要があります。Superset で公式にサポートされている Python バージョンのリストについては、[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml) ファイルを参照してください。[pyenv](https://github.com/pyenv/pyenv) (および [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv)) などの Python バージョン マネージャーを使用することをお勧めします。
+最新バージョンの Python をインストールする必要があります。
+Superset で公式にサポートされている Python バージョンのリストについては、[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml) ファイルを参照してください。
+[pyenv](https://github.com/pyenv/pyenv) (および [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv)) などの Python バージョン マネージャーを使用することをお勧めします。
 
 また、`pip` と `setuptools` の最新バージョンがインストールされていることも確認しましょう:
 
@@ -74,7 +81,8 @@ brew install readline pkg-config libffi openssl mysql postgresql@14
 pip install --upgrade setuptools pip
 ```
 
-最後に、特定の Python パッケージを適切にビルドするには、LDFLAGS と CFLAGS を設定する必要がある場合があります。これらの変数は次のようにエクスポートできます:
+最後に、特定の Python パッケージを適切にビルドするには、LDFLAGS と CFLAGS を設定する必要がある場合があります。
+これらの変数は次のようにエクスポートできます:
 
 ```bash
 export LDFLAGS="-L$(brew --prefix openssl)/lib"
@@ -85,7 +93,10 @@ export CFLAGS="-I$(brew --prefix openssl)/include"
 
 ## Python 仮想環境
 
-Superset を仮想環境内にインストールすることを強くお勧めします。Python には、`virtualenv` が同梱されています。[pyenv](https://github.com/pyenv/pyenv) を使用している場合は、[pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv) をインストールできます。または、`pip` を使用してインストールすることもできます:
+Superset を仮想環境内にインストールすることを強くお勧めします。
+Python には、`virtualenv` が同梱されています。
+[pyenv](https://github.com/pyenv/pyenv) を使用している場合は、[pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv) をインストールできます。
+または、`pip` を使用してインストールすることもできます:
 
 ```bash
 pip install virtualenv
@@ -108,7 +119,8 @@ pyenv virtualenv superset
 pyenv activate superset
 ```
 
-仮想環境をアクティブ化すると、インストールまたはアンインストールしたすべての Python パッケージはこの環境に限定されます。コマンド ラインで `deactivate` を実行すると、この環境を終了できます。
+仮想環境をアクティブ化すると、インストールまたはアンインストールしたすべての Python パッケージはこの環境に限定されます。
+コマンド ラインで `deactivate` を実行すると、この環境を終了できます。
 
 ### Supersetのインストールと初期化
 
@@ -119,6 +131,7 @@ pip install apache_superset
 ```
 
 次に、必須構成 SECRET_KEY と FLASK_APP を定義します:
+
 ```bash
 export SUPERSET_SECRET_KEY=YOUR-SECRET-KEY
 export FLASK_APP=superset

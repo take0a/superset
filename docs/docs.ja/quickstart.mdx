@@ -4,10 +4,12 @@ hide_title: false
 sidebar_position: 2
 ---
 
-**Apache Superset を試す準備はできましたか?** このクイックスタート ガイドは、**3 つの簡単な手順** でローカル マシン上で起動して実行するのに役立ちます。[Docker](https://www.docker.com)、[Docker Compose](https://docs.docker.com/compose/)、[Git](https://git-scm.com/) がインストールされていることを前提としています。
+**Apache Superset を試す準備はできましたか?** このクイックスタート ガイドは、**3 つの簡単な手順** でローカル マシン上で起動して実行するのに役立ちます。
+[Docker](https://www.docker.com)、[Docker Compose](https://docs.docker.com/compose/)、[Git](https://git-scm.com/) がインストールされていることを前提としています。
 
 :::caution
-サンドボックス型環境での迅速な開始やその他の開発型ユースケースには `Docker Compose` の使用をお勧めしますが、**本番環境でのこの設定はお勧めしません**。この目的については、[Kubernetes へのインストール](/docs/installation/kubernetes/) ページを参照してください。
+サンドボックス型環境での迅速な開始やその他の開発型ユースケースには `Docker Compose` の使用をお勧めしますが、**本番環境でのこの設定はお勧めしません**。
+この目的については、[Kubernetes へのインストール](/docs/installation/kubernetes/) ページを参照してください。
 :::
 
 ### 1. Superset を入手
@@ -29,9 +31,11 @@ $ git checkout tags/4.1.1
 $ docker compose -f docker-compose-image-tag.yml up
 ```
 
-Docker Compose が基盤となるコンテナ イメージを取得し、いくつかの例を読み込むため、少し時間がかかる場合があります。すべてのコンテナがダウンロードされ、出力が安定したら、ログインする準備が整います。
+Docker Compose が基盤となるコンテナ イメージを取得し、いくつかの例を読み込むため、少し時間がかかる場合があります。
+すべてのコンテナがダウンロードされ、出力が安定したら、ログインする準備が整います。
 
-⚠️ 「validating superset\docker-compose-image-tag.yml: services.superset-worker-beat.env_file.0 must be a string」のようなエラー メッセージが表示される場合は、`docker-compose` のバージョンを更新する必要があります。`docker-compose` は廃止予定であるため、代わりに `docker compose` を使用する必要があります。
+⚠️ 「validating superset\docker-compose-image-tag.yml: services.superset-worker-beat.env_file.0 must be a string」のようなエラー メッセージが表示される場合は、`docker-compose` のバージョンを更新する必要があります。
+`docker-compose` は廃止予定であるため、代わりに `docker compose` を使用する必要があります。
 
 ### 3. Superset にログイン
 
@@ -53,7 +57,9 @@ docker compose down
 ```
 
 :::tip
-Superset はデータをローカルに保持するため、同じ環境を複数回使用できます。ただし、Docker Compose の `stop` コマンドを実行して、すべてのプロセスを適切に停止してください。そうすることで、データの破損や損失を回避できます。
+Superset はデータをローカルに保持するため、同じ環境を複数回使用できます。
+ただし、Docker Compose の `stop` コマンドを実行して、すべてのプロセスを適切に停止してください。
+そうすることで、データの破損や損失を回避できます。
 :::
 
 ## 次は？

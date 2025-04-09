@@ -9,13 +9,18 @@ version: 1
 
 ## Celery
 
-大規模な分析データベースでは、数分または数時間かかるクエリを実行することがよくあります。一般的なWebリクエストのタイムアウト（30～60秒）を超えて実行される長時間実行クエリをサポートするには、Supersetの非同期バックエンドを構成する必要があります。これは以下の要素で構成されます:
+大規模な分析データベースでは、数分または数時間かかるクエリを実行することがよくあります。
+一般的なWebリクエストのタイムアウト（30～60秒）を超えて実行される長時間実行クエリをサポートするには、Supersetの非同期バックエンドを構成する必要があります。
+これは以下の要素で構成されます:
 
-- 1つまたは複数のSupersetワーカー（Celeryワーカーとして実装）。`celery worker`コマンドで起動できます。関連オプションを表示するには、`celery worker --help`を実行してください。
-- Celeryブローカー（メッセージキュー）。RedisまたはRabbitMQの使用を推奨します。
+- 1つまたは複数のSupersetワーカー（Celeryワーカーとして実装）。
+  `celery worker`コマンドで起動できます。
+  関連オプションを表示するには、`celery worker --help`を実行してください。
+- Celeryブローカー（メッセージキュー）。Redis または RabbitMQ の使用を推奨します。
 - ワーカーがクエリ結果を保存する場所を定義する結果バックエンド
 
-Celeryを設定するには、`superset_config.py`で`CELERY_CONFIG`を定義する必要があります。ワーカープロセスとウェブサーバープロセスの両方で同じ設定を使用する必要があります。
+Celeryを設定するには、`superset_config.py` で `CELERY_CONFIG` を定義する必要があります。
+ワーカープロセスとウェブサーバープロセスの両方で同じ設定を使用する必要があります。
 
 ```python
 class CeleryConfig(object):
@@ -48,7 +53,7 @@ celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4
 celery --app=superset.tasks.celery_app:app beat
 ```
 
-結果のバックエンドを設定するには、 flask_caching.backends.base import BaseCache の派生のインスタンスを superset_config.py の RESULTS_BACKEND 構成キーに渡す必要があります。
+結果のバックエンドを設定するには、flask_caching.backends.base import BaseCache の派生のインスタンスを superset_config.py の RESULTS_BACKEND 構成キーに渡す必要があります。
 Memcached、Redis、S3 (https://pypi.python.org/pypi/s3werkzeugcache) 、メモリ、ファイルシステム（単一サーバー型の設定またはテスト用）を利用できます。
 また、独自のキャッシュインターフェースを作成することもできます。`superset_config.py` は次のようになります:
 
@@ -77,7 +82,7 @@ RESULTS_BACKEND = RedisCache(
 - セットアップ全体で _celery beat のインスタンスは 1 つだけ実行_ する必要があります。
   そうでない場合、バックグラウンドジョブが複数回スケジュールされ、レポートの重複配信、予想以上の負荷/トラフィックの増加などの異常な動作が発生する可能性があります。
 
-- SQL Lab は、データベース設定 (Sources > Databases > Edit record) で **非同期クエリ実行** を有効にした場合にのみ、クエリを非同期で実行します。
+- SQL Lab は、データベース設定 (Sources > Databases > Edit record) で **Asynchronous Query Execution** を有効にした場合にのみ、クエリを非同期で実行します。
 
 ## Celery Flower
 

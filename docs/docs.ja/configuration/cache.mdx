@@ -35,14 +35,16 @@ FILTER_STATE_CACHE_CONFIG = {
 
 専用のキャッシュストアを使用するには、追加のPythonライブラリをインストールする必要があります
 
--Redisの場合：[redis](https://pypi.python.org/pypi/redis) Python パッケージをお勧めします
--memcached：[pylibmc](https://pypi.org/project/pylibmc/) クライアントライブラリを `python memcached` として使用することをお勧めします。
+- Redisの場合：[redis](https://pypi.python.org/pypi/redis) Python パッケージをお勧めします
+- memcached：[pylibmc](https://pypi.org/project/pylibmc/) クライアントライブラリを `python memcached` として使用することをお勧めします。
 
 これらのライブラリは、pip を使用してインストールできます。
 
 ## メタストアキャッシュのフォールバック
 
-フィルター状態と探索のキャッシュは、何らかの形で必要となることに注意してください。これらのキャッシュのいずれかが未定義の場合、Supersetはメタデータデータベースにデータを保存する組み込みキャッシュを使用します。専用のキャッシュを使用することをお勧めしますが、組み込みキャッシュは他のデータのキャッシュにも使用できます。
+フィルター状態と探索のキャッシュは、何らかの形で必要となることに注意してください。
+これらのキャッシュのいずれかが未定義の場合、Supersetはメタデータデータベースにデータを保存する組み込みキャッシュを使用します。
+専用のキャッシュを使用することをお勧めしますが、組み込みキャッシュは他のデータのキャッシュにも使用できます。
 
 例えば、組み込みキャッシュを使用してチャートデータを保存するには、次の設定を使用します:
 
@@ -56,11 +58,13 @@ DATA_CACHE_CONFIG = {
 
 ## チャートキャッシュのタイムアウト
 
-チャートのキャッシュタイムアウトは、個々のチャート、データセット、またはデータベースの設定によって上書きされる場合があります。これらの設定はそれぞれ順番にチェックされ、最後に `DATA_CACHE_CONFIG` で定義されたデフォルト値にフォールバックされます。
+チャートのキャッシュタイムアウトは、個々のチャート、データセット、またはデータベースの設定によって上書きされる場合があります。
+これらの設定はそれぞれ順番にチェックされ、最後に `DATA_CACHE_CONFIG` で定義されたデフォルト値にフォールバックされます。
 
-なお、キャッシュタイムアウトを `-1` に設定すると、チャートデータのキャッシュをチャート、データセット、またはデータベースごとに無効にできます。また、`DATA_CACHE_CONFIG` で設定されている場合、デフォルトで無効にすることもできます。
+なお、キャッシュタイムアウトを `-1` に設定すると、チャートデータのキャッシュをチャート、データセット、またはデータベースごとに無効にできます。
+また、`DATA_CACHE_CONFIG` で設定されている場合、デフォルトで無効にすることもできます。
 
-## SQLラボのクエリ結果
+## SQLLab のクエリ結果
 
 SQL Lab クエリ結果のキャッシュは、非同期クエリが有効になっている場合に使用され、`RESULTS_BACKEND` を使用して設定されます。
 
@@ -68,7 +72,7 @@ SQL Lab クエリ結果のキャッシュは、非同期クエリが有効にな
 
 詳細については、[Celery 経由の非同期クエリ](/docs/configuration/async-queries-celery) を参照してください。
 
-## Caching Thumbnails
+## サムネイルのキャッシュ
 
 これはオプションの機能であり、config で [機能フラグ](/docs/configuration/configuring-superset#feature-flags) を有効にすることで有効にすることができます。
 
@@ -88,9 +92,10 @@ from superset.tasks.types import FixedExecutor
 THUMBNAIL_EXECUTORS = [FixedExecutor("admin")]
 ```
 
-この機能を使用するには、キャッシュシステムとCeleryワーカーが必要です。すべてのサムネイルはキャッシュに保存され、ワー​​カーによって非同期的に処理されます。
+この機能を使用するには、キャッシュシステムと Celery ワーカーが必要です。
+すべてのサムネイルはキャッシュに保存され、ワー​​カーによって非同期的に処理されます。
 
-画像をS3に保存する場合の設定例は以下のとおりです:
+画像を S3 に保存する場合の設定例は以下のとおりです:
 
 ```python
 from flask import Flask
@@ -118,13 +123,16 @@ def init_thumbnail_cache(app: Flask) -> S3Cache:
 THUMBNAIL_CACHE_CONFIG = init_thumbnail_cache
 ```
 
-上記の例では、ダッシュボードのキャッシュキーは `superset_thumb__dashboard__{ID}` になります。Selenium のベース URL は、以下のコマンドで上書きできます。
+上記の例では、ダッシュボードのキャッシュキーは `superset_thumb__dashboard__{ID}` になります。
+Selenium のベース URL は、以下のコマンドで上書きできます。
 
 ```
 WEBDRIVER_BASEURL = "https://superset.company.com"
 ```
 
-Selenium Web Driveの追加設定は、`WEBDRIVER_CONFIGURATION`を使用して設定できます。Seleniumの認証にはカスタム関数を実装できます。デフォルトの関数は、`flask-login`セッションCookieを使用します。カスタム関数のシグネチャの例を以下に示します:
+Selenium Web Driveの追加設定は、`WEBDRIVER_CONFIGURATION`を使用して設定できます。
+Seleniumの認証にはカスタム関数を実装できます。
+デフォルトの関数は、`flask-login`セッションCookieを使用します。カスタム関数のシグネチャの例を以下に示します:
 
 ```python
 def auth_driver(driver: WebDriver, user: "User") -> WebDriver:

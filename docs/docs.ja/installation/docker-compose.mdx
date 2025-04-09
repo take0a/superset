@@ -13,25 +13,33 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 <br /><br />
 
 :::caution
-`docker compose` は主に **単一ホスト** 上でコンテナのセットを実行するように設計されており、**高可用性** の要件をサポートできないため、実稼働タイプのユースケースをサポートするために `docker compose` 構造を使用することはサポートも推奨もされていません。単一ホスト環境の場合は、[k8s へのインストール](https://superset.apache.org/docs/installation/running-on-kubernetes) ドキュメントとともに [minikube](https://minikube.sigs.k8s.io/docs/start/) を使用することをお勧めします。
+`docker compose` は主に **単一ホスト** 上でコンテナのセットを実行するように設計されており、**高可用性** の要件をサポートできないため、実稼働タイプのユースケースをサポートするために `docker compose` 構造を使用することはサポートも推奨もされていません。
+単一ホスト環境の場合は、[k8s へのインストール](https://superset.apache.org/docs/installation/running-on-kubernetes) ドキュメントとともに [minikube](https://minikube.sigs.k8s.io/docs/start/) を使用することをお勧めします。
 :::
 
-[クイックスタート ガイド](/docs/quickstart) で述べたように、Superset をローカルで試す最も早い方法は、Linux または Mac OSX コンピューターで Docker Compose を使用することです。Superset は Windows を公式にサポートしていません。また、完全に機能する **開発環境** をすばやく起動する最も簡単な方法でもあります。
+[クイックスタート ガイド](/docs/quickstart) で述べたように、Superset をローカルで試す最も早い方法は、Linux または Mac OSX コンピューターで Docker Compose を使用することです。
+Superset は Windows を公式にサポートしていません。
+また、完全に機能する **開発環境** をすばやく起動する最も簡単な方法でもあります。
 
 `docker compose` を実行するためにサポートされている主な方法は 3 つあります。
 
 1. **docker-compose.yml:** はインタラクティブな開発用で、フロントエンド/バックエンド ファイルを含むローカル フォルダーをマウントして、アプリに加えた変更をリアルタイムで編集して体験できます。
-1. **docker-compose-non-dev.yml** は、ローカル ブランチに基づいてより不変なイメージを構築し、必要なすべてのイメージを実行します。これを起動した時点でのローカル ブランチの変更は反映されますが、`up` 中にコードに加えられた変更はアプリに反映されません。
-1. **docker-compose-image-tag.yml** では、たとえば `3.0.0` リリースのイメージを docker-hub から取得し、試せるように起動します。ここでは、ローカル ブランチの内容は実行内容には影響しません。docker-hub からビルド済みのイメージを取得して実行するだけです。`docker compose` が起動する Postgres イメージとともに動作するようにするには、`export TAG=4.0.0-dev` または `export TAG=3.0.0-dev` のように、`-dev` サフィックスの付いた TAG を指定する必要があります。デフォルトは `latest-dev` です。
-  これは、`dev` ビルドが、`docker compose` ビルドの一部として起動された Postgres データベースに接続するために必要な `psycopg2-binary` をパッケージ化するためです。
+1. **docker-compose-non-dev.yml** は、ローカル ブランチに基づいてより不変なイメージを構築し、必要なすべてのイメージを実行します。
+これを起動した時点でのローカル ブランチの変更は反映されますが、`up` 中にコードに加えられた変更はアプリに反映されません。
+1. **docker-compose-image-tag.yml** では、たとえば `3.0.0` リリースのイメージを docker-hub から取得し、試せるように起動します。
+ここでは、ローカル ブランチの内容は実行内容には影響しません。docker-hub からビルド済みのイメージを取得して実行するだけです。
+`docker compose` が起動する Postgres イメージとともに動作するようにするには、`export TAG=4.0.0-dev` または `export TAG=3.0.0-dev` のように、`-dev` サフィックスの付いた TAG を指定する必要があります。
+デフォルトは `latest-dev` です。
+これは、`dev` ビルドが、`docker compose` ビルドの一部として起動された Postgres データベースに接続するために必要な `psycopg2-binary` をパッケージ化するためです。
 
 いずれかの要件を設定した後、これら 2 つのアプローチについて詳しく説明します。
 
 ## 要件
 
-このドキュメントでは、[Docker](https://www.docker.com) と [git](https://git-scm.com/) がインストールされていることを前提としています。また、以前は `docker-compose` を使用していましたが、廃止予定のため、現在は代わりに `docker compose` を使用しています。
+このドキュメントでは、[Docker](https://www.docker.com) と [git](https://git-scm.com/) がインストールされていることを前提としています。
+また、以前は `docker-compose` を使用していましたが、廃止予定のため、現在は代わりに `docker compose` を使用しています。
 
-## 1. SupersetのGitHubリポジトリをクローンする
+## 1. Superset の GitHub リポジトリをクローンする
 
 次のコマンドを使用して、ターミナルで [Superset のリポジトリをクローン](https://github.com/apache/superset)します:
 
@@ -43,7 +51,10 @@ git clone --depth=1  https://github.com/apache/superset.git
 
 ## 2. Docker Compose を通じてスーパーセットを起動する
 
-まず、`docker compose` の仕組みについて理解していることを前提とします。ここでは、一般的に `docker compose up` について言及しますが、場合によっては `docker compose pull` を使用して新しいリモート イメージを強制的にチェックしたり、`docker compose build` で強制的にビルドしたり、`docker compose build --pull` を使用して最新のベース イメージで強制的にビルドしたりする必要があるかもしれません。ただし、ほとんどの場合は、単純な `up` コマンドで十分です。このトピックの詳細については、docker compose のドキュメントを参照してください。
+まず、`docker compose` の仕組みについて理解していることを前提とします。
+ここでは、一般的に `docker compose up` について言及しますが、場合によっては `docker compose pull` を使用して新しいリモート イメージを強制的にチェックしたり、`docker compose build` で強制的にビルドしたり、`docker compose build --pull` を使用して最新のベース イメージで強制的にビルドしたりする必要があるかもしれません。
+ただし、ほとんどの場合は、単純な `up` コマンドで十分です。
+このトピックの詳細については、docker compose のドキュメントを参照してください。
 
 ### オプション1 - インタラクティブな開発環境向け
 
@@ -53,16 +64,22 @@ docker compose up --build
 ```
 
 :::tip
-開発モードで実行する場合、UI が適切にレンダリングされるように、`superset-node` コンテナはアセットの構築を完了する必要があります。コードを変更せずに Superset を試してみたい場合は、`production` または以下の特定のバージョンについて記載されている手順に従ってください。
+開発モードで実行する場合、UI が適切にレンダリングされるように、`superset-node` コンテナはアセットの構築を完了する必要があります。
+コードを変更せずに Superset を試してみたい場合は、`production` または以下の特定のバージョンについて記載されている手順に従ってください。
 :::
 
 :::tip
-デフォルトでは、ローカルの superset-frontend フォルダーをここにマウントし、`npm install` と `npm run dev` を実行します。これにより、webpack がフロントエンド コードをコンパイル/バンドルするようにトリガーされます。ローカル設定によっては、特にメモリが 16 GB 未満の場合は、これらの操作の実行に非常に時間がかかる場合があります。この場合、env 変数 `BUILD_SUPERSET_FRONTEND_IN_DOCKER` を `false` に設定し、代わりにターミナルでローカルに実行することをお勧めします。
+デフォルトでは、ローカルの superset-frontend フォルダーをここにマウントし、`npm install` と `npm run dev` を実行します。
+これにより、webpack がフロントエンド コードをコンパイル/バンドルするようにトリガーされます。
+ローカル設定によっては、特にメモリが 16 GB 未満の場合は、これらの操作の実行に非常に時間がかかる場合があります。
+この場合、env 変数 `BUILD_SUPERSET_FRONTEND_IN_DOCKER` を `false` に設定し、代わりにターミナルでローカルに実行することをお勧めします。
 `npm i && npm run dev` をトリガーするだけで、はるかに高速になります。
 :::
 
 :::tip
-場合によっては、npm 関連の状態がおかしくなることがありますが、`superset-frontend/` フォルダーから `npm run prune` を実行すると、さまざまなパッケージの `node_module/` フォルダーが削除され、最初からやり直すことができます。`docker compose` のコンテキストでは、`docker compose up` を実行する前に `export NPM_RUN_PRUNE=true` を設定すると、docker 内からそれがトリガーされます。これにより起動が遅くなりますが、npm 関連のさまざまな問題が修正されます。
+場合によっては、npm 関連の状態がおかしくなることがありますが、`superset-frontend/` フォルダーから `npm run prune` を実行すると、さまざまなパッケージの `node_module/` フォルダーが削除され、最初からやり直すことができます。
+`docker compose` のコンテキストでは、`docker compose up` を実行する前に `export NPM_RUN_PRUNE=true` を設定すると、docker 内からそれがトリガーされます。
+これにより起動が遅くなりますが、npm 関連のさまざまな問題が修正されます。
 :::
 
 ### オプション2 - ローカルブランチから不変イメージのセットを構築する
@@ -82,41 +99,54 @@ docker compose -f docker-compose-image-tag.yml up
 Docker Hub から指定できる既存のタグの詳細については、docker 関連のドキュメントを参照してください。
 
 :::note
-オプション 2 と 3 については、より確実な結果を得るために、より適切なリポジトリ (つまり、`git checkout 4.0.0`) からリリース タグをチェックアウトすることをお勧めします。これにより、`docker-compose.*.yml` 構成とマウントされた `docker/` スクリプトが、起動しようとしているイメージと同期していることが保証されます。
+オプション 2 と 3 については、より確実な結果を得るために、より適切なリポジトリ (つまり、`git checkout 4.0.0`) からリリース タグをチェックアウトすることをお勧めします。
+これにより、`docker-compose.*.yml` 構成とマウントされた `docker/` スクリプトが、起動しようとしているイメージと同期していることが保証されます。
 :::
 
 ## `docker compose` のヒントと設定
 
 :::caution
-Superset インスタンスに属するすべてのコンテンツ (チャート、ダッシュボード、ユーザーなど) は、メタデータ データベースに保存されます。本番環境では、このデータベースをバックアップする必要があります。docker compose を使用したデフォルトのインストールでは、そのデータは Docker [ボリューム](https://docs.docker.com/storage/volumes/) に含まれる PostgreSQL データベースに保存されますが、これはバックアップされません。
+Superset インスタンスに属するすべてのコンテンツ (チャート、ダッシュボード、ユーザーなど) は、メタデータ データベースに保存されます。
+本番環境では、このデータベースをバックアップする必要があります。
+docker compose を使用したデフォルトのインストールでは、そのデータは Docker [ボリューム](https://docs.docker.com/storage/volumes/) に含まれる PostgreSQL データベースに保存されますが、これはバックアップされません。
 
 繰り返しますが、**本番環境では使用しないでください**
 
 :::
 
-マシン上で起動されているコンテナからのログ出力のストリームが表示されます。この出力が遅くなったら、ローカル マシン上で Superset のインスタンスが実行中になっているはずです。今後の実行時にテキストの壁を回避するには、`docker compose up` コマンドの最後に `-d` オプションを追加します。
+マシン上で起動されているコンテナからのログ出力のストリームが表示されます。
+この出力が遅くなったら、ローカル マシン上で Superset のインスタンスが実行中になっているはずです。
+今後の実行時にテキストの壁を回避するには、`docker compose up` コマンドの最後に `-d` オプションを追加します。
 
 ### さらに設定する
 
-以下は、Docker Compose で Superset を実行する方法を設定するユーザー向けです。それ以外の場合は、次のセクションに進んでください。
+以下は、Docker Compose で Superset を実行する方法を設定するユーザー向けです。
+それ以外の場合は、次のセクションに進んでください。
 
 [docker/README.md](https://github.com/apache/superset/tree/master/docker#configuration) に記載されている手順に従って、追加の Python パッケージをインストールし、構成のオーバーライドを適用できます。
 
 `docker/.env` は `docker compose` で使用されるすべての Docker イメージのデフォルトの環境変数を設定し、`docker/.env-local` を使用してそれらのデフォルトを上書きできることに注意してください。
 また、`docker/.env-local` は `.gitignore` で参照されるため、開発者が機密性の高い構成をリポジトリにコミットするリスクを回避できます。
 
-重要な変数の 1 つは `SUPERSET_LOAD_EXAMPLES` です。これは、`superset_init` コンテナがサンプル データと視覚化をメタデータ データベースに取り込むかどうかを決定します。これらのサンプルは、Superset の学習とテストには役立ちますが、経験豊富なユーザーや本番環境のデプロイメントには必要ありません。読み込みプロセスには数分かかることがあり、CPU を大量に消費するため、リソースが制限されたデバイスでは無効にすることをお勧めします。
+重要な変数の 1 つは `SUPERSET_LOAD_EXAMPLES` です。
+これは、`superset_init` コンテナがサンプル データと視覚化をメタデータ データベースに取り込むかどうかを決定します。
+これらのサンプルは、Superset の学習とテストには役立ちますが、経験豊富なユーザーや本番環境のデプロイメントには必要ありません。
+読み込みプロセスには数分かかることがあり、CPU を大量に消費するため、リソースが制限されたデバイスでは無効にすることをお勧めします。
 
 通常は `PYTHONPATH` にある `superset_config.py` ファイルで管理される、より高度な構成や動的な構成の場合は、git によって無視される `docker/pythonpath_dev/superset_config_docker.py` を提供することで実行できることに注意してください (ローカル構成をリポジトリにコミット/プッシュできなくなります)。
 この仕組みは `docker/pythonpath_dev/superset_config.py` にあり、ロジックが `from superset_config_docker import *` を実行していることがわかります。
 
 :::note
-ユーザーは、Superset から他のデータベースに接続したいと考えることがよくあります。現在、これを行う最も簡単な方法は、`docker-compose-non-dev.yml` ファイルを変更し、他のサービスが依存するサービスとしてデータベースを追加することです (`x-superset-depends-on` 経由)。Superset サービスに `network_mode: host` を設定しようとする人もいますが、構成ではサービス名に Docker Compose DNS リゾルバーを使用する必要があるため、通常はインストールが失敗します。
+ユーザーは、Superset から他のデータベースに接続したいと考えることがよくあります。
+現在、これを行う最も簡単な方法は、`docker-compose-non-dev.yml` ファイルを変更し、他のサービスが依存するサービスとしてデータベースを追加することです (`x-superset-depends-on` 経由)。
+Superset サービスに `network_mode: host` を設定しようとする人もいますが、構成ではサービス名に Docker Compose DNS リゾルバーを使用する必要があるため、通常はインストールが失敗します。
 これに対する適切な解決策があれば、お知らせください。
 :::
 
 :::note
-Superset は [Scarf Gateway](https://about.scarf.sh/scarf-gateway) を使用してテレメトリ データを収集します。さまざまな Superset バージョンのインストール数を把握することで、パッチ適用と長期サポートに関するプロジェクトの決定に役立ちます。Scarf は個人を特定できる情報 (PII) を削除し、集計された統計情報のみを提供します。
+Superset は [Scarf Gateway](https://about.scarf.sh/scarf-gateway) を使用してテレメトリ データを収集します。
+さまざまな Superset バージョンのインストール数を把握することで、パッチ適用と長期サポートに関するプロジェクトの決定に役立ちます。
+Scarf は個人を特定できる情報 (PII) を削除し、集計された統計情報のみを提供します。
 
 docker compose ベースのインストールによって Scarf Gateway 経由でダウンロードされたパッケージのこのデータ収集をオプトアウトするには、`docker-compose.yml` ファイルと `docker-compose-non-dev.yml` ファイルの `x-superset-image:` 行を編集し、`apachesuperset.docker.scarf.sh/apache/superset` を `apache/superset` に置き換えて、Docker Hub から直接イメージをプルします。
 
@@ -125,7 +155,10 @@ Scarf テレメトリ ピクセルを無効にするには、ターミナルま�
 
 ## 3. Superset にログイン
 
-ローカルの Superset インスタンスには、データを保存するための Postgres サーバーも含まれており、Superset に同梱されているサンプル データセットがすでにいくつかプリロードされています。Web ブラウザーから `http://localhost:8088` にアクセスして、Superset にアクセスできます。多くのブラウザーでは現在、デフォルトで `https` が使用されていることに注意してください。お使いのブラウザーがそれらの 1 つである場合は、`http` を使用していることを確認してください。
+ローカルの Superset インスタンスには、データを保存するための Postgres サーバーも含まれており、Superset に同梱されているサンプル データセットがすでにいくつかプリロードされています。
+Web ブラウザーから `http://localhost:8088` にアクセスして、Superset にアクセスできます。
+多くのブラウザーでは現在、デフォルトで `https` が使用されていることに注意してください。
+お使いのブラウザーがそれらの 1 つである場合は、`http` を使用していることを確認してください。
 
 デフォルトのユーザー名とパスワードでログインします:
 
@@ -139,13 +172,28 @@ password: admin
 
 ## 4. Supersetをローカルデータベースインスタンスに接続する
 
-`docker` または `docker compose` を使用して Superset を実行すると、Superset が完全に別のマシンで実行されているかのように、独自の docker コンテナで実行されます。したがって、ホスト名 `localhost` を使用してローカル データベースに接続しようとしても機能しません。`localhost` は、実際のホスト マシンではなく、Superset が実行されている docker コンテナを参照するためです。幸い、docker は、コンテナ内からホスト マシンのネットワーク リソースに簡単にアクセスする方法を提供しており、この機能を利用してローカル データベース インスタンスに接続します。
+`docker` または `docker compose` を使用して Superset を実行すると、Superset が完全に別のマシンで実行されているかのように、独自の docker コンテナで実行されます。
+したがって、ホスト名 `localhost` を使用してローカル データベースに接続しようとしても機能しません。
+`localhost` は、実際のホスト マシンではなく、Superset が実行されている docker コンテナを参照するためです。
+幸い、docker は、コンテナ内からホスト マシンのネットワーク リソースに簡単にアクセスする方法を提供しており、この機能を利用してローカル データベース インスタンスに接続します。
 
-ここでは、Superset (docker コンテナで実行中) から postgresql (ホスト マシンで実行中) に接続するための手順を示します。他のデータベースでは構成が若干異なる場合がありますが、要点は同じで、2 つの手順に要約されます。
+ここでは、Superset (docker コンテナで実行中) から postgresql (ホスト マシンで実行中) に接続するための手順を示します。
+他のデータベースでは構成が若干異なる場合がありますが、要点は同じで、2 つの手順に要約されます。
 
-1. **(Mac ユーザーはこの手順を省略できます)** パブリック着信接続を受け入れるようにローカル postgresql/データベース インスタンスを構成します。デフォルトでは、postgresql は `localhost` および Docker からの着信接続のみを許可します。`--network=host` を使用しない限り、`localhost` はそれぞれホスト マシンと Docker コンテナー内の異なるエンドポイントを参照します。postgresql が Docker からの接続を受け入れるようにするには、`postgresql.conf` ファイルと `pg_hba.conf` ファイルに 1 行変更を加える必要があります。このタスクについては、Web 上で OS/PG バージョンに合わせた便利なリンクを簡単に見つけることができます。Docker の場合は、`*` ではなく IP `172.0.0.0/8` をホワイトリストに追加するだけで十分ですが、いずれにしても、実稼働データベースでこれを行うと、データベースをパブリック インターネットに公開するため、悲惨な結果になる可能性があることに注意してください。
-1. データベースへの接続を試行する際、ホスト名として `localhost` の代わりに `host.docker.internal` (Mac ユーザー、Ubuntu) または `172.18.0.1` (Linux ユーザー) を使用してください。これは Docker 内部の詳細です。Mac システムでは、Docker Desktop がホスト名 `host.docker.internal` の DNS エントリを作成し、それがホスト マシンの正しいアドレスに解決されますが、Linux ではそうではありません (少なくともデフォルトでは)。これら 2 つのホスト名のどちらも機能しない場合は、使用する正確なホスト名を見つける必要があります。そのためには、`ifconfig` または `ip addr show` を実行して、Docker によって作成されたはずの `docker0` インターフェイスの IP アドレスを確認します。あるいは、`docker0` インターフェースが表示されない場合は、(必要な場合は sudo を使用して) `docker network inspect bridge` を試し、`"Gateway"` のエントリがあるかどうかを確認し、IP アドレスをメモします。
+1. **(Mac ユーザーはこの手順を省略できます)** パブリック着信接続を受け入れるようにローカル postgresql/データベース インスタンスを構成します。
+デフォルトでは、postgresql は `localhost` および Docker からの着信接続のみを許可します。
+`--network=host` を使用しない限り、`localhost` はそれぞれホスト マシンと Docker コンテナー内の異なるエンドポイントを参照します。
+postgresql が Docker からの接続を受け入れるようにするには、`postgresql.conf` ファイルと `pg_hba.conf` ファイルに 1 行変更を加える必要があります。
+このタスクについては、Web 上で OS/PG バージョンに合わせた便利なリンクを簡単に見つけることができます。
+Docker の場合は、`*` ではなく IP `172.0.0.0/8` をホワイトリストに追加するだけで十分ですが、いずれにしても、実稼働データベースでこれを行うと、データベースをパブリック インターネットに公開するため、悲惨な結果になる可能性があることに注意してください。
+1. データベースへの接続を試行する際、ホスト名として `localhost` の代わりに `host.docker.internal` (Mac ユーザー、Ubuntu) または `172.18.0.1` (Linux ユーザー) を使用してください。
+これは Docker 内部の詳細です。Mac システムでは、Docker Desktop がホスト名 `host.docker.internal` の DNS エントリを作成し、それがホスト マシンの正しいアドレスに解決されますが、Linux ではそうではありません (少なくともデフォルトでは)。
+これら 2 つのホスト名のどちらも機能しない場合は、使用する正確なホスト名を見つける必要があります。
+そのためには、`ifconfig` または `ip addr show` を実行して、Docker によって作成されたはずの `docker0` インターフェイスの IP アドレスを確認します。
+あるいは、`docker0` インターフェースが表示されない場合は、(必要な場合は sudo を使用して) `docker network inspect bridge` を試し、`"Gateway"` のエントリがあるかどうかを確認し、IP アドレスをメモします。
 
 ## 4. ビルドするか、しないか
 
-`docker compose up` を実行すると、docker は舞台裏で必要なものを構築しますが、アセットがすでに存在する場合は docker キャッシュを使用する場合があります。`docker compose up` の前に `docker compose build` を実行するか、同等のショートカット `docker compose up --build` を実行すると、docker イメージがリポジトリ内の定義と一致することが保証されます。これはメインの docker-compose.yml ファイル (デフォルト) にのみ適用され、上記で定義した代替方法には適用されません。
+`docker compose up` を実行すると、docker は舞台裏で必要なものを構築しますが、アセットがすでに存在する場合は docker キャッシュを使用する場合があります。
+`docker compose up` の前に `docker compose build` を実行するか、同等のショートカット `docker compose up --build` を実行すると、docker イメージがリポジトリ内の定義と一致することが保証されます。
+これはメインの docker-compose.yml ファイル (デフォルト) にのみ適用され、上記で定義した代替方法には適用されません。

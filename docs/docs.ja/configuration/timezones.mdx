@@ -16,11 +16,16 @@ Apache Superset に関連するタイムゾーンコンポーネントは4つあ
 
 時間フィールド（`DATETIME`、`TIME`、`TIMESTAMP` など）が明示的にタイムゾーンを定義していない場合、デフォルトでコンポーネントの基盤タイムゾーンが使用されます。
 
-Apache Superset はデータの取り込み方法 (1) やクライアントのタイムゾーン (4) を制御できないため、この問題をある程度解決しやすくするために、一貫性の観点から、(2) と (3) の両方で同じタイムゾーンを使用するように設定することを強くお勧めします。特に [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) を優先することで、明示的なタイムスタンプのない時間フィールドが誤ったタイムゾーンに強制変換されることを防ぎます。実際、Apache Superset は現在、タイムスタンプは UTC であると暗黙的に想定しているため、(3) を UTC 以外のタイムゾーンに設定すると問題が発生する可能性があります。
+Apache Superset はデータの取り込み方法 (1) やクライアントのタイムゾーン (4) を制御できないため、この問題をある程度解決しやすくするために、一貫性の観点から、(2) と (3) の両方で同じタイムゾーンを使用するように設定することを強くお勧めします。
+特に [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) を優先することで、明示的なタイムスタンプのない時間フィールドが誤ったタイムゾーンに強制変換されることを防ぎます。
+実際、Apache Superset は現在、タイムスタンプは UTC であると暗黙的に想定しているため、(3) を UTC 以外のタイムゾーンに設定すると問題が発生する可能性があります。
 
 データの一貫性（クライアントのタイムゾーンに関係なく）を確保するため、Apache Superset バックエンドは、クライアントに送信されるすべてのタイムスタンプに明示的な（または [エポックタイム](https://en.wikipedia.org/wiki/Unix_time) のように半明示的な、常に UTC を参照する）タイムゾーンがエンコードされていることを確認しようとします。
 
-しかしながら、Apache Superset がサポートする多数の [データベースエンジン](/docs/configuration/databases#installing-drivers-in-docker-images) と、それらの [Python データベース API (DB-API)](https://www.python.org/dev/peps/pep-0249/) 実装間のさまざまな不整合、そして JSON にシリアル化する前に SQL を DataFrame に読み込むために [Pandas](https://pandas.pydata.org/) を使用しているという事実が課題となっています。残念ながら、Pandas は DB-API [type_code](https://www.python.org/dev/peps/pep-0249/#type-objects) を無視し、デフォルトで DB-API から返される Python の型に依存しています。現在、サポートされているデータベースエンジンの一部のみが Pandas で正常に動作します。つまり、明示的なタイムスタンプが指定されていないタイムスタンプは、サーバーのタイムゾーンを使用して JSON にシリアル化され、クライアントのタイムゾーンに関係なく、一貫した方法でタイムスタンプが表示されることが保証されます。
+しかしながら、Apache Superset がサポートする多数の [データベースエンジン](/docs/configuration/databases#installing-drivers-in-docker-images) と、それらの [Python データベース API (DB-API)](https://www.python.org/dev/peps/pep-0249/) 実装間のさまざまな不整合、そして JSON にシリアル化する前に SQL を DataFrame に読み込むために [Pandas](https://pandas.pydata.org/) を使用しているという事実が課題となっています。
+残念ながら、Pandas は DB-API [type_code](https://www.python.org/dev/peps/pep-0249/#type-objects) を無視し、デフォルトで DB-API から返される Python の型に依存しています。
+現在、サポートされているデータベースエンジンの一部のみが Pandas で正常に動作します。
+つまり、明示的なタイムスタンプが指定されていないタイムスタンプは、サーバーのタイムゾーンを使用して JSON にシリアル化され、クライアントのタイムゾーンに関係なく、一貫した方法でタイムスタンプが表示されることが保証されます。
 
 例えば、以下は MySQL と Presto の比較です。
 

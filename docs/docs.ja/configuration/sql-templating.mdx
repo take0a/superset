@@ -10,7 +10,9 @@ version: 1
 ## Jinjaテンプレート
 
 SQL LabとExploreは、クエリで[Jinjaテンプレート](https://jinja.palletsprojects.com/en/2.11.x/)をサポートしています。
-テンプレートを有効にするには、`superset_config.py`で`ENABLE_TEMPLATE_PROCESSING` [機能フラグ](/docs/configuration/configuring-superset#feature-flags)を有効にする必要があります。テンプレートを有効にすると、仮想データセットやExploreのフィルターおよびメトリックコントロールのカスタムSQLにPythonコードを埋め込むことができます。デフォルトでは、以下の変数がJinjaコンテキストで使用可能になります:
+テンプレートを有効にするには、`superset_config.py`で`ENABLE_TEMPLATE_PROCESSING` [機能フラグ](/docs/configuration/configuring-superset#feature-flags)を有効にする必要があります。
+テンプレートを有効にすると、仮想データセットやExploreのフィルターおよびメトリックコントロールのカスタムSQLにPythonコードを埋め込むことができます。
+デフォルトでは、以下の変数がJinjaコンテキストで使用可能になります:
 
 - `columns`: クエリでグループ化する列
 - `filter`: クエリで適用するフィルター
@@ -48,7 +50,8 @@ WHERE (
 )
 ```
 
-末尾の `1 = 1` は、時間フィルターが設定されていない場合でも、`WHERE` 句に値が存在することを保証します。多くのデータベースエンジンでは、これを `true` に置き換えることができます。
+末尾の `1 = 1` は、時間フィルターが設定されていない場合でも、`WHERE` 句に値が存在することを保証します。
+多くのデータベースエンジンでは、これを `true` に置き換えることができます。
 
 Jinja パラメータは、クエリ内では二重括弧で囲み、ロジックブロック内では一重括弧で囲んで呼び出されることに注意してください。
 
@@ -61,7 +64,8 @@ JINJA_CONTEXT_ADDONS = {
 }
 ```
 
-Jinja テンプレートのデフォルト値は、SQL Lab ユーザーインターフェースの「Parameters」メニューから指定できます。UIでは、パラメータセットをJSONとして割り当てることができます。
+Jinja テンプレートのデフォルト値は、SQL Lab ユーザーインターフェースの「Parameters」メニューから指定できます。
+UIでは、パラメータセットをJSONとして割り当てることができます。
 
 ```json
 {
@@ -219,7 +223,8 @@ Jinja コードに `|tojson` を追加することで、配列を JSON 文字列
 {{ current_user_roles()|tojson }}
 ```
 
-`|where_in` フィルターを使用すると、SQL 文でロールを使用できます。例えば、`current_user_roles()` が `['admin', 'viewer']` を返す場合、次のテンプレートを使用します:
+`|where_in` フィルターを使用すると、SQL 文でロールを使用できます。
+例えば、`current_user_roles()` が `['admin', 'viewer']` を返す場合、次のテンプレートを使用します:
 
 ```python
 SELECT * FROM users WHERE role IN {{ current_user_roles()|where_in }}
@@ -423,9 +428,12 @@ WHERE
 
 **データセット**
 
-`dataset` マクロを使用して、物理データセットと仮想データセットをクエリできます。これは、データセットに計算列と指標を定義し、その定義をアドホック SQL Lab クエリで再利用したい場合に便利です。
+`dataset` マクロを使用して、物理データセットと仮想データセットをクエリできます。
+これは、データセットに計算列と指標を定義し、その定義をアドホック SQL Lab クエリで再利用したい場合に便利です。
 
-マクロを使用するには、まずデータセットの ID を見つける必要があります。これは、すべてのデータセットが表示されているビューに移動し、対象のデータセットにマウスオーバーして URL を確認することで確認できます。たとえば、データセットの URL が https://superset.example.org/explore/?dataset_type=table&dataset_id=42 の場合、その ID は 42 です。
+マクロを使用するには、まずデータセットの ID を見つける必要があります。
+これは、すべてのデータセットが表示されているビューに移動し、対象のデータセットにマウスオーバーして URL を確認することで確認できます。
+たとえば、データセットの URL が https://superset.example.org/explore/?dataset_type=table&dataset_id=42 の場合、その ID は 42 です。
 
 ID がわかれば、テーブルと同じようにクエリを実行できます:
 
@@ -439,7 +447,8 @@ SELECT * FROM {{ dataset(42) }} LIMIT 10
 SELECT * FROM {{ dataset(42, include_metrics=True) }} LIMIT 10
 ```
 
-指標は集計であるため、結果のSQL式は指標以外のすべての列でグループ化されます。代わりに、グループ化する列のサブセットを指定することもできます:
+指標は集計であるため、結果のSQL式は指標以外のすべての列でグループ化されます。
+代わりに、グループ化する列のサブセットを指定することもできます:
 
 ```sql
 SELECT * FROM {{ dataset(42, include_metrics=True, columns=["ds", "category"]) }} LIMIT 10
@@ -464,6 +473,7 @@ SELECT * FROM {{ dataset(42, include_metrics=True, columns=["ds", "category"]) }
 Superset は [Jinja2 テンプレートパッケージの組み込みフィルター](https://jinja.palletsprojects.com/en/stable/templates/#builtin-filters) をサポートしています。カスタムフィルターも実装されています。
 
 **Where In**
+
 リストを SQL 互換のステートメントに変換します。これは、配列を返すマクロ (例: `filter_values` マクロ) で便利です。
 
 ```
@@ -472,7 +482,8 @@ Dashboard filter with "First", "Second" and "Third" options selected
 {{ filter_values('column')|where_in }} => ('First', 'Second', 'Third')
 ```
 
-デフォルトでは、このフィルターは値がnullの場合に `()` を（文字列として）返します。この場合、`default_to_none`パラメータを `True` に設定するとnullが返されます:
+デフォルトでは、このフィルターは値がnullの場合に `()` を（文字列として）返します。
+この場合、`default_to_none`パラメータを `True` に設定するとnullが返されます:
 
 ```
 Dashboard filter without any value applied
@@ -482,7 +493,8 @@ Dashboard filter without any value applied
 
 **To Datetime**
 
-文字列を `datetime` オブジェクトとして読み込みます。これは日付操作を行う際に便利です。例えば:
+文字列を `datetime` オブジェクトとして読み込みます。これは日付操作を行う際に便利です。
+例えば:
 
 ```
 {% set from_expr = get_time_filter("dttm", strftime="%Y-%m-%d").from_expr %}
