@@ -1,29 +1,26 @@
 ---
-title: Caching
+title: キャッシング
 hide_title: true
 sidebar_position: 3
 version: 1
 ---
 
-# Caching
+# キャッシング
 
-Superset uses [Flask-Caching](https://flask-caching.readthedocs.io/) for caching purposes.
-Flask-Caching supports various caching backends, including Redis (recommended), Memcached,
-SimpleCache (in-memory), or the local filesystem.
-[Custom cache backends](https://flask-caching.readthedocs.io/en/latest/#custom-cache-backends)
-are also supported.
+SuperSetは、キャッシュ目的で[Flask-Caching](https://flask-caching.readthedocs.io/) を使用します。
+Flaskキャッシングは、Redis（推奨）、Memcached、SimpleCache（インメモリ）、またはローカルファイルシステムなど、さまざまなキャッシュバックエンドをサポートしています。
+[カスタムキャッシュバックエンド](https://flask-caching.readthedocs.io/en/latest/#custom-cache-backends) もサポートされています。
 
-Caching can be configured by providing dictionaries in
-`superset_config.py` that comply with [the Flask-Caching config specifications](https://flask-caching.readthedocs.io/en/latest/#configuring-flask-caching).
+キャッシングは、[フラスコキャッシング設定仕様](https://flask-caching.readthedocs.io/en/latest/#configuring-flask-caching) に準拠する `superset_config.py` で辞書を提供することで構成できます。
 
-The following cache configurations can be customized in this way:
+次のキャッシュ構成は、この方法でカスタマイズできます。
 
 - Dashboard filter state (required): `FILTER_STATE_CACHE_CONFIG`.
 - Explore chart form data (required): `EXPLORE_FORM_DATA_CACHE_CONFIG`
 - Metadata cache (optional): `CACHE_CONFIG`
 - Charting data queried from datasets (optional): `DATA_CACHE_CONFIG`
 
-For example, to configure the filter state cache using Redis:
+たとえば、Redisを使用してフィルター状態キャッシュを構成するには:
 
 ```python
 FILTER_STATE_CACHE_CONFIG = {
@@ -34,24 +31,20 @@ FILTER_STATE_CACHE_CONFIG = {
 }
 ```
 
-## Dependencies
+## 依存関係
 
-In order to use dedicated cache stores, additional python libraries must be installed
+専用のキャッシュストアを使用するには、追加のPythonライブラリをインストールする必要があります
 
-- For Redis: we recommend the [redis](https://pypi.python.org/pypi/redis) Python package
-- Memcached: we recommend using [pylibmc](https://pypi.org/project/pylibmc/) client library as
-  `python-memcached` does not handle storing binary data correctly.
+-Redisの場合：[redis](https://pypi.python.org/pypi/redis) Python パッケージをお勧めします
+-memcached：[pylibmc](https://pypi.org/project/pylibmc/) クライアントライブラリを `python memcached` として使用することをお勧めします。
 
-These libraries can be installed using pip.
+これらのライブラリは、pip を使用してインストールできます。
 
-## Fallback Metastore Cache
+## メタストアキャッシュのフォールバック
 
-Note, that some form of Filter State and Explore caching are required. If either of these caches
-are undefined, Superset falls back to using a built-in cache that stores data in the metadata
-database. While it is recommended to use a dedicated cache, the built-in cache can also be used
-to cache other data.
+フィルター状態と探索のキャッシュは、何らかの形で必要となることに注意してください。これらのキャッシュのいずれかが未定義の場合、Supersetはメタデータデータベースにデータを保存する組み込みキャッシュを使用します。専用のキャッシュを使用することをお勧めしますが、組み込みキャッシュは他のデータのキャッシュにも使用できます。
 
-For example, to use the built-in cache to store chart data, use the following config:
+例えば、組み込みキャッシュを使用してチャートデータを保存するには、次の設定を使用します:
 
 ```python
 DATA_CACHE_CONFIG = {
@@ -61,28 +54,23 @@ DATA_CACHE_CONFIG = {
 }
 ```
 
-## Chart Cache Timeout
+## チャートキャッシュのタイムアウト
 
-The cache timeout for charts may be overridden by the settings for an individual chart, dataset, or
-database. Each of these configurations will be checked in order before falling back to the default
-value defined in `DATA_CACHE_CONFIG`.
+チャートのキャッシュタイムアウトは、個々のチャート、データセット、またはデータベースの設定によって上書きされる場合があります。これらの設定はそれぞれ順番にチェックされ、最後に `DATA_CACHE_CONFIG` で定義されたデフォルト値にフォールバックされます。
 
-Note, that by setting the cache timeout to `-1`, caching for charting data can be disabled, either
-per chart, dataset or database, or by default if set in `DATA_CACHE_CONFIG`.
+なお、キャッシュタイムアウトを `-1` に設定すると、チャートデータのキャッシュをチャート、データセット、またはデータベースごとに無効にできます。また、`DATA_CACHE_CONFIG` で設定されている場合、デフォルトで無効にすることもできます。
 
-## SQL Lab Query Results
+## SQLラボのクエリ結果
 
-Caching for SQL Lab query results is used when async queries are enabled and is configured using
-`RESULTS_BACKEND`.
+SQL Lab クエリ結果のキャッシュは、非同期クエリが有効になっている場合に使用され、`RESULTS_BACKEND` を使用して設定されます。
 
-Note that this configuration does not use a flask-caching dictionary for its configuration, but
-instead requires a cachelib object.
+この設定では、flask-caching ディクショナリを使用せず、代わりに cachelib オブジェクトを使用することに注意してください。
 
-See [Async Queries via Celery](/docs/configuration/async-queries-celery) for details.
+詳細については、[Celery 経由の非同期クエリ](/docs/configuration/async-queries-celery) を参照してください。
 
 ## Caching Thumbnails
 
-This is an optional feature that can be turned on by activating its [feature flag](/docs/configuration/configuring-superset#feature-flags) on config:
+これはオプションの機能であり、config で [機能フラグ](/docs/configuration/configuring-superset#feature-flags) を有効にすることで有効にすることができます。
 
 ```
 FEATURE_FLAGS = {
@@ -91,8 +79,8 @@ FEATURE_FLAGS = {
 }
 ```
 
-By default thumbnails are rendered per user, and will fall back to the Selenium user for anonymous users.
-To always render thumbnails as a fixed user (`admin` in this example), use the following configuration:
+デフォルトでは、サムネイルはユーザーごとにレンダリングされ、匿名ユーザーの場合は Selenium ユーザーにフォールバックされます。
+常に固定ユーザー（この例では「admin」）としてサムネイルをレンダリングするには、次の設定を使用します:
 
 ```python
 from superset.tasks.types import FixedExecutor
@@ -100,10 +88,9 @@ from superset.tasks.types import FixedExecutor
 THUMBNAIL_EXECUTORS = [FixedExecutor("admin")]
 ```
 
-For this feature you will need a cache system and celery workers. All thumbnails are stored on cache
-and are processed asynchronously by the workers.
+この機能を使用するには、キャッシュシステムとCeleryワーカーが必要です。すべてのサムネイルはキャッシュに保存され、ワー​​カーによって非同期的に処理されます。
 
-An example config where images are stored on S3 could be:
+画像をS3に保存する場合の設定例は以下のとおりです:
 
 ```python
 from flask import Flask
@@ -131,23 +118,20 @@ def init_thumbnail_cache(app: Flask) -> S3Cache:
 THUMBNAIL_CACHE_CONFIG = init_thumbnail_cache
 ```
 
-Using the above example cache keys for dashboards will be `superset_thumb__dashboard__{ID}`. You can
-override the base URL for selenium using:
+上記の例では、ダッシュボードのキャッシュキーは `superset_thumb__dashboard__{ID}` になります。Selenium のベース URL は、以下のコマンドで上書きできます。
 
 ```
 WEBDRIVER_BASEURL = "https://superset.company.com"
 ```
 
-Additional selenium web drive configuration can be set using `WEBDRIVER_CONFIGURATION`. You can
-implement a custom function to authenticate selenium. The default function uses the `flask-login`
-session cookie. Here's an example of a custom function signature:
+Selenium Web Driveの追加設定は、`WEBDRIVER_CONFIGURATION`を使用して設定できます。Seleniumの認証にはカスタム関数を実装できます。デフォルトの関数は、`flask-login`セッションCookieを使用します。カスタム関数のシグネチャの例を以下に示します:
 
 ```python
 def auth_driver(driver: WebDriver, user: "User") -> WebDriver:
     pass
 ```
 
-Then on configuration:
+次に構成を行います:
 
 ```
 WEBDRIVER_AUTH_FUNC = auth_driver

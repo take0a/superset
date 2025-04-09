@@ -1,13 +1,12 @@
 ---
-title: Issue Codes
+title: 問題コード
 sidebar_position: 5
 version: 1
 ---
 
-# Issue Code Reference
+# 問題コードのリファレンス
 
-This page lists issue codes that may be displayed in
-Superset and provides additional context.
+このページには、Superset に表示される可能性のある問題コードがリストされ、追加のコンテキストが提供されます。
 
 ## Issue 1000
 
@@ -15,10 +14,8 @@ Superset and provides additional context.
 The datasource is too large to query.
 ```
 
-It's likely your datasource has grown too large to run the current
-query, and is timing out. You can resolve this by reducing the
-size of your datasource or by modifying your query to only process a
-subset of your data.
+データソースが大きくなりすぎて現在のクエリを実行できず、タイムアウトになっている可能性があります。
+データソースのサイズを小さくするか、データのサブセットのみを処理するようにクエリを変更することで、この問題を解決できます。
 
 ## Issue 1001
 
@@ -26,9 +23,8 @@ subset of your data.
 The database is under an unusual load.
 ```
 
-Your query may have timed out because of unusually high load on the
-database engine. You can make your query simpler, or wait until the
-database is under less load and try again.
+データベースエンジンの負荷が異常に高くなったため、クエリがタイムアウトした可能性があります。
+クエリを簡素化するか、データベースの負荷が軽減されるまで待ってから再試行してください。
 
 ## Issue 1002
 
@@ -36,11 +32,9 @@ database is under less load and try again.
 The database returned an unexpected error.
 ```
 
-Your query failed because of an error that occurred on the database.
-This may be due to a syntax error, a bug in your query, or some other
-internal failure within the database. This is usually not an
-issue within Superset, but instead a problem with the underlying
-database that serves your query.
+データベースでエラーが発生したため、クエリが失敗しました。
+これは、構文エラー、クエリのバグ、またはデータベース内のその他の内部エラーが原因である可能性があります。
+これは通常、Superset 内の問題ではなく、クエリを処理する基盤となるデータベースの問題です。
 
 ## Issue 1003
 
@@ -48,9 +42,8 @@ database that serves your query.
 There is a syntax error in the SQL query. Perhaps there was a misspelling or a typo.
 ```
 
-Your query failed because of a syntax error within the underlying query. Please
-validate that all columns or tables referenced within the query exist and are spelled
-correctly.
+クエリの構文エラーのため、クエリが失敗しました。
+クエリ内で参照されているすべての列またはテーブルが存在し、スペルが正しいことを確認してください。
 
 ## Issue 1004
 
@@ -58,9 +51,8 @@ correctly.
 The column was deleted or renamed in the database.
 ```
 
-Your query failed because it is referencing a column that no longer exists in
-the underlying datasource. You should modify the query to reference the
-replacement column, or remove this column from your query.
+クエリは、基になるデータソースに存在しない列を参照しているため失敗しました。
+置換列を参照するようにクエリを変更するか、クエリからこの列を削除する必要があります。
 
 ## Issue 1005
 
@@ -68,9 +60,8 @@ replacement column, or remove this column from your query.
 The table was deleted or renamed in the database.
 ```
 
-Your query failed because it is referencing a table that no longer exists in
-the underlying database. You should modify your query to reference the correct
-table.
+クエリは、基になるデータベースに存在しないテーブルを参照しているため失敗しました。
+正しいテーブルを参照するようにクエリを変更する必要があります。
 
 ## Issue 1006
 
@@ -78,10 +69,9 @@ table.
 One or more parameters specified in the query are missing.
 ```
 
-Your query was not submitted to the database because it's missing one or more
-parameters. You should define all the parameters referenced in the query in a
-valid JSON document. Check that the parameters are spelled correctly and that
-the document has a valid syntax.
+1つ以上のパラメータが不足しているため、クエリはデータベースに送信されませんでした。
+クエリで参照されているすべてのパラメータを有効なJSONドキュメントで定義する必要があります。
+パラメータのスペルが正しく、ドキュメントの構文が有効であることを確認してください。
 
 ## Issue 1007
 
@@ -89,8 +79,8 @@ the document has a valid syntax.
 The hostname provided can't be resolved.
 ```
 
-The hostname provided when adding a new database is invalid and cannot be
-resolved. Please check that there are no typos in the hostname.
+新しいデータベースを追加する際に指定したホスト名が無効であり、解決できません。
+ホスト名に誤字がないことを確認してください。
 
 ## Issue 1008
 
@@ -98,9 +88,8 @@ resolved. Please check that there are no typos in the hostname.
 The port is closed.
 ```
 
-The port provided when adding a new database is not open. Please check that
-the port number is correct, and that the database is running and listening on
-that port.
+新しいデータベースの追加時に指定したポートが開いていません。
+ポート番号が正しいこと、およびデータベースがそのポートで実行され、リッスンしていることを確認してください。
 
 ## Issue 1009
 
@@ -108,9 +97,9 @@ that port.
 The host might be down, and cannot be reached on the provided port.
 ```
 
-The host provided when adding a new database doesn't seem to be up.
-Additionally, it cannot be reached on the provided port. Please check that
-there are no firewall rules preventing access to the host.
+新しいデータベースを追加する際に指定したホストが起動していないようです。
+また、指定したポートでアクセスできません。
+ホストへのアクセスをブロックするファイアウォールルールがないことを確認してください。
 
 ## Issue 1010
 
@@ -118,8 +107,8 @@ there are no firewall rules preventing access to the host.
 Superset encountered an error while running a command.
 ```
 
-Something unexpected happened, and Superset encountered an error while
-running a command. Please reach out to your administrator.
+予期しない問題が発生し、Superset でコマンドの実行中にエラーが発生しました。
+管理者に問い合わせてください。
 
 ## Issue 1011
 
@@ -127,8 +116,8 @@ running a command. Please reach out to your administrator.
 Superset encountered an unexpected error.
 ```
 
-Something unexpected happened in the Superset backend. Please reach out
-to your administrator.
+Superset バックエンドで予期しない問題が発生しました。
+管理者にご連絡ください。
 
 ## Issue 1012
 
@@ -136,8 +125,8 @@ to your administrator.
 The username provided when connecting to a database is not valid.
 ```
 
-The user provided a username that doesn't exist in the database. Please check
-that the username is typed correctly and exists in the database.
+ユーザーがデータベースに存在しないユーザー名を入力しました。
+ユーザー名が正しく入力され、データベースに存在することを確認してください。
 
 ## Issue 1013
 
@@ -145,8 +134,8 @@ that the username is typed correctly and exists in the database.
 The password provided when connecting to a database is not valid.
 ```
 
-The user provided a password that is incorrect. Please check that the
-password is typed correctly.
+ユーザーが入力したパスワードが間違っています。
+パスワードが正しく入力されているか確認してください。
 
 ## Issue 1014
 
@@ -154,8 +143,8 @@ password is typed correctly.
 Either the username or the password used are incorrect.
 ```
 
-Either the username provided does not exist or the password was written incorrectly. Please
-check that the username and password were typed correctly.
+入力されたユーザー名が存在しないか、パスワードが間違っています。
+ユーザー名とパスワードが正しく入力されていることを確認してください。
 
 ## Issue 1015
 
@@ -163,7 +152,8 @@ check that the username and password were typed correctly.
 Either the database is spelled incorrectly or does not exist.
 ```
 
-Either the database was written incorrectly or it does not exist. Check that it was typed correctly.
+データベースの記述が間違っているか、データベースが存在しません。
+正しく入力されているか確認してください。
 
 ## Issue 1016
 
@@ -171,7 +161,8 @@ Either the database was written incorrectly or it does not exist. Check that it 
 The schema was deleted or renamed in the database.
 ```
 
-The schema was either removed or renamed. Check that the schema is typed correctly and exists.
+スキーマが削除されたか、名前が変更されました。
+スキーマが正しく入力され、存在していることを確認してください。
 
 ## Issue 1017
 
@@ -179,7 +170,8 @@ The schema was either removed or renamed. Check that the schema is typed correct
 The user doesn't have the proper permissions to connect to the database
 ```
 
-We were unable to connect to your database. Please confirm that your service account has the Viewer and Job User roles on the project.
+データベースに接続できませんでした。
+サービスアカウントにプロジェクトの閲覧者ロールとジョブユーザーロールが付与されていることを確認してください。
 
 ## Issue 1018
 
@@ -187,7 +179,8 @@ We were unable to connect to your database. Please confirm that your service acc
 One or more parameters needed to configure a database are missing.
 ```
 
-Not all parameters required to test, create, or edit a database were present. Please double check which parameters are needed, and that they are present.
+データベースのテスト、作成、編集に必要なパラメータがすべて揃っていません。
+必要なパラメータとそのパラメータが揃っていることを再度ご確認ください。
 
 ## Issue 1019
 
@@ -195,7 +188,7 @@ Not all parameters required to test, create, or edit a database were present. Pl
 The submitted payload has the incorrect format.
 ```
 
-Please check that the request payload has the correct format (eg, JSON).
+リクエストペイロードの形式が正しいことを確認してください (例: JSON)。
 
 ## Issue 1020
 
@@ -203,7 +196,7 @@ Please check that the request payload has the correct format (eg, JSON).
 The submitted payload has the incorrect schema.
 ```
 
-Please check that the request payload has the expected schema.
+リクエストペイロードに予期されたスキーマがあることを確認してください。
 
 ## Issue 1021
 
@@ -211,15 +204,16 @@ Please check that the request payload has the expected schema.
 Results backend needed for asynchronous queries is not configured.
 ```
 
-Your instance of Superset doesn't have a results backend configured, which is needed for asynchronous queries. Please contact an administrator for further assistance.
-
+Superset のインスタンスに、非同期クエリに必要な結果バックエンドが設定されていません。
+詳細については、管理者にお問い合わせください。
 ## Issue 1022
 
 ```
 Database does not allow data manipulation.
 ```
 
-Only `SELECT` statements are allowed against this database. Please contact an administrator if you need to run DML (data manipulation language) on this database.
+このデータベースに対しては `SELECT` ステートメントのみが許可されています。
+このデータベースで DML (データ操作言語) を実行する必要がある場合は、管理者に問い合わせてください。
 
 ## Issue 1023
 
@@ -227,7 +221,8 @@ Only `SELECT` statements are allowed against this database. Please contact an ad
 CTAS (create table as select) doesn't have a SELECT statement at the end.
 ```
 
-The last statement in a query run as CTAS (create table as select) MUST be a SELECT statement. Please make sure the last statement in the query is a SELECT.
+CTAS (create table as select) として実行されるクエリの最後のステートメントは、SELECT ステートメントである必要があります。
+クエリの最後のステートメントが SELECT であることを確認してください。
 
 ## Issue 1024
 
@@ -235,7 +230,8 @@ The last statement in a query run as CTAS (create table as select) MUST be a SEL
 CVAS (create view as select) query has more than one statement.
 ```
 
-When running a CVAS (create view as select) the query should have a single statement. Please make sure the query has a single statement, and no extra semi-colons other than the last one.
+CVAS（create view as select）を実行する場合、クエリには単一のステートメントが必要です。
+クエリに単一のステートメントが含まれており、最後のセミコロン以外に余分なセミコロンがないことを確認してください。
 
 ## Issue 1025
 
@@ -243,7 +239,8 @@ When running a CVAS (create view as select) the query should have a single state
 CVAS (create view as select) query is not a SELECT statement.
 ```
 
-When running a CVAS (create view as select) the query should be a SELECT statement. Please make sure the query has a single statement and it's a SELECT statement.
+CVAS（create view as select）を実行する場合、クエリはSELECT文である必要があります。
+クエリに単一の文があり、それがSELECT文であることを確認してください。
 
 ## Issue 1026
 
@@ -251,7 +248,9 @@ When running a CVAS (create view as select) the query should be a SELECT stateme
 Query is too complex and takes too long to run.
 ```
 
-The submitted query might be too complex to run under the time limit defined by your Superset administrator. Please double check your query and verify if it can be optimized. Alternatively, contact your administrator to increase the timeout period.
+送信されたクエリは複雑すぎるため、Superset管理者が定義した時間制限内で実行できない可能性があります。
+クエリを再確認し、最適化できるかどうかを確認してください。
+または、管理者に連絡してタイムアウト期間を延長してください。
 
 ## Issue 1027
 
@@ -259,7 +258,8 @@ The submitted query might be too complex to run under the time limit defined by 
 The database is currently running too many queries.
 ```
 
-The database might be under heavy load, running too many queries. Please try again later, or contact an administrator for further assistance.
+データベースの負荷が高く、クエリの実行数が多すぎる可能性があります。
+しばらくしてからもう一度お試しいただくか、管理者にご連絡ください。
 
 ## Issue 1028
 
@@ -267,7 +267,9 @@ The database might be under heavy load, running too many queries. Please try aga
 One or more parameters specified in the query are malformed.
 ```
 
-The query contains one or more malformed template parameters. Please check your query and confirm that all template parameters are surround by double braces, for example, "\{\{ ds \}\}". Then, try running your query again.
+クエリに不正なテンプレートパラメータが1つ以上含まれています。
+クエリを確認し、すべてのテンプレートパラメータが二重中括弧で囲まれていることを確認してください（例："\{\{ ds \}\}"）。
+その後、クエリを再度実行してください。
 
 ## Issue 1029
 
@@ -275,7 +277,7 @@ The query contains one or more malformed template parameters. Please check your 
 The object does not exist in this database.
 ```
 
-Either the schema, column, or table do not exist in the database.
+スキーマ、列、またはテーブルのいずれかがデータベースに存在しません。
 
 ## Issue 1030
 
@@ -283,7 +285,8 @@ Either the schema, column, or table do not exist in the database.
 The query potentially has a syntax error.
 ```
 
-The query might have a syntax error. Please check and run again.
+クエリに構文エラーがある可能性があります。
+確認して再度実行してください。
 
 ## Issue 1031
 
@@ -291,7 +294,8 @@ The query might have a syntax error. Please check and run again.
 The results backend no longer has the data from the query.
 ```
 
-The results from the query might have been deleted from the results backend after some period. Please re-run your query.
+クエリの結果は、一定期間後に結果バックエンドから削除されている可能性があります。
+クエリを再実行してください。
 
 ## Issue 1032
 
@@ -299,7 +303,8 @@ The results from the query might have been deleted from the results backend afte
 The query associated with the results was deleted.
 ```
 
-The query associated with the stored results no longer exists. Please re-run your query.
+保存された結果に関連付けられたクエリは存在しません。
+クエリを再実行してください。
 
 ## Issue 1033
 
@@ -307,7 +312,8 @@ The query associated with the stored results no longer exists. Please re-run you
 The results stored in the backend were stored in a different format, and no longer can be deserialized.
 ```
 
-The query results were stored in a format that is no longer supported. Please re-run your query.
+クエリ結果はサポートされていない形式で保存されました。
+クエリを再実行してください。
 
 ## Issue 1034
 
@@ -315,7 +321,7 @@ The query results were stored in a format that is no longer supported. Please re
 The database port provided is invalid.
 ```
 
-Please check that the provided database port is an integer between 0 and 65535 (inclusive).
+指定されたデータベース ポートが 0 から 65535 までの整数であることを確認してください。
 
 ## Issue 1035
 
@@ -323,7 +329,8 @@ Please check that the provided database port is an integer between 0 and 65535 (
 Failed to start remote query on a worker.
 ```
 
-The query was not started by an asynchronous worker. Please reach out to your administrator for further assistance.
+クエリは非同期ワーカーによって開始されませんでした。
+詳細については、管理者にお問い合わせください。
 
 ## Issue 1036
 
@@ -331,4 +338,5 @@ The query was not started by an asynchronous worker. Please reach out to your ad
 The database was deleted.
 ```
 
-The operation failed because the database referenced no longer exists. Please reach out to your administrator for further assistance.
+参照されたデータベースが存在しないため、操作は失敗しました。
+詳細については、管理者にお問い合わせください。

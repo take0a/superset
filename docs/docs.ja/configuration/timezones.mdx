@@ -1,28 +1,28 @@
 ---
-title: Timezones
+title: タイムゾーン
 hide_title: true
 sidebar_position: 6
 version: 1
 ---
 
-# Timezones
+# タイムゾーン
 
-There are four distinct timezone components which relate to Apache Superset,
+Apache Superset に関連するタイムゾーンコンポーネントは4つあります。
 
-1. The timezone that the underlying data is encoded in.
-2. The timezone of the database engine.
-3. The timezone of the Apache Superset backend.
-4. The timezone of the Apache Superset client.
+1. 基盤となるデータがエンコードされているタイムゾーン。
+2. データベースエンジンのタイムゾーン。
+3. Apache Superset バックエンドのタイムゾーン。
+4. Apache Superset クライアントのタイムゾーン。
 
-where if a temporal field (`DATETIME`, `TIME`, `TIMESTAMP`, etc.) does not explicitly define a timezone it defaults to the underlying timezone of the component.
+時間フィールド（`DATETIME`、`TIME`、`TIMESTAMP` など）が明示的にタイムゾーンを定義していない場合、デフォルトでコンポーネントの基盤タイムゾーンが使用されます。
 
-To help make the problem somewhat tractable—given that Apache Superset has no control on either how the data is ingested (1) or the timezone of the client (4)—from a consistency standpoint it is highly recommended that both (2) and (3) are configured to use the same timezone with a strong preference given to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) to ensure temporal fields without an explicit timestamp are not incorrectly coerced into the wrong timezone. Actually Apache Superset currently has implicit assumptions that timestamps are in UTC and thus configuring (3) to a non-UTC timezone could be problematic.
+Apache Superset はデータの取り込み方法 (1) やクライアントのタイムゾーン (4) を制御できないため、この問題をある程度解決しやすくするために、一貫性の観点から、(2) と (3) の両方で同じタイムゾーンを使用するように設定することを強くお勧めします。特に [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time) を優先することで、明示的なタイムスタンプのない時間フィールドが誤ったタイムゾーンに強制変換されることを防ぎます。実際、Apache Superset は現在、タイムスタンプは UTC であると暗黙的に想定しているため、(3) を UTC 以外のタイムゾーンに設定すると問題が発生する可能性があります。
 
-To strive for data consistency (regardless of the timezone of the client) the Apache Superset backend tries to ensure that any timestamp sent to the client has an explicit (or semi-explicit as in the case with [Epoch time](https://en.wikipedia.org/wiki/Unix_time) which is always in reference to UTC) timezone encoded within.
+データの一貫性（クライアントのタイムゾーンに関係なく）を確保するため、Apache Superset バックエンドは、クライアントに送信されるすべてのタイムスタンプに明示的な（または [エポックタイム](https://en.wikipedia.org/wiki/Unix_time) のように半明示的な、常に UTC を参照する）タイムゾーンがエンコードされていることを確認しようとします。
 
-The challenge however lies with the slew of [database engines](/docs/configuration/databases#installing-drivers-in-docker-images) which Apache Superset supports and various inconsistencies between their [Python Database API (DB-API)](https://www.python.org/dev/peps/pep-0249/) implementations combined with the fact that we use [Pandas](https://pandas.pydata.org/) to read SQL into a DataFrame prior to serializing to JSON. Regrettably Pandas ignores the DB-API [type_code](https://www.python.org/dev/peps/pep-0249/#type-objects) relying by default on the underlying Python type returned by the DB-API. Currently only a subset of the supported database engines work correctly with Pandas, i.e., ensuring timestamps without an explicit timestamp are serializd to JSON with the server timezone, thus guaranteeing the client will display timestamps in a consistent manner irrespective of the client's timezone.
+しかしながら、Apache Superset がサポートする多数の [データベースエンジン](/docs/configuration/databases#installing-drivers-in-docker-images) と、それらの [Python データベース API (DB-API)](https://www.python.org/dev/peps/pep-0249/) 実装間のさまざまな不整合、そして JSON にシリアル化する前に SQL を DataFrame に読み込むために [Pandas](https://pandas.pydata.org/) を使用しているという事実が課題となっています。残念ながら、Pandas は DB-API [type_code](https://www.python.org/dev/peps/pep-0249/#type-objects) を無視し、デフォルトで DB-API から返される Python の型に依存しています。現在、サポートされているデータベースエンジンの一部のみが Pandas で正常に動作します。つまり、明示的なタイムスタンプが指定されていないタイムスタンプは、サーバーのタイムゾーンを使用して JSON にシリアル化され、クライアントのタイムゾーンに関係なく、一貫した方法でタイムスタンプが表示されることが保証されます。
 
-For example the following is a comparison of MySQL and Presto,
+例えば、以下は MySQL と Presto の比較です。
 
 ```python
 import pandas as pd
@@ -39,7 +39,7 @@ pd.read_sql_query(
 ).to_json()
 ```
 
-which outputs `{"ts":{"0":1640995200000}}` (which infers the UTC timezone per the Epoch time definition) and `{"ts":{"0":"2022-01-01 00:00:00.000"}}` (without an explicit timezone) respectively and thus are treated differently in JavaScript:
+これはそれぞれ `{"ts":{"0":1640995200000}}` (エポック時間の定義に従って UTC タイムゾーンを推測) と `{"ts":{"0":"2022-01-01 00:00:00.000"}}` (明示的なタイムゾーンなし) を出力し、JavaScript では異なる扱いを受けます:
 
 ```js
 new Date(1640995200000)

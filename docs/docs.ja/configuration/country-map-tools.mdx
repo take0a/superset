@@ -6,21 +6,17 @@ version: 1
 
 import countriesData from '../../data/countries.json';
 
-# The Country Map Visualization
+# 国別地図の視覚化
 
-The Country Map visualization allows you to plot lightweight choropleth maps of
-your countries by province, states, or other subdivision types. It does not rely
-on any third-party map services but would require you to provide the
-[ISO-3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) codes of your country's
-top-level subdivisions. Comparing to a province or state's full names, the ISO
-code is less ambiguous and is unique to all regions in the world.
+国別マップのビジュアライゼーションでは、国を州、都道府県、その他の区分ごとに軽量なコロプレスマップとして作成できます。
+サードパーティの地図サービスには依存しませんが、国の最上位区分の[ISO-3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)コードをご提供いただく必要があります。
+州や県の正式名称と比較すると、ISOコードは曖昧さが少なく、世界中のすべての地域で一意です。
 
-## Included Maps
+## 含まれるマップ
 
-The current list of countries can be found in the src
-[legacy-plugin-chart-country-map/src/countries.ts](https://github.com/apache/superset/blob/master/superset-frontend/plugins/legacy-plugin-chart-country-map/src/countries.ts)
+現在の国リストは、ソース [legacy-plugin-chart-country-map/src/countries.ts](https://github.com/apache/superset/blob/master/superset-frontend/plugins/legacy-plugin-chart-country-map/src/countries.ts) に記載されています。
 
-The Country Maps visualization already ships with the maps for the following countries:
+Country Maps ビジュアライゼーションには、以下の国の地図が既に含まれています。
 
 <ul style={{columns: 3}}>
 {countriesData.countries.map((country, index) => (
@@ -28,13 +24,12 @@ The Country Maps visualization already ships with the maps for the following cou
 ))}
 </ul>
 
-## Adding a New Country
+## 新しい国を追加する
 
-To add a new country to the list, you'd have to edit files in
-[@superset-ui/legacy-plugin-chart-country-map](https://github.com/apache/superset/tree/master/superset-frontend/plugins/legacy-plugin-chart-country-map).
+リストに新しい国を追加するには、[@superset-ui/legacy-plugin-chart-country-map](https://github.com/apache/superset/tree/master/superset-frontend/plugins/legacy-plugin-chart-country-map) 内のファイルを編集する必要があります。
 
-1. Generate a new GeoJSON file for your country following the guide in [this Jupyter notebook](https://github.com/apache/superset/blob/master/superset-frontend/plugins/legacy-plugin-chart-country-map/scripts/Country%20Map%20GeoJSON%20Generator.ipynb).
-2. Edit the countries list in [legacy-plugin-chart-country-map/src/countries.ts](https://github.com/apache/superset/blob/master/superset-frontend/plugins/legacy-plugin-chart-country-map/src/countries.ts).
-3. Install superset-frontend dependencies: `cd superset-frontend && npm install`
-4. Verify your countries in Superset plugins storybook: `npm run plugins:storybook`.
-5. Build and install Superset from source code.
+1. [こちらの Jupyter Notebook](https://github.com/apache/superset/blob/master/superset-frontend/plugins/legacy-plugin-chart-country-map/scripts/Country%20Map%20GeoJSON%20Generator.ipynb) のガイドに従って、対象の国用の新しい GeoJSON ファイルを生成します。
+2. [legacy-plugin-chart-country-map/src/countries.ts](https://github.com/apache/superset/blob/master/superset-frontend/plugins/legacy-plugin-chart-country-map/src/countries.ts) の国リストを編集します。
+3. superset-frontend の依存関係をインストールします: `cd superset-frontend && npm install`
+4. Superset プラグインのストーリーブックで国を確認します: `npm run plugins:storybook`
+5. ソースコードから Superset をビルドしてインストールします。

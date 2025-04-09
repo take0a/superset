@@ -1,14 +1,15 @@
 ---
-title: Importing and Exporting Datasources
+title: データソースのインポートとエクスポート
 hide_title: true
 sidebar_position: 11
 version: 1
 ---
 
-# Importing and Exporting Datasources
+# データソースのインポートとエクスポート
 
-The superset cli allows you to import and export datasources from and to YAML. Datasources include
-databases. The data is expected to be organized in the following hierarchy:
+superset cli を使用すると、YAML からデータソースをインポートおよびエクスポートできます。
+データソースにはデータベースが含まれます。
+データは次の階層構造で整理される必要があります:
 
 ```text
 ├──databases
@@ -26,94 +27,91 @@ databases. The data is expected to be organized in the following hierarchy:
 |  └── ... (more databases)
 ```
 
-## Exporting Datasources to YAML
+## データソースをYAMLにエクスポートする
 
-You can print your current datasources to stdout by running:
+次のコマンドを実行すると、現在のデータソースを stdout に出力できます:
 
 ```bash
 superset export_datasources
 ```
 
-To save your datasources to a ZIP file run:
+データソースを ZIP ファイルに保存するには、次のコマンドを実行します:
 
 ```bash
 superset export_datasources -f <filename>
 ```
 
-By default, default (null) values will be omitted. Use the -d flag to include them. If you want back
-references to be included (e.g. a column to include the table id it belongs to) use the -b flag.
+デフォルトでは、デフォルト値（null）は省略されます。デフォルト値を含めるには、-d フラグを使用してください。
+後方参照を含める場合（例：列に所属するテーブル ID を含める場合）は、-b フラグを使用してください。
 
-Alternatively, you can export datasources using the UI:
+UI を使用してデータソースをエクスポートすることもできます。
 
-1. Open **Sources -> Databases** to export all tables associated to a single or multiple databases.
-   (**Tables** for one or more tables)
-2. Select the items you would like to export.
-3. Click **Actions -> Export** to YAML
-4. If you want to import an item that you exported through the UI, you will need to nest it inside
-   its parent element, e.g. a database needs to be nested under databases a table needs to be nested
-   inside a database element.
+1. **Sources -> Databases** を開き、単一または複数のデータベースに関連付けられたすべてのテーブルをエクスポートします。
+   （1 つ以上のテーブルの場合は [テーブル] を選択します。）
+2. エクスポートする項目を選択します。
+3. **Actions -> Export** をクリックします。
+4. UI を使用してエクスポートした項目をインポートする場合は、親要素内にネストする必要があります。たとえば、データベースはデータベースの下にネストし、テーブルはデータベース要素内にネストする必要があります。
 
-In order to obtain an **exhaustive list of all fields** you can import using the YAML import run:
+**すべてのフィールドの完全なリスト** を取得するには、YAML インポートを使用して次のコマンドを実行します。
 
 ```bash
 superset export_datasource_schema
 ```
 
-As a reminder, you can use the `-b` flag to include back references.
+なお、バック参照を含めるには `-b` フラグを使用できます。
 
-## Importing Datasources
+## データソースのインポート
 
-In order to import datasources from a ZIP file, run:
+ZIPファイルからデータソースをインポートするには、次のコマンドを実行します:
 
 ```bash
 superset import_datasources -p <path / filename>
 ```
 
-The optional username flag **-u** sets the user used for the datasource import. The default is 'admin'. Example:
+オプションのユーザー名フラグ **-u** は、データソースのインポートに使用するユーザーを設定します。デフォルトは「admin」です。例:
 
 ```bash
 superset import_datasources -p <path / filename> -u 'admin'
 ```
 
-## Legacy Importing Datasources
+## レガシーデータソースのインポート
 
-### From older versions of Superset to current version
+### 旧バージョンのSupersetから最新バージョンへ
 
-When using Superset version 4.x.x to import from an older version (2.x.x or 3.x.x) importing is supported as the command `legacy_import_datasources` and expects a JSON or directory of JSONs. The options are `-r` for recursive and `-u` for specifying a user. Example of legacy import without options:
+Supersetバージョン4.x.xを使用して旧バージョン（2.x.xまたは3.x.x）からインポートする場合、インポートはコマンド「legacy_import_datasources」でサポートされ、JSONまたはJSONのディレクトリが想定されます。オプションは、再帰インポートの場合は「-r」、ユーザー指定の場合は「-u」です。オプションなしのレガシーインポートの例:
 
 ```bash
 superset legacy_import_datasources -p <path or filename>
 ```
 
-### From older versions of Superset to older versions
+### 旧バージョンの Superset から旧バージョンへ
 
-When using an older Superset version (2.x.x & 3.x.x) of Superset, the command is `import_datasources`. ZIP and YAML files are supported and to switch between them the feature flag `VERSIONED_EXPORT` is used. When `VERSIONED_EXPORT` is `True`, `import_datasources` expects a ZIP file, otherwise YAML. Example:
+旧バージョンのSuperset (2.x.xおよび3.x.x)を使用する場合、コマンドは`import_datasources`です。ZIPファイルとYAMLファイルがサポートされており、これらを切り替えるには機能フラグ`VERSIONED_EXPORT`を使用します。`VERSIONED_EXPORT`が`True`の場合、`import_datasources`はZIPファイルを、それ以外の場合はYAMLファイルを要求します。例:
 
 ```bash
 superset import_datasources -p <path or filename>
 ```
 
-When `VERSIONED_EXPORT` is `False`, if you supply a path all files ending with **yaml** or **yml** will be parsed. You can apply
-additional flags (e.g. to search the supplied path recursively):
+`VERSIONED_EXPORT` が `False` の場合、パスを指定すると **yaml** または **yml** で終わるすべてのファイルが解析されます。
+追加のフラグを適用することもできます（例：指定されたパスを再帰的に検索する）:
 
 ```bash
 superset import_datasources -p <path> -r
 ```
 
-The sync flag **-s** takes parameters in order to sync the supplied elements with your file. Be
-careful this can delete the contents of your meta database. Example:
+同期フラグ **-s** は、指定された要素をファイルと同期するためのパラメータを受け取ります。
+これによりメタデータの内容が削除される可能性があるので注意してください。例:
 
 ```bash
 superset import_datasources -p <path / filename> -s columns,metrics
 ```
 
-This will sync all metrics and columns for all datasources found in the `<path /filename>` in the
-Superset meta database. This means columns and metrics not specified in YAML will be deleted. If you
-would add tables to columns,metrics those would be synchronised as well.
+これにより、Superset メタデータデータベースの `<path /filename>` にあるすべてのデータソースのすべてのメトリックと列が同期されます。
+つまり、YAML で指定されていない列とメトリックは削除されます。
+列やメトリックにテーブルを追加した場合、それらも同期されます。
 
-If you don’t supply the sync flag (**-s**) importing will only add and update (override) fields.
-E.g. you can add a verbose_name to the column ds in the table random_time_series from the example
-datasets by saving the following YAML to file and then running the **import_datasources** command.
+同期フラグ (**-s**) を指定しない場合、インポートではフィールドの追加と更新（上書き）のみが行われます。
+例えば、サンプルデータセットのテーブル random_time_series の列 ds に verbose_name を追加するには、次の YAML をファイルに保存し、**import_datasources** コマンドを実行します。
 
 ```yaml
 databases:

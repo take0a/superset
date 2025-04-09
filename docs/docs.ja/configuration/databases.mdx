@@ -1,39 +1,29 @@
 ---
-title: Connecting to Databases
+title: データベースへの接続
 hide_title: true
 sidebar_position: 1
 version: 1
 ---
-# Connecting to Databases
+# データベースへの接続
 
-Superset does not ship bundled with connectivity to databases. The main step in connecting
-Superset to a database is to **install the proper database driver(s)**
-in your environment.
+Superset には、データベースへの接続機能がバンドルされていません。Superset をデータベースに接続するための主な手順は、**適切なデータベース ドライバーを環境にインストールする** ことです。
 
 :::note
-You’ll need to install the required packages for the database you want to use as your metadata database
-as well as the packages needed to connect to the databases you want to access through Superset.
-For information about setting up Superset's metadata database, please refer to
-installation documentations ([Docker Compose](/docs/installation/docker-compose), [Kubernetes](/docs/installation/kubernetes))
+メタデータ データベースとして使用するデータベースに必要なパッケージと、Superset 経由でアクセスするデータベースに接続するために必要なパッケージをインストールする必要があります。
+Superset のメタデータ データベースの設定については、インストール ドキュメント ([Docker Compose](/docs/installation/docker-compose)、[Kubernetes](/docs/installation/kubernetes)) を参照してください。
 :::
 
-This documentation tries to keep pointer to the different drivers for commonly used database
-engine.
+このドキュメントでは、一般的に使用されるデータベース エンジンのさまざまなドライバーへのポインターを維持しようとします。
 
-## Installing Database Drivers
+## データベースドライバーのインストール
 
-Superset requires a Python [DB-API database driver](https://peps.python.org/pep-0249/)
-and a [SQLAlchemy dialect](https://docs.sqlalchemy.org/en/20/dialects/) to be installed for
-each database engine you want to connect to.
+Superset では、接続するデータベース エンジンごとに、Python [DB-API データベース ドライバー](https://peps.python.org/pep-0249/) と [SQLAlchemy 方言](https://docs.sqlalchemy.org/en/20/dialects/) がインストールされている必要があります。
 
-You can read more [here](/docs/configuration/databases#installing-drivers-in-docker-images) about how to
-install new database drivers into your Superset configuration.
+Superset 構成に新しいデータベース ドライバーをインストールする方法については、[こちら](/docs/configuration/databases#installing-drivers-in-docker-images) で詳しく読むことができます。
 
-### Supported Databases and Dependencies
+### サポートされているデータベースと依存関係
 
-Some of the recommended packages are shown below. Please refer to
-[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml) for the versions that
-are compatible with Superset.
+推奨パッケージの一部を以下に示します。Supersetと互換性のあるバージョンについては、[pyproject.toml](https://github.com/apache/superset/blob/master/pyproject.toml) を参照してください。
 
 | <div style={{width: '150px'}}>Database</div>                   | PyPI package                                                                       | Connection String                                                                                                                                      |
 | --------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -87,111 +77,83 @@ are compatible with Superset.
 
 ---
 
-Note that many other databases are supported, the main criteria being the existence of a functional
-SQLAlchemy dialect and Python driver. Searching for the keyword "sqlalchemy + (database name)"
-should help get you to the right place.
+他にも多くのデータベースがサポートされていることに注意してください。主な基準は、機能的な SQLAlchemy 方言と Python ドライバーの存在です。キーワード「sqlalchemy + (データベース名)」を検索すると、適切な場所にたどり着くことができます。
 
-If your database or data engine isn't on the list but a SQL interface
-exists, please file an issue on the
-[Superset GitHub repo](https://github.com/apache/superset/issues), so we can work on documenting and
-supporting it.
+データベースまたはデータ エンジンがリストにないけれども、SQL インターフェイスが存在する場合は、[Superset GitHub リポジトリ](https://github.com/apache/superset/issues) に問題を報告してください。そうすれば、ドキュメント化とサポートに取り組むことができます。
 
-If you'd like to build a database connector for Superset integration,
-read the [following tutorial](https://preset.io/blog/building-database-connector/).
+Superset 統合用のデータベース コネクタを構築する場合は、[次のチュートリアル](https://preset.io/blog/building-database-connector/) をお読みください。
 
-### Installing Drivers in Docker Images
+### Docker イメージにドライバーをインストールする
 
-Superset requires a Python database driver to be installed for each additional
-type of database you want to connect to.
+Superset では、接続する追加のデータベースの種類ごとに Python データベース ドライバーをインストールする必要があります。
 
-In this example, we'll walk through how to install the MySQL connector library.
-The connector library installation process is the same for all additional libraries.
+この例では、MySQL コネクタライブラリのインストール方法について説明します。
+コネクタライブラリのインストールプロセスは、すべての追加ライブラリで同じです。
 
-#### 1. Determine the driver you need
+#### 1. 必要なドライバーを決定する
 
-Consult the [list of database drivers](/docs/configuration/databases)
-and find the PyPI package needed to connect to your database. In this example, we're connecting
-to a MySQL database, so we'll need the `mysqlclient` connector library.
+[データベースドライバ一覧](/docs/configuration/databases)を参照し、データベースへの接続に必要なPyPIパッケージを見つけてください。この例ではMySQLデータベースに接続するため、`mysqlclient`コネクタライブラリが必要になります。
 
-#### 2. Install the driver in the container
+#### 2. コンテナにドライバーをインストールする
 
-We need to get the `mysqlclient` library installed into the Superset docker container
-(it doesn't matter if it's installed on the host machine). We could enter the running
-container with `docker exec -it <container_name> bash` and run `pip install mysqlclient`
-there, but that wouldn't persist permanently.
+`mysqlclient` ライブラリを Superset Docker コンテナにインストールする必要があります (ホスト マシンにインストールされているかどうかは関係ありません)。`docker exec -it <container_name> bash` を使用して実行中のコンテナに入り、そこで `pip install mysqlclient` を実行することもできますが、永続的に保持されるわけではありません。
 
-To address this, the Superset `docker compose` deployment uses the convention
-of a `requirements-local.txt` file. All packages listed in this file will be installed
-into the container from PyPI at runtime. This file will be ignored by Git for
-the purposes of local development.
+この問題に対処するために、Superset `docker compose` デプロイメントでは `requirements-local.txt` ファイルの規則を使用します。
+このファイルにリストされているすべてのパッケージは、実行時に PyPI からコンテナにインストールされます。
+このファイルは、ローカル開発の目的で Git によって無視されます。
 
-Create the file `requirements-local.txt` in a subdirectory called `docker` that
-exists in the directory with your `docker-compose.yml` or `docker-compose-non-dev.yml` file.
+`docker-compose.yml` または `docker-compose-non-dev.yml` ファイルがあるディレクトリにある `docker` というサブディレクトリに `requirements-local.txt` ファイルを作成します。
 
 ```bash
 # Run from the repo root:
 touch ./docker/requirements-local.txt
 ```
 
-Add the driver identified in step above.  You can use a text editor or do
-it from the command line like:
+上記の手順で特定したドライバーを追加します。
+テキストエディタを使用するか、コマンドラインから次のように実行できます:
 
 ```bash
 echo "mysqlclient" >> ./docker/requirements-local.txt
 ```
 
-**If you are running a stock (non-customized) Superset image**, you are done.
-Launch Superset with `docker compose -f docker-compose-non-dev.yml up` and
-the driver should be present.
+**標準の（カスタマイズされていない）Superset イメージを実行している場合**、これで完了です。
+`docker compose -f docker-compose-non-dev.yml up` で Superset を起動すると、ドライバーがインストールされているはずです。
 
-You can check its presence by entering the running container with
-`docker exec -it <container_name> bash` and running `pip freeze`.  The PyPI package should
-be present in the printed list.
+`docker exec -it <container_name> bash` で実行中のコンテナに入り、`pip freeze` を実行することで、ドライバーの存在を確認できます。表示されるリストに PyPI パッケージが含まれているはずです。
 
-**If you're running a customized docker image**, rebuild your local image with the new
-driver baked in:
+**カスタマイズされた Docker イメージを実行している場合**、新しいドライバーを組み込んだローカルイメージを再構築します:
 
 ```bash
 docker compose build --force-rm
 ```
 
-After the rebuild of the Docker images is complete, relaunch Superset by
-running `docker compose up`.
+Docker イメージの再構築が完了したら、`docker compose up` を実行して Superset を再起動します。
 
-#### 3. Connect to MySQL
+#### 3. MySQLに接続する
 
-Now that you've got a MySQL driver installed in your container, you should be able to connect
-to your database via the Superset web UI.
+コンテナに MySQL ドライバーがインストールされたので、Superset の Web UI 経由でデータベースに接続できるようになります。
 
-As an admin user, go to Settings -> Data: Database Connections and click the +DATABASE button.
-From there, follow the steps on the
-[Using Database Connection UI page](/docs/configuration/databases#connecting-through-the-ui).
+管理者ユーザーとして、「Settings」 -> 「Data: Database Connections」に移動し、「+DATABASE」ボタンをクリックします。
+そこから、[データベース接続 UI の使用](/docs/configuration/databases#connecting-through-the-ui) の手順に従います。
 
-Consult the page for your specific database type in the Superset documentation to determine
-the connection string and any other parameters you need to input.  For instance,
-on the [MySQL page](/docs/configuration/databases#mysql), we see that the connection string
-to a local MySQL database differs depending on whether the setup is running on Linux or Mac.
+Superset ドキュメントで、ご利用のデータベースの種類に応じたページを参照し、接続文字列とその他の入力パラメータを確認してください。
+例えば、[MySQL ページ](/docs/configuration/databases#mysql) では、ローカル MySQL データベースへの接続文字列は、セットアップが Linux で実行されているか Mac で実行されているかによって異なります。
 
-Click the “Test Connection” button, which should result in a popup message saying,
-"Connection looks good!".
+「Test Connection」 ボタンをクリックすると、「Connection looks good!」というポップアップメッセージが表示されます。
 
-#### 4. Troubleshooting
+#### 4. トラブルシューティング
 
-If the test fails, review your docker logs for error messages.  Superset uses SQLAlchemy
-to connect to databases; to troubleshoot the connection string for your database, you might
-start Python in the Superset application container or host environment and try to connect
-directly to the desired database and fetch data. This eliminates Superset for the
-purposes of isolating the problem.
+テストが失敗した場合は、Docker ログでエラー メッセージを確認してください。Superset は SQLAlchemy を使用してデータベースに接続します。データベースの接続文字列のトラブルシューティングを行うには、Superset アプリケーション コンテナーまたはホスト環境で Python を起動し、目的のデータベースに直接接続してデータを取得してみてください。これにより、問題を切り分けるために Superset が排除されます。
 
-Repeat this process for each type of database you want Superset to connect to.
+Superset が接続するデータベースの種類ごとにこのプロセスを繰り返します。
 
-### Database-specific Instructions
+### データベース固有の指示
 
 #### Ascend.io
 
-The recommended connector library to Ascend.io is [impyla](https://github.com/cloudera/impyla).
+Ascend.io に推奨されるコネクタ ライブラリは [impyla](https://github.com/cloudera/impyla) です。
 
-The expected connection string is formatted as follows:
+想定される接続文字列の形式は次のとおりです:
 
 ```
 ascend://{username}:{password}@{hostname}:{port}/{database}?auth_mechanism=PLAIN;use_ssl=true
@@ -199,9 +161,9 @@ ascend://{username}:{password}@{hostname}:{port}/{database}?auth_mechanism=PLAIN
 
 #### Apache Doris
 
-The [sqlalchemy-doris](https://pypi.org/project/pydoris/) library is the recommended way to connect to Apache Doris through SQLAlchemy.
+SQLAlchemy 経由で Apache Doris に接続するには、[sqlalchemy-doris](https://pypi.org/project/pydoris/) ライブラリの使用が推奨されます。
 
-You'll need the following setting values to form the connection string:
+接続文字列を作成するには、以下の設定値が必要です:
 
 - **User**: User Name
 - **Password**: Password
@@ -210,7 +172,7 @@ You'll need the following setting values to form the connection string:
 - **Catalog**: Catalog Name
 - **Database**: Database Name
 
-Here's what the connection string looks like:
+接続文字列は次のようになります:
 
 ```
 doris://<User>:<Password>@<Host>:<Port>/<Catalog>.<Database>
@@ -220,16 +182,15 @@ doris://<User>:<Password>@<Host>:<Port>/<Catalog>.<Database>
 
 ##### PyAthenaJDBC
 
-[PyAthenaJDBC](https://pypi.org/project/PyAthenaJDBC/) is a Python DB 2.0 compliant wrapper for the
-[Amazon Athena JDBC driver](https://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html).
+[PyAthenaJDBC](https://pypi.org/project/PyAthenaJDBC/) は、[Amazon Athena JDBC ドライバー](https://docs.aws.amazon.com/athena/latest/ug/connect-with-jdbc.html) 用の Python DB 2.0 準拠のラッパーです。
 
-The connection string for Amazon Athena is as follows:
+Amazon Athena の接続文字列は次のとおりです:
 
 ```
 awsathena+jdbc://{aws_access_key_id}:{aws_secret_access_key}@athena.{region_name}.amazonaws.com/{schema_name}?s3_staging_dir={s3_staging_dir}&...
 ```
 
-Note that you'll need to escape & encode when forming the connection string like so:
+次のように接続文字列を形成するときは、エスケープとエンコードを行う必要があることに注意してください:
 
 ```
 s3://... -> s3%3A//...
@@ -237,14 +198,13 @@ s3://... -> s3%3A//...
 
 ##### PyAthena
 
-You can also use the [PyAthena library](https://pypi.org/project/PyAthena/) (no Java required) with the
-following connection string:
+次の接続文字列を使用して、[PyAthena ライブラリ](https://pypi.org/project/PyAthena/) (Java は不要) を使用することもできます:
 
 ```
 awsathena+rest://{aws_access_key_id}:{aws_secret_access_key}@athena.{region_name}.amazonaws.com/{schema_name}?s3_staging_dir={s3_staging_dir}&...
 ```
 
-The PyAthena library also allows to assume a specific IAM role which you can define by adding following parameters in Superset's Athena database connection UI under ADVANCED --> Other --> ENGINE PARAMETERS.
+PyAthena ライブラリでは、Superset の Athena データベース接続 UI の [ADVANCED] --> [Other] --> [ENGINE PARAMETERS] で次のパラメータを追加することで定義できる特定の IAM ロールを引き受けることもできます。
 
 ```json
 {
@@ -258,24 +218,23 @@ The PyAthena library also allows to assume a specific IAM role which you can def
 
 ##### PyDynamoDB
 
-[PyDynamoDB](https://pypi.org/project/PyDynamoDB/) is a Python DB API 2.0 (PEP 249) client for Amazon DynamoDB.
+[PyDynamoDB](https://pypi.org/project/PyDynamoDB/) は、Amazon DynamoDB 用の Python DB API 2.0 (PEP 249) クライアントです。
 
-The connection string for Amazon DynamoDB is as follows:
+Amazon DynamoDB への接続文字列は次のとおりです:
 
 ```
 dynamodb://{aws_access_key_id}:{aws_secret_access_key}@dynamodb.{region_name}.amazonaws.com:443?connector=superset
 ```
 
-To get more documentation, please visit: [PyDynamoDB WIKI](https://github.com/passren/PyDynamoDB/wiki/5.-Superset).
+詳細なドキュメントについては、[PyDynamoDB WIKI](https://github.com/passren/PyDynamoDB/wiki/5.-Superset) をご覧ください。
 
 #### AWS Redshift
 
-The [sqlalchemy-redshift](https://pypi.org/project/sqlalchemy-redshift/) library is the recommended
-way to connect to Redshift through SQLAlchemy.
+SQLAlchemy 経由で Redshift に接続するには、[sqlalchemy-redshift](https://pypi.org/project/sqlalchemy-redshift/) ライブラリの使用が推奨されます。
 
-This dialect requires either [redshift_connector](https://pypi.org/project/redshift-connector/) or [psycopg2](https://pypi.org/project/psycopg2/) to work properly.
+この方言が正しく動作するには、[redshift_connector](https://pypi.org/project/redshift-connector/) または [psycopg2](https://pypi.org/project/psycopg2/) のいずれかが必要です。
 
-You'll need to set the following values to form the connection string:
+接続文字列を作成するには、以下の値を設定する必要があります:
 
 - **User Name**: userName
 - **Password**: DBPassword
@@ -285,7 +244,7 @@ You'll need to set the following values to form the connection string:
 
 ##### psycopg2
 
-Here's what the SQLALCHEMY URI looks like:
+SQLALCHEMY URI は次のようになります:
 
 ```
 redshift+psycopg2://<userName>:<DBPassword>@<AWS End Point>:5439/<Database Name>
@@ -293,33 +252,33 @@ redshift+psycopg2://<userName>:<DBPassword>@<AWS End Point>:5439/<Database Name>
 
 ##### redshift_connector
 
-Here's what the SQLALCHEMY URI looks like:
+SQLALCHEMY URI は次のようになります:
 
 ```
 redshift+redshift_connector://<userName>:<DBPassword>@<AWS End Point>:5439/<Database Name>
 ```
 
-###### Using IAM-based credentials with Redshift cluster
+###### Redshift クラスターで IAM ベースの認証情報を使用する
 
-[Amazon redshift cluster](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html) also supports generating temporary IAM-based database user credentials.
+[Amazon Redshift クラスター](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html) は、一時的な IAM ベースのデータベースユーザー認証情報の生成もサポートしています。
 
-Your superset app's [IAM role should have permissions](https://docs.aws.amazon.com/redshift/latest/mgmt/generating-iam-credentials-role-permissions.html) to call the `redshift:GetClusterCredentials` operation.
+superset アプリの [IAM ロールには、`redshift:GetClusterCredentials` オペレーションを呼び出すための権限が必要です](https://docs.aws.amazon.com/redshift/latest/mgmt/generating-iam-credentials-role-permissions.html)。
 
-You have to define the following arguments in Superset's redshift database connection UI under ADVANCED --> Others --> ENGINE PARAMETERS.
+superset の Redshift データベース接続 UI の [ADVANCED] --> [Others] --> [ENGINE PARAMETERS] で、以下の引数を定義する必要があります。
 
 ```
 {"connect_args":{"iam":true,"database":"<database>","cluster_identifier":"<cluster_identifier>","db_user":"<db_user>"}}
 ```
 
-and SQLALCHEMY URI should be set to `redshift+redshift_connector://`
+SQLALCHEMY URIは`redshift+redshift_connector://`に設定する必要があります。
 
-###### Using IAM-based credentials with Redshift serverless
+###### Redshift サーバーレスで IAM ベースの認証情報を使用する
 
-[Redshift serverless](https://docs.aws.amazon.com/redshift/latest/mgmt/serverless-whatis.html) supports connection using IAM roles.
+[Redshift Serverless](https://docs.aws.amazon.com/redshift/latest/mgmt/serverless-whatis.html) は、IAM ロールを使用した接続をサポートしています。
 
-Your superset app's IAM role should have `redshift-serverless:GetCredentials` and `redshift-serverless:GetWorkgroup` permissions on Redshift serverless workgroup.
+Superset アプリの IAM ロールには、Redshift Serverless ワークグループに対する `redshift-serverless:GetCredentials` および `redshift-serverless:GetWorkgroup` 権限が必要です。
 
-You have to define the following arguments in Superset's redshift database connection UI under ADVANCED --> Others --> ENGINE PARAMETERS.
+Superset の Redshift データベース接続 UI の「ADVANCED」->「Others」->「ENGINE PARAMETERS」で、以下の引数を定義する必要があります。
 
 ```
 {"connect_args":{"iam":true,"is_serverless":true,"serverless_acct_id":"<aws account number>","serverless_work_group":"<redshift work group>","database":"<database>","user":"IAMR:<superset iam role name>"}}
@@ -327,31 +286,29 @@ You have to define the following arguments in Superset's redshift database conne
 
 #### ClickHouse
 
-To use ClickHouse with Superset, you will need to install the `clickhouse-connect` Python library:
+ClickHouse を Superset で使用するには、`clickhouse-connect` Python ライブラリをインストールする必要があります:
 
-If running Superset using Docker Compose, add the following to your `./docker/requirements-local.txt` file:
+Docker Compose を使用して Superset を実行する場合は、`./docker/requirements-local.txt` ファイルに次の内容を追加します:
 
 ```
 clickhouse-connect>=0.6.8
 ```
 
-The recommended connector library for ClickHouse is
-[clickhouse-connect](https://github.com/ClickHouse/clickhouse-connect).
+ClickHouse に推奨されるコネクタライブラリは [clickhouse-connect](https://github.com/ClickHouse/clickhouse-connect) です。
 
-The expected connection string is formatted as follows:
+想定される接続文字列の形式は次のとおりです:
 
 ```
 clickhousedb://<user>:<password>@<host>:<port>/<database>[?options…]clickhouse://{username}:{password}@{hostname}:{port}/{database}
 ```
 
-Here's a concrete example of a real connection string:
+実際の接続文字列の具体的な例を次に示します:
 
 ```
 clickhousedb://demo:demo@github.demo.trial.altinity.cloud/default?secure=true
 ```
 
-If you're using Clickhouse locally on your computer, you can get away with using a http protocol URL that
-uses the default user without a password (and doesn't encrypt the connection):
+Clickhouse をコンピュータ上でローカルに使用している場合は、パスワードなしでデフォルトのユーザーを使用する (接続を暗号化しない) http プロトコル URL を使用すれば済みます:
 
 ```
 clickhousedb://localhost/default
@@ -359,10 +316,9 @@ clickhousedb://localhost/default
 
 #### CockroachDB
 
-The recommended connector library for CockroachDB is
-[sqlalchemy-cockroachdb](https://github.com/cockroachdb/sqlalchemy-cockroachdb).
+CockroachDB に推奨されるコネクタライブラリは [sqlalchemy-cockroachdb](https://github.com/cockroachdb/sqlalchemy-cockroachdb) です。
 
-The expected connection string is formatted as follows:
+想定される接続文字列の形式は次のとおりです:
 
 ```
 cockroachdb://root@{hostname}:{port}/{database}?sslmode=disable
@@ -370,15 +326,14 @@ cockroachdb://root@{hostname}:{port}/{database}?sslmode=disable
 
 #### Couchbase
 
-The Couchbase's Superset connection is designed to support two services: Couchbase Analytics and Couchbase Columnar.
-The recommended connector library for couchbase is
-[couchbase-sqlalchemy](https://github.com/couchbase/couchbase-sqlalchemy).
+Couchbase の Superset 接続は、Couchbase Analytics と Couchbase Columnar の 2 つのサービスをサポートするように設計されています。
+Couchbase に推奨されるコネクタライブラリは [couchbase-sqlalchemy](https://github.com/couchbase/couchbase-sqlalchemy) です。
 
 ```
 pip install couchbase-sqlalchemy
 ```
 
-The expected connection string is formatted as follows:
+予想される接続文字列の形式は次のとおりです:
 
 ```
 couchbase://{username}:{password}@{hostname}:{port}?truststorepath={certificate path}?ssl={true/false}
@@ -386,30 +341,26 @@ couchbase://{username}:{password}@{hostname}:{port}?truststorepath={certificate 
 
 #### CrateDB
 
-The connector library for CrateDB is [sqlalchemy-cratedb].
-We recommend to add the following item to your `requirements.txt` file:
+CrateDB のコネクタライブラリは [sqlalchemy-cratedb] です。
+`requirements.txt` ファイルに次の項目を追加することをお勧めします:
 
 ```
 sqlalchemy-cratedb>=0.40.1,<1
 ```
 
-An SQLAlchemy connection string for [CrateDB Self-Managed] on localhost,
-for evaluation purposes, looks like this:
+評価目的でローカルホスト上の[CrateDB Self-Managed]のSQLAlchemy接続文字列は次のようになります:
 
 ```
 crate://crate@127.0.0.1:4200
 ```
 
-An SQLAlchemy connection string for connecting to [CrateDB Cloud] looks like
-this:
+[CrateDB Cloud] に接続するための SQLAlchemy 接続文字列は次のようになります:
 
 ```
 crate://<username>:<password>@<clustername>.cratedb.net:4200/?ssl=true
 ```
 
-Follow the steps [here](/docs/configuration/databases#installing-database-drivers)
-to install the CrateDB connector package when setting up Superset locally using
-Docker Compose.
+Docker Compose を使用してローカルで Superset を設定する場合は、[こちら](/docs/configuration/databases#installing-database-drivers) の手順に従って、CrateDB コネクタ パッケージをインストールしてください。
 
 ```
 echo "sqlalchemy-cratedb" >> ./docker/requirements-local.txt
@@ -421,16 +372,16 @@ echo "sqlalchemy-cratedb" >> ./docker/requirements-local.txt
 
 #### Databend
 
-The recommended connector library for Databend is [databend-sqlalchemy](https://pypi.org/project/databend-sqlalchemy/).
-Superset has been tested on `databend-sqlalchemy>=0.2.3`.
+Databend の推奨コネクタライブラリは [databend-sqlalchemy](https://pypi.org/project/databend-sqlalchemy/) です。
+Superset は `databend-sqlalchemy>=0.2.3` でテストされています。
 
-The recommended connection string is:
+推奨される接続文字列は次のとおりです。
 
 ```
 databend://{username}:{password}@{host}:{port}/{database_name}
 ```
 
-Here's a connection string example of Superset connecting to a Databend database:
+以下は、Superset が Databend データベースに接続する接続文字列の例です:
 
 ```
 databend://user:password@localhost:8000/default?secure=false
@@ -438,29 +389,29 @@ databend://user:password@localhost:8000/default?secure=false
 
 #### Databricks
 
-Databricks now offer a native DB API 2.0 driver, `databricks-sql-connector`, that can be used with the `sqlalchemy-databricks` dialect. You can install both with:
+Databricks は現在、ネイティブ DB API 2.0 ドライバ「databricks-sql-connector」を提供しています。これは「sqlalchemy-databricks」方言で使用できます。どちらも以下のコマンドでインストールできます:
 
 ```bash
 pip install "apache-superset[databricks]"
 ```
 
-To use the Hive connector you need the following information from your cluster:
+Hive コネクタを使用するには、クラスターから次の情報を取得する必要があります:
 
 - Server hostname
 - Port
 - HTTP path
 
-These can be found under "Configuration" -> "Advanced Options" -> "JDBC/ODBC".
+これらは、「構成」→「詳細オプション」→「JDBC/ODBC」にあります。
 
-You also need an access token from "Settings" -> "User Settings" -> "Access Tokens".
+また、「設定」→「ユーザー設定」→「アクセストークン」からアクセストークンを取得する必要があります。
 
-Once you have all this information, add a database of type "Databricks Native Connector" and use the following SQLAlchemy URI:
+これらの情報をすべて入手したら、「Databricks Native Connector」タイプのデータベースを追加し、以下のSQLAlchemy URIを使用します:
 
 ```
 databricks+connector://token:{access_token}@{server_hostname}:{port}/{database_name}
 ```
 
-You also need to add the following configuration to "Other" -> "Engine Parameters", with your HTTP path:
+また、HTTP パスを使用して、「その他」->「エンジン パラメータ」に次の構成を追加する必要があります:
 
 ```json
 {
@@ -470,23 +421,23 @@ You also need to add the following configuration to "Other" -> "Engine Parameter
 
 ##### Older driver
 
-Originally Superset used `databricks-dbapi` to connect to Databricks. You might want to try it if you're having problems with the official Databricks connector:
+元々、SupersetはDatabricksへの接続に`databricks-dbapi`を使用していました。公式のDatabricksコネクタで問題が発生している場合は、こちらを試してみると良いかもしれません:
 
 ```bash
 pip install "databricks-dbapi[sqlalchemy]"
 ```
 
-There are two ways to connect to Databricks when using `databricks-dbapi`: using a Hive connector or an ODBC connector. Both ways work similarly, but only ODBC can be used to connect to [SQL endpoints](https://docs.databricks.com/sql/admin/sql-endpoints.html).
+`databricks-dbapi` を使用する場合、Databricks に接続する方法は 2 つあります。Hive コネクタを使用する方法と ODBC コネクタを使用する方法です。どちらの方法も動作は似ていますが、[SQL エンドポイント](https://docs.databricks.com/sql/admin/sql-endpoints.html) への接続には ODBC のみを使用できます。
 
 #### Hive
 
-To connect to a Hive cluster add a database of type "Databricks Interactive Cluster" in Superset, and use the following SQLAlchemy URI:
+Hive クラスターに接続するには、Superset に「Databricks Interactive Cluster」タイプのデータベースを追加し、次の SQLAlchemy URI を使用します:
 
 ```
 databricks+pyhive://token:{access_token}@{server_hostname}:{port}/{database_name}
 ```
 
-You also need to add the following configuration to "Other" -> "Engine Parameters", with your HTTP path:
+また、HTTP パスを使用して、「Other」->「Engine Parameters」に次の構成を追加する必要があります。
 
 ```json
 {"connect_args": {"http_path": "sql/protocolv1/o/****"}}
@@ -494,26 +445,26 @@ You also need to add the following configuration to "Other" -> "Engine Parameter
 
 #### ODBC
 
-For ODBC you first need to install the [ODBC drivers for your platform](https://databricks.com/spark/odbc-drivers-download).
+ODBC を使用する場合は、まず [お使いのプラットフォーム用の ODBC ドライバー](https://databricks.com/spark/odbc-drivers-download) をインストールする必要があります。
 
-For a regular connection use this as the SQLAlchemy URI after selecting either "Databricks Interactive Cluster" or "Databricks SQL Endpoint" for the database, depending on your use case:
+通常の接続の場合は、ユースケースに応じてデータベースとして「Databricks Interactive Cluster」または「Databricks SQL Endpoint」を選択した後、これを SQLAlchemy URI として使用します:
 
 ```
 databricks+pyodbc://token:{access_token}@{server_hostname}:{port}/{database_name}
 ```
 
-And for the connection arguments:
+接続引数については次のようになります:
 
 ```json
 {"connect_args": {"http_path": "sql/protocolv1/o/****", "driver_path": "/path/to/odbc/driver"}}
 ```
 
-The driver path should be:
+ドライバーのパスは次のようになります:
 
 - `/Library/simba/spark/lib/libsparkodbc_sbu.dylib` (Mac OS)
 - `/opt/simba/spark/lib/64/libsparkodbc_sb64.so` (Linux)
 
-For a connection to a SQL endpoint you need to use the HTTP path from the endpoint:
+SQL エンドポイントに接続するには、エンドポイントからの HTTP パスを使用する必要があります:
 
 ```json
 {"connect_args": {"http_path": "/sql/1.0/endpoints/****", "driver_path": "/path/to/odbc/driver"}}
@@ -521,10 +472,9 @@ For a connection to a SQL endpoint you need to use the HTTP path from the endpoi
 
 #### Denodo
 
-The recommended connector library for Denodo is
-[denodo-sqlalchemy](https://pypi.org/project/denodo-sqlalchemy/).
+Denodo に推奨されるコネクタライブラリは [denodo-sqlalchemy](https://pypi.org/project/denodo-sqlalchemy/) です。
 
-The expected connection string is formatted as follows (default port is 9996):
+想定される接続文字列の形式は次のとおりです（デフォルトポートは 9996 です）:
 
 ```
 denodo://{username}:{password}@{hostname}:{port}/{database}
@@ -532,42 +482,38 @@ denodo://{username}:{password}@{hostname}:{port}/{database}
 
 #### Dremio
 
-The recommended connector library for Dremio is
-[sqlalchemy_dremio](https://pypi.org/project/sqlalchemy-dremio/).
+Dremio に推奨されるコネクタライブラリは [sqlalchemy_dremio](https://pypi.org/project/sqlalchemy-dremio/) です。
 
-The expected connection string for ODBC (Default port is 31010) is formatted as follows:
+ODBC の接続文字列（デフォルトポートは 31010）は、以下の形式になります:
 
 ```
 dremio+pyodbc://{username}:{password}@{host}:{port}/{database_name}/dremio?SSL=1
 ```
 
-The expected connection string for Arrow Flight (Dremio 4.9.1+. Default port is 32010) is formatted as follows:
+Arrow Flight (Dremio 4.9.1+。デフォルト ポートは 32010) の予想される接続文字列は、次の形式になります:
 
 ```
 dremio+flight://{username}:{password}@{host}:{port}/dremio
 ```
 
-This [blog post by Dremio](https://www.dremio.com/tutorials/dremio-apache-superset/) has some
-additional helpful instructions on connecting Superset to Dremio.
+この [Dremio のブログ投稿](https://www.dremio.com/tutorials/dremio-apache-superset/) には、Superset を Dremio に接続するための追加の役立つ手順が記載されています。
 
 #### Apache Drill
 
 ##### SQLAlchemy
 
-The recommended way to connect to Apache Drill is through SQLAlchemy. You can use the
-[sqlalchemy-drill](https://github.com/JohnOmernik/sqlalchemy-drill) package.
+Apache Drillへの接続には、SQLAlchemy経由の接続が推奨されます。[sqlalchemy-drill](https://github.com/JohnOmernik/sqlalchemy-drill) パッケージを使用できます。
 
-Once that is done, you can connect to Drill in two ways, either via the REST interface or by JDBC.
-If you are connecting via JDBC, you must have the Drill JDBC Driver installed.
+インストールが完了すると、RESTインターフェース経由またはJDBC経由の2つの方法でDrillに接続できるようになります。
+JDBC経由で接続する場合は、Drill JDBCドライバーがインストールされている必要があります。
 
-The basic connection string for Drill looks like this:
+Drillの基本的な接続文字列は次のとおりです。
 
 ```
 drill+sadrill://<username>:<password>@<host>:<port>/<storage_plugin>?use_ssl=True
 ```
 
-To connect to Drill running on a local machine running in embedded mode you can use the following
-connection string:
+組み込みモードで実行されているローカル マシンで実行されている Drill に接続するには、次の接続文字列を使用できます:
 
 ```
 drill+sadrill://localhost:8047/dfs?use_ssl=False
@@ -575,10 +521,9 @@ drill+sadrill://localhost:8047/dfs?use_ssl=False
 
 ##### JDBC
 
-Connecting to Drill through JDBC is more complicated and we recommend following
-[this tutorial](https://drill.apache.org/docs/using-the-jdbc-driver/).
+JDBC 経由で Drill に接続する方法はより複雑なため、[こちらのチュートリアル](https://drill.apache.org/docs/using-the-jdbc-driver/) に従うことをお勧めします。
 
-The connection string looks like:
+接続文字列は次のようになります:
 
 ```
 drill+jdbc://<username>:<password>@<host>:<port>
@@ -586,49 +531,42 @@ drill+jdbc://<username>:<password>@<host>:<port>
 
 ##### ODBC
 
-We recommend reading the
-[Apache Drill documentation](https://drill.apache.org/docs/installing-the-driver-on-linux/) and read
-the [GitHub README](https://github.com/JohnOmernik/sqlalchemy-drill#usage-with-odbc) to learn how to
-work with Drill through ODBC.
+ODBC を介して Drill を操作する方法を学ぶには、[Apache Drill のドキュメント](https://drill.apache.org/docs/installing-the-driver-on-linux/) を読み、[GitHub README](https://github.com/JohnOmernik/sqlalchemy-drill#usage-with-odbc) を読むことをお勧めします。
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
 #### Apache Druid
 
-A native connector to Druid ships with Superset (behind the `DRUID_IS_ACTIVE` flag) but this is
-slowly getting deprecated in favor of the SQLAlchemy / DBAPI connector made available in the
-[pydruid library](https://pythonhosted.org/pydruid/).
+Druid へのネイティブ コネクタは Superset (`DRUID_IS_ACTIVE` フラグの背後) に同梱されていますが、これは [pydruid ライブラリ](https://pythonhosted.org/pydruid/) で利用できる SQLAlchemy / DBAPI コネクタに取って代わられ、徐々に廃止されつつあります。
 
-The connection string looks like:
+接続文字列は次のようになります:
 
 ```
 druid://<User>:<password>@<Host>:<Port-default-9088>/druid/v2/sql
 ```
 
-Here's a breakdown of the key components of this connection string:
+この接続文字列の主要な構成要素は次のとおりです。
 
-- `User`: username portion of the credentials needed to connect to your database
-- `Password`: password portion of the credentials needed to connect to your database
-- `Host`: IP address (or URL) of the host machine that's running your database
-- `Port`: specific port that's exposed on your host machine where your database is running
+- `User`: データベースへの接続に必要な認証情報のユーザー名部分
+- `Password`: データベースへの接続に必要な認証情報のパスワード部分
+- `Host`: データベースを実行しているホストマシンのIPアドレス（またはURL）
+- `Port`: データベースを実行しているホストマシンで公開されている特定のポート
 
-##### Customizing Druid Connection
+##### Druid 接続のカスタマイズ
 
-When adding a connection to Druid, you can customize the connection a few different ways in the
-**Add Database** form.
+Druid への接続を追加する際、**Add Database** フォームでいくつかの方法で接続をカスタマイズできます。
 
-**Custom Certificate**
+**カスタム証明書**
 
-You can add certificates in the **Root Certificate** field when configuring the new database
-connection to Druid:
+Druid への新しいデータベース接続を構成する際に、**Root Certificate** フィールドに証明書を追加できます:
 
 <img src={useBaseUrl("/img/root-cert-example.png")} />{" "}
 
-When using a custom certificate, pydruid will automatically use https scheme.
+カスタム証明書を使用する場合、pydruid は自動的に https スキームを使用します。
 
-**Disable SSL Verification**
+**SSL 検証を無効にする**
 
-To disable SSL verification, add the following to the **Extras** field:
+SSL 検証を無効にするには、**Extras** フィールドに以下のコードを追加します:
 
 ```
 engine_params:
@@ -636,58 +574,47 @@ engine_params:
  {"scheme": "https", "ssl_verify_cert": false}}
 ```
 
-##### Aggregations
+##### 集約
 
-Common aggregations or Druid metrics can be defined and used in Superset. The first and simpler use
-case is to use the checkbox matrix exposed in your datasource’s edit view (**Sources -> Druid
-Datasources -> [your datasource] -> Edit -> [tab] List Druid Column**).
+Superset では、一般的な集計や Druid メトリクスを定義・使用できます。最初の、そしてよりシンプルなユースケースは、データソースの編集ビューに表示されるチェックボックスマトリックスを使用することです (**Sources -> Druid Datasources -> [your datasource] -> Edit -> [tab] [List Druid Column]**)。
 
-Clicking the GroupBy and Filterable checkboxes will make the column appear in the related dropdowns
-while in the Explore view. Checking Count Distinct, Min, Max or Sum will result in creating new
-metrics that will appear in the **List Druid Metric** tab upon saving the datasource.
+[GroupBy] および [Filterable] チェックボックスをオンにすると、Explore ビューで関連するドロップダウンに列が表示されます。[Count Distinct]、[Min]、[Max]、または [Sum] をオンにすると、新しいメトリクスが作成され、データソースの保存時に **List Druid Metric** タブに表示されます。
 
-By editing these metrics, you’ll notice that their JSON element corresponds to Druid aggregation
-definition. You can create your own aggregations manually from the **List Druid Metric** tab
-following Druid documentation.
+これらのメトリクスを編集すると、その JSON 要素が Druid 集計定義に対応していることがわかります。**List Druid Metric** タブから、Druid ドキュメントに従って独自の集計を手動で作成することもできます。
 
-##### Post-Aggregations
+##### 集約後
 
-Druid supports post aggregation and this works in Superset. All you have to do is create a metric,
-much like you would create an aggregation manually, but specify `postagg` as a `Metric Type`. You
-then have to provide a valid json post-aggregation definition (as specified in the Druid docs) in
-the JSON field.
+Druidは集約後をサポートし、これはSuperSetで機能します。あなたがしなければならないのは、あなたが手動で集約を作成するのと同じようにメトリックを作成することですが、「Postagg」を「メトリックタイプ」として指定します。次に、JSONフィールドで有効なJSON後の凝集後定義（ドルイドドキュメントで指定）を提供する必要があります。
 
 #### Elasticsearch
 
-The recommended connector library for Elasticsearch is
-[elasticsearch-dbapi](https://github.com/preset-io/elasticsearch-dbapi).
+ElasticSearchの推奨コネクタライブラリは[Elasticsearch-dbapi]（https://github.com/preset-io/elasticsearch-dbapi）です。
 
-The connection string for Elasticsearch looks like this:
+ElasticSearchの接続文字列は次のようになります：
 
 ```
 elasticsearch+http://{user}:{password}@{host}:9200/
 ```
 
-**Using HTTPS**
+**HTTPSを使用**
 
 ```
 elasticsearch+https://{user}:{password}@{host}:9200/
 ```
 
-Elasticsearch as a default limit of 10000 rows, so you can increase this limit on your cluster or
-set Superset’s row limit on config
+ElasticSearchは10000行のデフォルト制限として、クラスターのこの制限を増やしたり、SuperSetの行の制限を設定したりすることができます。
 
 ```
 ROW_LIMIT = 10000
 ```
 
-You can query multiple indices on SQL Lab for example
+たとえば、SQL Labで複数のインデックスをクエリすることができます
 
 ```
 SELECT timestamp, agent FROM "logstash"
 ```
 
-But, to use visualizations for multiple indices you need to create an alias index on your cluster
+ただし、複数のインデックスに視覚化を使用するには、クラスターにエイリアスインデックスを作成する必要があります
 
 ```
 POST /_aliases
@@ -698,12 +625,11 @@ POST /_aliases
 }
 ```
 
-Then register your table with the alias name logstash_all
+次に、エイリアス名logstash_allにテーブルを登録します
 
-**Time zone**
+**タイムゾーン**
 
-By default, Superset uses UTC time zone for elasticsearch query. If you need to specify a time zone,
-please edit your Database and enter the settings of your specified time zone in the Other > ENGINE PARAMETERS:
+デフォルトでは、SuperSetはElasticSearchクエリにUTCタイムゾーンを使用します。タイムゾーンを指定する必要がある場合は、データベースを編集し、指定されたタイムゾーンの設定を Other > ENGINE PARAMETERS に入力してください:
 
 ```json
 {
@@ -713,15 +639,14 @@ please edit your Database and enter the settings of your specified time zone in 
 }
 ```
 
-Another issue to note about the time zone problem is that before elasticsearch7.8, if you want to convert a string into a `DATETIME` object,
-you need to use the `CAST` function,but this function does not support our `time_zone` setting. So it is recommended to upgrade to the version after elasticsearch7.8.
-After elasticsearch7.8, you can use the `DATETIME_PARSE` function to solve this problem.
-The DATETIME_PARSE function is to support our `time_zone` setting, and here you need to fill in your elasticsearch version number in the Other > VERSION setting.
-the superset will use the `DATETIME_PARSE` function for conversion.
+タイムゾーンの問題について注意すべきもう1つの問題は、Elasticsearch7.8の前に、文字列を「datetime」オブジェクトに変換する場合、「cast」関数を使用する必要があるが、この関数は「time_zone」設定をサポートしないことです。したがって、ElasticSearch7.8の後にバージョンにアップグレードすることをお勧めします。
+ElasticSearch7.8の後、「datetime_parse`関数を使用してこの問題を解決できます。
+DateTime_Parse関数は、「time_zone」設定をサポートすることであり、ここでは、他の>バージョン設定でElasticSearchバージョン番号を入力する必要があります。
+superset は、変換に「datetime_parse」関数を使用します。
 
-**Disable SSL Verification**
+**SSL検証を無効にします**
 
-To disable SSL verification, add the following to the **SQLALCHEMY URI** field:
+SSL検証を無効にするには、**SQLALCHEMY URI** フィールドに以下を追加します。
 
 ```
 elasticsearch+https://{user}:{password}@{host}:9200/?verify_certs=False
@@ -729,10 +654,9 @@ elasticsearch+https://{user}:{password}@{host}:9200/?verify_certs=False
 
 #### Exasol
 
-The recommended connector library for Exasol is
-[sqlalchemy-exasol](https://github.com/exasol/sqlalchemy-exasol).
+Exasolの推奨コネクタライブラリは[Sqlalchemy-exasol]（https://github.com/exasol/sqlalchemy-exasol）です。
 
-The connection string for Exasol looks like this:
+Exasolの接続文字列は次のようになります：
 
 ```
 exa+pyodbc://{username}:{password}@{hostname}:{port}/my_schema?CONNECTIONLCALL=en_US.UTF-8&driver=EXAODBC
@@ -740,16 +664,16 @@ exa+pyodbc://{username}:{password}@{hostname}:{port}/my_schema?CONNECTIONLCALL=e
 
 #### Firebird
 
-The recommended connector library for Firebird is [sqlalchemy-firebird](https://pypi.org/project/sqlalchemy-firebird/).
-Superset has been tested on `sqlalchemy-firebird>=0.7.0, <0.8`.
+Firebirdの推奨コネクタライブラリは[sqlalchemy-firebird]（https://pypi.org/project/sqlalchemy-firebird/）です。
+スーパーセットは、 `sqlalchemy-firebird> = 0.7.0、<0.8`でテストされています。
 
-The recommended connection string is:
+推奨される接続文字列は次のとおりです:
 
 ```
 firebird+fdb://{username}:{password}@{host}:{port}//{path_to_db_file}
 ```
 
-Here's a connection string example of Superset connecting to a local Firebird database:
+これは、ローカルファイアバードデータベースに接続する Superset の接続文字列の例です。
 
 ```
 firebird+fdb://SYSDBA:masterkey@192.168.86.38:3050//Library/Frameworks/Firebird.framework/Versions/A/Resources/examples/empbuild/employee.fdb
@@ -757,46 +681,42 @@ firebird+fdb://SYSDBA:masterkey@192.168.86.38:3050//Library/Frameworks/Firebird.
 
 #### Firebolt
 
-The recommended connector library for Firebolt is [firebolt-sqlalchemy](https://pypi.org/project/firebolt-sqlalchemy/).
+Fireboltの推奨コネクタライブラリは[Firebolt-sqlalchemy]（https://pypi.org/project/firebolt-sqlalchemy/）です。
 
-The recommended connection string is:
+推奨される接続文字列は次のとおりです:
 
 ```
 firebolt://{username}:{password}@{database}?account_name={name}
-or
+または
 firebolt://{username}:{password}@{database}/{engine_name}?account_name={name}
 ```
 
-It's also possible to connect using a service account:
+サービスアカウントを使用して接続することも可能です:
 
 ```
 firebolt://{client_id}:{client_secret}@{database}?account_name={name}
-or
+または
 firebolt://{client_id}:{client_secret}@{database}/{engine_name}?account_name={name}
 ```
 
 #### Google BigQuery
 
-The recommended connector library for BigQuery is
-[sqlalchemy-bigquery](https://github.com/googleapis/python-bigquery-sqlalchemy).
+BigQueryの推奨コネクタライブラリは [sqlalchemy-bigquery](https://github.com/googleapis/python-bigquery-sqlalchemy) です。
 
-##### Install BigQuery Driver
+##### BigQueryドライバーをインストールします
 
-Follow the steps [here](/docs/configuration/databases#installing-drivers-in-docker-images) about how to
-install new database drivers when setting up Superset locally via docker compose.
+Docker Composeを介してSuperSetをローカルにセットアップするときに新しいデータベースドライバーをインストールする方法については、[こちら](/docs/configuration/databases#installing-drivers-in-docker-images) に従ってください。
 
 ```bash
 echo "sqlalchemy-bigquery" >> ./docker/requirements-local.txt
 ```
 
-##### Connecting to BigQuery
+##### BigQueryへの接続
 
-When adding a new BigQuery connection in Superset, you'll need to add the GCP Service Account
-credentials file (as a JSON).
+SuperSetに新しいBigQuery接続を追加するときは、GCP Service Account Sredentialsファイル（JSONとして）を追加する必要があります。
 
-1. Create your Service Account via the Google Cloud Platform control panel, provide it access to the
-   appropriate BigQuery datasets, and download the JSON configuration file for the service account.
-2. In Superset, you can either upload that JSON or add the JSON blob in the following format (this should be the content of your credential JSON file):
+1. Google Cloud Platformコントロールパネルを介してサービスアカウントを作成し、適切なBigQueryデータセットへのアクセスを提供し、サービスアカウントのJSON構成ファイルをダウンロードします。
+2. Superset では、そのJSONをアップロードするか、次の形式でJSON Blobを追加することができます（これは資格情報JSONファイルのコンテンツになります）:
 
 ```json
 {
@@ -815,16 +735,15 @@ credentials file (as a JSON).
 
 ![CleanShot 2021-10-22 at 04 18 11](https://user-images.githubusercontent.com/52086618/138352958-a18ef9cb-8880-4ef1-88c1-452a9f1b8105.gif)
 
-3. Additionally, can connect via SQLAlchemy URI instead
+3. さらに、代わりにSqlalchemy URIを介して接続できます
 
-   The connection string for BigQuery looks like:
+   BigQueryの接続文字列は次のように見えます：
 
    ```
    bigquery://{project_id}
    ```
 
-   Go to the **Advanced** tab, Add a JSON blob to the **Secure Extra** field in the database configuration form with
-   the following format:
+   **Advanced**タブに移動し、次の形式でデータベース構成フォームの **Secure Extra** フィールドにJSONブロブを追加します。
 
    ```json
    {
@@ -832,7 +751,7 @@ credentials file (as a JSON).
    }
    ```
 
-   The resulting file should have this structure:
+   結果のファイルには、この構造が必要です:
 
    ```json
    {
@@ -851,31 +770,26 @@ credentials file (as a JSON).
     }
    ```
 
-You should then be able to connect to your BigQuery datasets.
+その後、BigQueryデータセットに接続できるはずです。
 
 ![CleanShot 2021-10-22 at 04 47 08](https://user-images.githubusercontent.com/52086618/138354340-df57f477-d3e5-42d4-b032-d901c69d2213.gif)
 
-To be able to upload CSV or Excel files to BigQuery in Superset, you'll need to also add the
-[pandas_gbq](https://github.com/pydata/pandas-gbq) library.
+SuperSetのBigQueryにCSVまたはExcelファイルをアップロードできるようにするには、[pandas_gbq]（https://github.com/pydata/pandas-gbq）ライブラリを追加する必要があります。
 
-Currently, the Google BigQuery Python SDK is not compatible with `gevent`, due to some dynamic monkeypatching on python core library by `gevent`.
-So, when you deploy Superset with `gunicorn` server, you have to use worker type except `gevent`.
+現在、Google Bigquery Python SDKは、「Gevent」によるPython Coreライブラリでの動的なモンキーパッチがあるため、「Gevent」と互換性がありません。
+したがって、「Gunicorn」サーバーでSuperSetを展開する場合、「Gevent」を除くワーカータイプを使用する必要があります。
 
 #### Google Sheets
 
-Google Sheets has a very limited
-[SQL API](https://developers.google.com/chart/interactive/docs/querylanguage). The recommended
-connector library for Google Sheets is [shillelagh](https://github.com/betodealmeida/shillelagh).
+Googleシートには非常に限られた[SQL API](https://developers.google.com/chart/interactive/docs/querylanguage) があります。 Googleシート用の推奨コネクタライブラリは [Shillelagh](https://github.com/betodealmeida/shillelagh) です。
 
-There are a few steps involved in connecting Superset to Google Sheets. This
-[tutorial](https://preset.io/blog/2020-06-01-connect-superset-google-sheets/) has the most up to date
-instructions on setting up this connection.
+SuperSetをGoogleシートに接続することには、いくつかの手順があります。この[チュートリアル](https://preset.io/blog/2020-06-01-connect-superset-google-sheets/) には、この接続の設定に関する最新の指示があります。
 
 #### Hana
 
-The recommended connector library is [sqlalchemy-hana](https://github.com/SAP/sqlalchemy-hana).
+推奨されるコネクタライブラリは[sqlalchemy-hana](https://github.com/sap/sqlalchemy-hana) です。
 
-The connection string is formatted as follows:
+接続文字列は次のようにフォーマットされます:
 
 ```
 hana://{username}:{password}@{host}:{port}
@@ -883,9 +797,9 @@ hana://{username}:{password}@{host}:{port}
 
 #### Apache Hive
 
-The [pyhive](https://pypi.org/project/PyHive/) library is the recommended way to connect to Hive through SQLAlchemy.
+[pyhive](https://pypi.org/project/pyhive/) ライブラリは、sqlalchemyを通じてハイブに接続する推奨方法です。
 
-The expected connection string is formatted as follows:
+予想される接続文字列は、次のようにフォーマットされます:
 
 ```
 hive://hive@{hostname}:{port}/{database}
@@ -893,9 +807,9 @@ hive://hive@{hostname}:{port}/{database}
 
 #### Hologres
 
-Hologres is a real-time interactive analytics service developed by Alibaba Cloud. It is fully compatible with PostgreSQL 11 and integrates seamlessly with the big data ecosystem.
+Hologres は、Alibaba Cloud が開発したリアルタイムのインタラクティブな分析サービスです。 PostgreSQL 11 と完全に互換性があり、BigData エコシステムとシームレスに統合します。
 
-Hologres sample connection parameters:
+Hologres サンプル接続パラメーター：
 
 - **User Name**: The AccessKey ID of your Alibaba Cloud account.
 - **Password**: The AccessKey secret of your Alibaba Cloud account.
@@ -903,7 +817,7 @@ Hologres sample connection parameters:
 - **Database Name**: The name of the Hologres database.
 - **Port**: The port number of the Hologres instance.
 
-The connection string looks like:
+接続文字列は次のようになります:
 
 ```
 postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}
@@ -911,16 +825,15 @@ postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}
 
 #### IBM DB2
 
-The [IBM_DB_SA](https://github.com/ibmdb/python-ibmdbsa/tree/master/ibm_db_sa) library provides a
-Python / SQLAlchemy interface to IBM Data Servers.
+[IBM_DB_SA](https://github.com/ibmdb/python-ibmdbsa/master/ibm_db_sa) ライブラリは、IBM データサーバーに Python/SQLAlchemy インターフェイスを提供します。
 
-Here's the recommended connection string:
+これが推奨される接続文字列です：
 
 ```
 db2+ibm_db://{username}:{passport}@{hostname}:{port}/{database}
 ```
 
-There are two DB2 dialect versions implemented in SQLAlchemy. If you are connecting to a DB2 version without `LIMIT [n]` syntax, the recommended connection string to be able to use the SQL Lab is:
+Sqlalchemyに実装されている2つのDB2方言バージョンがあります。 `limit [n]` syntaxなしでdb2バージョンに接続している場合、SQLラボを使用できるように推奨される接続文字列は次のとおりです:
 
 ```
 ibm_db_sa://{username}:{passport}@{hostname}:{port}/{database}
@@ -928,9 +841,9 @@ ibm_db_sa://{username}:{passport}@{hostname}:{port}/{database}
 
 #### Apache Impala
 
-The recommended connector library to Apache Impala is [impyla](https://github.com/cloudera/impyla).
+Apache Impalaへの推奨コネクタライブラリは [Impyla](https://github.com/cloudera/impyla) です。
 
-The expected connection string is formatted as follows:
+予想される接続文字列は、次のようにフォーマットされます:
 
 ```
 impala://{hostname}:{port}/{database}
@@ -938,30 +851,27 @@ impala://{hostname}:{port}/{database}
 
 #### Kusto
 
-The recommended connector library for Kusto is
-[sqlalchemy-kusto](https://pypi.org/project/sqlalchemy-kusto/2.0.0/)>=2.0.0.
+Kustoの推奨コネクタライブラリは [sqlalchemy-kusto](https://pypi.org/project/sqlalchemy-kusto/2.0.0/) > = 2.0.0 です。
 
-The connection string for Kusto (sql dialect) looks like this:
+Kusto（sql dialect）の接続文字列は次のようになります:
 
 ```
 kustosql+https://{cluster_url}/{database}?azure_ad_client_id={azure_ad_client_id}&azure_ad_client_secret={azure_ad_client_secret}&azure_ad_tenant_id={azure_ad_tenant_id}&msi=False
 ```
 
-The connection string for Kusto (kql dialect) looks like this:
+Kusto（kql dialect）の接続文字列は次のようになります。
 
 ```
 kustokql+https://{cluster_url}/{database}?azure_ad_client_id={azure_ad_client_id}&azure_ad_client_secret={azure_ad_client_secret}&azure_ad_tenant_id={azure_ad_tenant_id}&msi=False
 ```
 
-Make sure the user has privileges to access and use all required
-databases/tables/views.
+ユーザーがすべての必要なデータベース/テーブル/ビューにアクセスして使用する特権を持っていることを確認してください。
 
 #### Apache Kylin
 
-The recommended connector library for Apache Kylin is
-[kylinpy](https://github.com/Kyligence/kylinpy).
+Apache Kylinの推奨コネクタライブラリは[Kylinpy]（https://github.com/kyligence/kylinpy）です。
 
-The expected connection string is formatted as follows:
+予想される接続文字列は、次のようにフォーマットされます:
 
 ```
 kylin://<username>:<password>@<hostname>:<port>/<project>?<param1>=<value1>&<param2>=<value2>
@@ -969,9 +879,9 @@ kylin://<username>:<password>@<hostname>:<port>/<project>?<param1>=<value1>&<par
 
 #### MySQL
 
-The recommended connector library for MySQL is [mysqlclient](https://pypi.org/project/mysqlclient/).
+mysqlの推奨コネクタライブラリは [mysqlclient](https://pypi.org/project/mysqlclient/) です。
 
-Here's the connection string:
+これが接続文字列です:
 
 ```
 mysql://{username}:{password}@{host}/{database}
@@ -985,7 +895,7 @@ Host:
 - For Docker running in OSX: `docker.for.mac.host.internal`
   Port: `3306` by default
 
-One problem with `mysqlclient` is that it will fail to connect to newer MySQL databases using `caching_sha2_password` for authentication, since the plugin is not included in the client. In this case, you should use [mysql-connector-python](https://pypi.org/project/mysql-connector-python/) instead:
+「mysqlclient」の問題の1つは、プラグインがクライアントに含まれていないため、認証用に「caching_sha2_password」を使用して新しいmysqlデータベースに接続できないことです。この場合、[mysql-connector-python](https://pypi.org/project/mysql-connector-python/) を使用する必要があります。
 
 ```
 mysql+mysqlconnector://{username}:{password}@{host}/{database}
@@ -993,10 +903,9 @@ mysql+mysqlconnector://{username}:{password}@{host}/{database}
 
 #### IBM Netezza Performance Server
 
-The [nzalchemy](https://pypi.org/project/nzalchemy/) library provides a
-Python / SQLAlchemy interface to IBM Netezza Performance Server (aka Netezza).
+[nzalchemy](https://pypi.org/project/nzalchemy/) ライブラリは、IBM Netezza Performance Server（別名Netezza）にPython/SQLAlchemyインターフェイスを提供します。
 
-Here's the recommended connection string:
+これが推奨される接続文字列です:
 
 ```
 netezza+nzpy://{username}:{password}@{hostname}:{port}/{database}
@@ -1004,10 +913,9 @@ netezza+nzpy://{username}:{password}@{hostname}:{port}/{database}
 
 #### OceanBase
 
-The [sqlalchemy-oceanbase](https://pypi.org/project/oceanbase_py/) library is the recommended
-way to connect to OceanBase through SQLAlchemy.
+[sqlalchemy-oceanbase](https://pypi.org/project/oceanbase_py/) ライブラリは、SQLAlchemy を通じて OceanBase に接続する推奨方法です。
 
-The connection string for OceanBase looks like this:
+OceanBase の接続文字列は次のようになります：
 
 ```
 oceanbase://<User>:<Password>@<Host>:<Port>/<Database>
@@ -1015,17 +923,17 @@ oceanbase://<User>:<Password>@<Host>:<Port>/<Database>
 
 #### Ocient DB
 
-The recommended connector library for Ocient is [sqlalchemy-ocient](https://pypi.org/project/sqlalchemy-ocient).
+Ocientの推奨コネクタライブラリは[sqlalchemy-ocient]（https://pypi.org/project/sqlalchemy-ocient）です。
 
-##### Install the Ocient Driver
+##### Ocient ドライバーのインストール
 
 ```bash
 pip install sqlalchemy-ocient
 ```
 
-##### Connecting to Ocient
+##### COcient への接続
 
-The format of the Ocient DSN is:
+Ocient DSN の形式は次のとおりです:
 
 ```shell
 ocient://user:password@[host][:port][/database][?param1=value1&...]
@@ -1033,10 +941,9 @@ ocient://user:password@[host][:port][/database][?param1=value1&...]
 
 #### Oracle
 
-The recommended connector library is
-[cx_Oracle](https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html).
+推奨されるコネクタライブラリは [cx_oracle](https://cx-oracle.readthedocs.io/en/latest/user_guide/installation.html) です。
 
-The connection string is formatted as follows:
+接続文字列は次のようにフォーマットされます。
 
 ```
 oracle://<username>:<password>@<hostname>:<port>
@@ -1044,41 +951,41 @@ oracle://<username>:<password>@<hostname>:<port>
 
 #### Parseable
 
-[Parseable](https://www.parseable.io) is a distributed log analytics database that provides SQL-like query interface for log data. The recommended connector library is [sqlalchemy-parseable](https://github.com/parseablehq/sqlalchemy-parseable).
+[Parsable](https://www.parsable.io) は、ログデータに SQL のようなクエリインターフェイスを提供する分散ログ分析データベースです。推奨されるコネクタライブラリは [sqlalchemy-parsable](https://github.com/parsablehq/sqlalchemy-parsable) です。
 
-The connection string is formatted as follows:
+接続文字列は次のようにフォーマットされます:
 
 ```
 parseable://<username>:<password>@<hostname>:<port>/<stream_name>
 ```
 
-For example:
+例えば:
 
 ```
 parseable://admin:admin@demo.parseable.com:443/ingress-nginx
 ```
 
-Note: The stream_name in the URI represents the Parseable logstream you want to query. You can use both HTTP (port 80) and HTTPS (port 443) connections.
+注：URI の stream_name は、クエリする断続的なログストリームを表します。 HTTP（ポート80）とHTTPS（ポート443）接続の両方を使用できます。
 
 >>>>>>>
 #### Apache Pinot
 
-The recommended connector library for Apache Pinot is [pinotdb](https://pypi.org/project/pinotdb/).
+Apache Pinotの推奨コネクタライブラリは[pinotdb](https://pypi.org/project/pinotdb/) です。
 
-The expected connection string is formatted as follows:
+予想される接続文字列は、次のようにフォーマットされます:
 
 ```
 pinot+http://<pinot-broker-host>:<pinot-broker-port>/query?controller=http://<pinot-controller-host>:<pinot-controller-port>/``
 ```
 
-The expected connection string using username and password is formatted as follows:
+ユーザー名とパスワードを使用した予想される接続文字列は、次のようにフォーマットされます:
 
 ```
 pinot://<username>:<password>@<pinot-broker-host>:<pinot-broker-port>/query/sql?controller=http://<pinot-controller-host>:<pinot-controller-port>/verify_ssl=true``
 ```
 
-If you want to use explore view or joins, window functions, etc. then enable [multi-stage query engine](https://docs.pinot.apache.org/reference/multi-stage-engine).
-Add below argument while creating database connection in Advanced -> Other -> ENGINE PARAMETERS
+ビューや結合、ウィンドウ関数などをExploreで使用する場合は、[マルチステージクエリエンジン](https://docs.pinot.apache.org/reference/multi-stage-engine)を有効にします。
+Advanced -> Other -> ENGINE PARAMETERS でデータベース接続を作成しながら、以下の引数を追加します
 
 ```json
 {"connect_args":{"use_multistage_engine":"true"}}
@@ -1086,8 +993,7 @@ Add below argument while creating database connection in Advanced -> Other -> EN
 
 #### Postgres
 
-Note that, if you're using docker compose, the Postgres connector library [psycopg2](https://www.psycopg.org/docs/)
-comes out of the box with Superset.
+Docker Composeを使用している場合、Postgres コネクタライブラリ [psycopg2](https://www.psycopg.org/docs/) が Superset の箱から出てくることに注意してください。
 
 Postgres sample connection parameters:
 
@@ -1100,25 +1006,21 @@ Postgres sample connection parameters:
 - **Database Name**: Database Name
 - **Port**: default 5432
 
-The connection string looks like:
+接続文字列は次のようになります:
 
 ```
 postgresql://{username}:{password}@{host}:{port}/{database}
 ```
 
-You can require SSL by adding `?sslmode=require` at the end:
+最後に `？sslmode = require`を追加することで、SSLを要求できます:
 
 ```
 postgresql://{username}:{password}@{host}:{port}/{database}?sslmode=require
 ```
 
-You can read about the other SSL modes that Postgres supports in
-[Table 31-1 from this documentation](https://www.postgresql.org/docs/9.1/libpq-ssl.html).
+[このドキュメントの表 31-1 ](https://www.postgresql.org/docs/9.1/libpq-ssl.html) でサポートする他の SSL モードについて読むことができます。
 
-More information about PostgreSQL connection options can be found in the
-[SQLAlchemy docs](https://docs.sqlalchemy.org/en/13/dialects/postgresql.html#module-sqlalchemy.dialects.postgresql.psycopg2)
-and the
-[PostgreSQL docs](https://www.postgresql.org/docs/9.1/libpq-connect.html#LIBPQ-PQCONNECTDBPARAMS).
+PostgreSQL接続オプションの詳細については、[SQLAlchemy のドキュメント](https://docs.sqlalchemy.org/en/13/dialects/postgresql.html#module-sqlalchemy.dialects.postgresql.postgg2) および [PostgreSQL のドキュメント](https://www.postgresql.org/docs/9.1/libpq-connect.html#LIBPQ-PQCONNECTDBPARAMS) を参照。
 
 #### Presto
 

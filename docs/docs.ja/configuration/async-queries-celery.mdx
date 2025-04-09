@@ -1,25 +1,21 @@
 ---
-title: Async Queries via Celery
+title: Celery 経由の非同期クエリ
 hide_title: true
 sidebar_position: 4
 version: 1
 ---
 
-# Async Queries via Celery
+# Celery 経由の非同期クエリ
 
 ## Celery
 
-On large analytic databases, it’s common to run queries that execute for minutes or hours. To enable
-support for long running queries that execute beyond the typical web request’s timeout (30-60
-seconds), it is necessary to configure an asynchronous backend for Superset which consists of:
+大規模な分析データベースでは、数分または数時間かかるクエリを実行することがよくあります。一般的なWebリクエストのタイムアウト（30～60秒）を超えて実行される長時間実行クエリをサポートするには、Supersetの非同期バックエンドを構成する必要があります。これは以下の要素で構成されます:
 
-- one or many Superset workers (which is implemented as a Celery worker), and can be started with
-  the `celery worker` command, run `celery worker --help` to view the related options.
-- a celery broker (message queue) for which we recommend using Redis or RabbitMQ
-- a results backend that defines where the worker will persist the query results
+- 1つまたは複数のSupersetワーカー（Celeryワーカーとして実装）。`celery worker`コマンドで起動できます。関連オプションを表示するには、`celery worker --help`を実行してください。
+- Celeryブローカー（メッセージキュー）。RedisまたはRabbitMQの使用を推奨します。
+- ワーカーがクエリ結果を保存する場所を定義する結果バックエンド
 
-Configuring Celery requires defining a `CELERY_CONFIG` in your `superset_config.py`. Both the worker
-and web server processes should have the same configuration.
+Celeryを設定するには、`superset_config.py`で`CELERY_CONFIG`を定義する必要があります。ワーカープロセスとウェブサーバープロセスの両方で同じ設定を使用する必要があります。
 
 ```python
 class CeleryConfig(object):
@@ -40,23 +36,21 @@ class CeleryConfig(object):
 CELERY_CONFIG = CeleryConfig
 ```
 
-To start a Celery worker to leverage the configuration, run the following command:
+構成を活用するために Celery ワーカーを起動するには、次のコマンドを実行します:
 
 ```bash
 celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4
 ```
 
-To start a job which schedules periodic background jobs, run the following command:
+定期的なバックグラウンド ジョブをスケジュールするジョブを開始するには、次のコマンドを実行します:
 
 ```bash
 celery --app=superset.tasks.celery_app:app beat
 ```
 
-To setup a result backend, you need to pass an instance of a derivative of from
-from flask_caching.backends.base import BaseCache to the RESULTS_BACKEND configuration key in your superset_config.py. You can
-use Memcached, Redis, S3 (https://pypi.python.org/pypi/s3werkzeugcache), memory or the file system
-(in a single server-type setup or for testing), or to write your own caching interface. Your
-`superset_config.py` may look something like:
+結果のバックエンドを設定するには、 flask_caching.backends.base import BaseCache の派生のインスタンスを superset_config.py の RESULTS_BACKEND 構成キーに渡す必要があります。
+Memcached、Redis、S3 (https://pypi.python.org/pypi/s3werkzeugcache) 、メモリ、ファイルシステム（単一サーバー型の設定またはテスト用）を利用できます。
+また、独自のキャッシュインターフェースを作成することもできます。`superset_config.py` は次のようになります:
 
 ```python
 # On S3
@@ -71,33 +65,29 @@ RESULTS_BACKEND = RedisCache(
     host='localhost', port=6379, key_prefix='superset_results')
 ```
 
-For performance gains, [MessagePack](https://github.com/msgpack/msgpack-python) and
-[PyArrow](https://arrow.apache.org/docs/python/) are now used for results serialization. This can be
-disabled by setting `RESULTS_BACKEND_USE_MSGPACK = False` in your `superset_config.py`, should any
-issues arise. Please clear your existing results cache store when upgrading an existing environment.
+パフォーマンス向上のため、結果のシリアル化に [MessagePack](https://github.com/msgpack/msgpack-python) と [PyArrow](https://arrow.apache.org/docs/python/) が使用されるようになりました。
+問題が発生した場合、`superset_config.py` で `RESULTS_BACKEND_USE_MSGPACK = False` を設定することで、これを無効にできます。
+既存の環境をアップグレードする場合は、既存の結果キャッシュストアをクリアしてください。
 
-**Important Notes**
+**重要事項**
 
-- It is important that all the worker nodes and web servers in the Superset cluster _share a common
-  metadata database_. This means that SQLite will not work in this context since it has limited
-  support for concurrency and typically lives on the local file system.
+- Superset クラスター内のすべてのワーカーノードと Web サーバーが _共通のメタデータデータベースを共有_ することが重要です。
+  SQLite は同時実行のサポートが限られており、通常はローカルファイルシステム上に存在するため、このコンテキストでは動作しません。
 
-- There should _only be one instance of celery beat running_ in your entire setup. If not,
-  background jobs can get scheduled multiple times resulting in weird behaviors like duplicate
-  delivery of reports, higher than expected load / traffic etc.
+- セットアップ全体で _celery beat のインスタンスは 1 つだけ実行_ する必要があります。
+  そうでない場合、バックグラウンドジョブが複数回スケジュールされ、レポートの重複配信、予想以上の負荷/トラフィックの増加などの異常な動作が発生する可能性があります。
 
-- SQL Lab will _only run your queries asynchronously if_ you enable **Asynchronous Query Execution**
-  in your database settings (Sources > Databases > Edit record).
+- SQL Lab は、データベース設定 (Sources > Databases > Edit record) で **非同期クエリ実行** を有効にした場合にのみ、クエリを非同期で実行します。
 
 ## Celery Flower
 
-Flower is a web based tool for monitoring the Celery cluster which you can install from pip:
+Flower は、Celery クラスターを監視するための Web ベースのツールで、pip からインストールできます。
 
 ```bash
 pip install flower
 ```
 
-You can run flower using:
+flower は次のように実行できます:
 
 ```bash
 celery --app=superset.tasks.celery_app:app flower

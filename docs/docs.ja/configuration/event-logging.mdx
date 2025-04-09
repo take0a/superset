@@ -1,21 +1,20 @@
 ---
-title: Event Logging
+title: イベントログ
 sidebar_position: 9
 version: 1
 ---
 
 # Logging
 
-## Event Logging
+## イベントログ
 
-Superset by default logs special action events in its internal database (DBEventLogger). These logs can be accessed
-on the UI by navigating to **Security > Action Log**. You can freely customize these logs by
-implementing your own event log class.
-**When custom log class is enabled DBEventLogger is disabled and logs
-stop being populated in UI logs view.**
-To achieve both, custom log class should extend built-in DBEventLogger log class.
+Superset はデフォルトで、特別なアクションイベントを内部データベース (DBEventLogger) に記録します。
+これらのログには、UI から **[セキュリティ] > [アクションログ]** に移動することでアクセスできます。
+独自のイベントログクラスを実装することで、これらのログを自由にカスタマイズできます。
+**カスタムログクラスを有効にすると、DBEventLogger は無効になり、UI ログビューにログが表示されなくなります。**
+これら 2 つの機能を実現するには、カスタムログクラスで組み込みの DBEventLogger ログクラスを拡張する必要があります。
 
-Here's an example of a simple JSON-to-stdout class:
+以下は、JSON から標準出力への変換を行うシンプルなクラスの例です:
 
 ```python
     def log(self, user_id, action, *args, **kwargs):
@@ -38,7 +37,7 @@ Here's an example of a simple JSON-to-stdout class:
             print(json.dumps(log))
 ```
 
-End by updating your config to pass in an instance of the logger you want to use:
+最後に、使用するロガーのインスタンスを渡すように構成を更新します:
 
 ```
 EVENT_LOGGER = JSONStdOutEventLogger()
@@ -46,16 +45,14 @@ EVENT_LOGGER = JSONStdOutEventLogger()
 
 ## StatsD Logging
 
-Superset can be configured to log events to [StatsD](https://github.com/statsd/statsd)
-if desired. Most endpoints hit are logged as
-well as key events like query start and end in SQL Lab.
+Superset は、必要に応じて [StatsD](https://github.com/statsd/statsd) にイベントログを記録するように設定できます。
+アクセスされたエンドポイントのほとんどに加え、SQL Lab でのクエリの開始と終了などの重要なイベントもログに記録されます。
 
-To setup StatsD logging, it’s a matter of configuring the logger in your `superset_config.py`.
+StatsD のログ記録を設定するには、`superset_config.py` でロガーを設定するだけです。
 
 ```python
 from superset.stats_logger import StatsdStatsLogger
 STATS_LOGGER = StatsdStatsLogger(host='localhost', port=8125, prefix='superset')
 ```
 
-Note that it’s also possible to implement your own logger by deriving
-`superset.stats_logger.BaseStatsLogger`.
+`superset.stats_logger.BaseStatsLogger` を派生して独自のロガーを実装することもできることに注意してください。

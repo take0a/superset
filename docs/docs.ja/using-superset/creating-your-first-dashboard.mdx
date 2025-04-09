@@ -1,5 +1,5 @@
 ---
-title: Creating Your First Dashboard
+title: 最初のダッシュボードを作成する
 hide_title: true
 sidebar_position: 1
 version: 1
@@ -7,225 +7,189 @@ version: 1
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
-## Creating Your First Dashboard
+## 最初のダッシュボードを作成する
 
-This section is focused on documentation for end-users who will be using Superset
-for the data analysis and exploration workflow
- (data analysts, business analysts, data
-scientists, etc).
+このセクションでは、データ分析および探索ワークフローに Superset を使用するエンドユーザー (データ アナリスト、ビジネス アナリスト、データ サイエンティストなど) 向けのドキュメントに重点を置いています。
 
 :::tip
-In addition to this site, [Preset.io](http://preset.io/) maintains an updated set of end-user
-documentation at [docs.preset.io](https://docs.preset.io/).
+このサイトに加えて、[Preset.io](http://preset.io/) は [docs.preset.io](https://docs.preset.io/) でエンドユーザー向けのドキュメントの更新されたセットを管理しています。
 :::
 
-This tutorial targets someone who wants to create charts and dashboards in Superset. We’ll show you
-how to connect Superset to a new database and configure a table in that database for analysis.
-You’ll also explore the data you’ve exposed and add a visualization to a dashboard so that you get a
-feel for the end-to-end user experience.
+このチュートリアルは、Superset でチャートとダッシュボードを作成したい方を対象としています。
+Superset を新しいデータベースに接続し、そのデータベース内のテーブルを分析用に設定する方法を説明します。
+また、公開したデータを確認し、ダッシュボードにビジュアライゼーションを追加することで、エンドツーエンドのユーザーエクスペリエンスを体感していただきます。
 
-### Connecting to a new database
+### 新しいデータベースへの接続
 
-Superset itself doesn't have a storage layer to store your data but instead pairs with
-your existing SQL-speaking database or data store.
+Superset 自体にはデータを保存するストレージレイヤーはありませんが、既存の SQL 対応データベースまたはデータストアと連携します。
 
-First things first, we need to add the connection credentials to your database to be able
-to query and visualize data from it. If you're using Superset locally via
-[Docker compose](/docs/installation/docker-compose), you can
-skip this step because a Postgres database, named **examples**, is included and
-pre-configured in Superset for you.
+まず最初に、データベースへの接続認証情報を追加して、データベースからクエリを実行し、データを視覚化できるようにする必要があります。
+[Docker compose](/docs/installation/docker-compose) 経由で Superset をローカルで使用する場合は、**examples** という名前の Postgres データベースが Superset に含まれており、事前構成されているため、この手順は省略できます。
 
-Under the **+** menu in the top right, select Data, and then the _Connect Database_ option:
+右上の **+** メニューで Data を選択し、Connect database オプションを選択します。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_01_add_database_connection.png")} width="600" />{" "} <br/><br/>
 
-Then select your database type in the resulting modal:
+次に、表示されるモーダルでデータベースの種類を選択します。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_02_select_database.png" )} width="600" />{" "} <br/><br/>
 
-Once you've selected a database, you can configure a number of advanced options in this window,
-or for the purposes of this walkthrough, you can click the link below all these fields:
+データベースを選択したら、このウィンドウでいくつかの詳細オプションを設定できます。または、このチュートリアルでは、すべてのフィールドの下にあるリンクをクリックできます:
 
 <img src={useBaseUrl("/img/tutorial/tutorial_03a_database_connection_string_link.png" )} width="600" />{" "} <br/><br/>
 
-Please note, if you are trying to connect to another locally running database (whether on host or another container), and you get the message `The port is closed.`, then you need to adjust the HOST to `host.docker.internal`
+ローカルで実行中の別のデータベース（ホスト上または別のコンテナ上）に接続しようとして`The port is closed.`というメッセージが表示される場合は、HOST を `host.docker.internal` に変更する必要があります。
 
-Once you've clicked that link you only need to specify two things (the database name and SQLAlchemy URI):
+リンクをクリックしたら、データベース名と SQLAlchemy URI の 2 つだけを指定してください。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_03b_connection_string_details.png" )} width="600" />{" "} <br/><br/>
 
-As noted in the text below the form, you should refer to the SQLAlchemy documentation on
-[creating new connection URIs](https://docs.sqlalchemy.org/en/12/core/engines.html#database-urls)
-for your target database.
+フォームの下のテキストに記載されているように、ターゲット データベースの [新しい接続 URI の作成](https://docs.sqlalchemy.org/en/12/core/engines.html#database-urls) については、SQLAlchemy のドキュメントを参照する必要があります。
 
-Click the **Test Connection** button to confirm things work end to end. If the connection looks good, save the configuration
-by clicking the **Connect** button in the bottom right corner of the modal window:
+**Test Connection** ボタンをクリックして、エンドツーエンドで正常に動作していることを確認してください。接続に問題がなければ、モーダルウィンドウの右下にある **Connect** ボタンをクリックして設定を保存します。
 
-Congratulations, you've just added a new data source in Superset!
+おめでとうございます。Superset に新しいデータソースが追加されました。
 
-### Registering a new table
+### 新しいテーブルを登録する
 
-Now that you’ve configured a data source, you can select specific tables (called **Datasets** in Superset)
-that you want exposed in Superset for querying.
+データソースの設定が完了したら、クエリ実行のためにSupersetで公開する特定のテーブル（Supersetでは **Datasets** と呼ばれます）を選択できます。
 
-Navigate to **Data ‣ Datasets** and select the **+ Dataset** button in the top right corner.
+**Data ‣ Datasets** に移動し、右上にある **+ Dataset** ボタンを選択します。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_08_sources_tables.png" )} />
 
-A modal window should pop up in front of you. Select your **Database**,
-**Schema**, and **Table** using the drop downs that appear. In the following example,
-we register the **cleaned_sales_data** table from the **examples** database.
+モーダルウィンドウがポップアップ表示されます。表示されるドロップダウンから**Database**、**Schema**、**Table**を選択してください。以下の例では、**examples** データベースから **cleaned_sales_data** テーブルを登録します。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_09_add_new_table.png" )} />
 
-To finish, click the **Add** button in the bottom right corner. You should now see your dataset in the list of datasets.
+最後に、右下にある **Add** ボタンをクリックします。データセットのリストにデータセットが表示されます。
 
-### Customizing column properties
+### 列プロパティのカスタマイズ
 
-Now that you've registered your dataset, you can configure column properties
- for how the column should be treated in the Explore workflow:
+データセットを登録したら、Explore ワークフローで列をどのように扱うかを設定する列プロパティを設定できます。
 
-- Is the column temporal? (should it be used for slicing & dicing in time series charts?)
-- Should the column be filterable?
-- Is the column dimensional?
-- If it's a datetime column, how should Superset parse
-the datetime format? (using the [ISO-8601 string pattern](https://en.wikipedia.org/wiki/ISO_8601))
+- 列は時間的ですか？（時系列グラフのスライス＆ダイスに使用する必要がありますか？）
+- 列はフィルタリング可能ですか？
+- 列はディメンション化されていますか？
+- 日付時刻列の場合、Superset は日付時刻形式をどのように解析しますか？（[ISO-8601 文字列パターン](https://en.wikipedia.org/wiki/ISO_8601) を使用）
 
 <img src={useBaseUrl("/img/tutorial/tutorial_column_properties.png" )} />
 
-### Superset semantic layer
+### Superset セマンティックレイヤー
 
-Superset has a thin semantic layer that adds many quality of life improvements for analysts.
-The Superset semantic layer can store 2 types of computed data:
+Superset には、アナリストの作業効率を大幅に向上させる、シンプルなセマンティックレイヤーが搭載されています。
+Superset のセマンティックレイヤーは、2種類の計算データを保存できます。
 
-1. Virtual metrics: you can write SQL queries that aggregate values
-from multiple column (e.g. `SUM(recovered) / SUM(confirmed)`) and make them
-available as columns for (e.g. `recovery_rate`) visualization in Explore.
-Aggregate functions are allowed and encouraged for metrics.
+1. 仮想メトリクス：複数の列（例：`SUM(recovered) / SUM(confirmed)`）の値を集計するSQLクエリを作成し、Explore の可視化（例：`recovery_rate`）用の列として使用できます。
+メトリクスでは集計関数の使用が許可されており、推奨されています。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_sql_metric.png" )} />
 
-You can also certify metrics if you'd like for your team in this view.
+このビューでは、必要に応じてチーム向けにメトリクスを認証することもできます。
 
-1. Virtual calculated columns: you can write SQL queries that
-customize the appearance and behavior
-of a specific column (e.g. `CAST(recovery_rate as float)`).
-Aggregate functions aren't allowed in calculated columns.
+1. 仮想計算列：特定の列の外観と動作をカスタマイズするSQLクエリを記述できます（例：`CAST(recovery_rate as float)`）。計算列では集計関数は使用できません。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_calculated_column.png" )} />
 
-### Creating charts in Explore view
+### 探索ビューでグラフを作成する
 
-Superset has 2 main interfaces for exploring data:
+Superset には、データ探索のための 2 つの主要なインターフェースがあります。
 
-- **Explore**: no-code viz builder. Select your dataset, select the chart,
-customize the appearance, and publish.
-- **SQL Lab**: SQL IDE for cleaning, joining, and preparing data for Explore workflow
+- **Explore**: コーディング不要の Viz ビルダー。データセットを選択し、チャートを選択して、外観をカスタマイズし、パブリッシュできます。
+- **SQL Lab**: Explore ワークフロー用のデータのクリーニング、結合、準備を行う SQL IDE。
 
-We'll focus on the Explore view for creating charts right now.
-To start the Explore workflow from the **Datasets** tab, start by clicking the name
-of the dataset that will be powering your chart.
+ここでは、チャートを作成するための Explore ビューに焦点を当てます。
+**Datasets** タブから Explore ワークフローを開始するには、まずチャートを作成するデータセットの名前をクリックします。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_launch_explore.png" )} /><br/><br/>
 
-You're now presented with a powerful workflow for exploring data and iterating on charts.
+データの探索とグラフの反復処理のための強力なワークフローが利用可能になりました。
 
-- The **Dataset** view on the left-hand side has a list of columns and metrics,
-scoped to the current dataset you selected.
-- The **Data** preview below the chart area also gives you helpful data context.
-- Using the **Data** tab and **Customize** tabs, you can change the visualization type,
-select the temporal column, select the metric to group by, and customize
-the aesthetics of the chart.
+- 左側の **Dataset** ビューには、現在選択しているデータセットを範囲とする列と指標のリストが表示されます。
+- グラフ領域の下にある **Data** プレビューでは、データのコンテキストも確認できます。
+- **Data** タブと **Customize** タブを使用すると、視覚化タイプの変更、時系列列の選択、グループ化する指標の選択、グラフの外観のカスタマイズを行うことができます。
 
-As you customize your chart using drop-down menus, make sure to click the **Run** button
-to get visual feedback.
+ドロップダウンメニューを使用してグラフをカスタマイズする際は、視覚的なフィードバックを得るために必ず **Run** ボタンをクリックしてください。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_explore_run.jpg" )} />
 
-In the following screenshot, we craft a grouped Time-series Bar Chart to visualize
-our quarterly sales data by product line just by clicking options in drop-down menus.
+次のスクリーンショットでは、ドロップダウン メニューのオプションをクリックするだけで、グループ化された時系列棒グラフを作成し、製品ライン別に四半期の売上データを視覚化します。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_explore_settings.jpg" )} />
 
-### Creating a slice and dashboard
+### スライスとダッシュボードの作成
 
-To save your chart, first click the **Save** button. You can either:
+チャートを保存するには、まず **Save** ボタンをクリックします。以下のいずれかの方法で保存できます。
 
-- Save your chart and add it to an existing dashboard
-- Save your chart and add it to a new dashboard
+- チャートを保存して既存のダッシュボードに追加する
+- チャートを保存して新しいダッシュボードに追加する
 
-In the following screenshot, we save the chart to a new "Superset Duper Sales Dashboard":
+次のスクリーンショットでは、チャートを新しい「Superset Duper Sales Dashboard」に保存しています。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_save_slice.png" )} />
 
-To publish, click **Save and goto Dashboard**.
+公開するには、**Save and goto Dashboard** をクリックしてください。
 
-Behind the scenes, Superset will create a slice and store all the information needed
-to create your chart in its thin data layer
- (the query, chart type, options selected, name, etc).
+Superset はバックグラウンドでスライスを作成し、チャートの作成に必要なすべての情報（クエリ、チャートの種類、選択したオプション、名前など）をその薄いデータレイヤーに保存します。
 
  <img src={useBaseUrl("/img/tutorial/tutorial_first_dashboard.png" )} style={{width: "100%", maxWidth: "500px"}} />
 
- To resize the chart, start by clicking the Edit Dashboard button in the top right corner.
+グラフのサイズを変更するには、まず右上隅にある「Edit Dashboard」ボタンをクリックします。
 
  <img src={useBaseUrl("/img/tutorial/tutorial_edit_button.png" )} width="300" />
 
-Then, click and drag the bottom right corner of the chart until the chart layout snaps
-into a position you like onto the underlying grid.
+次に、グラフのレイアウトが基になるグリッド上の希望の位置にスナップされるまで、グラフの右下隅をクリックしてドラッグします。
 
  <img src={useBaseUrl("/img/tutorial/tutorial_chart_resize.png" )} style={{width: "100%", maxWidth: "500px"}} />
 
- Click **Save** to persist the changes.
+ 変更を保存するには、**Save** をクリックしてください。
 
-Congrats! You’ve successfully linked, analyzed, and visualized data in Superset. There are a wealth
-of other table configuration and visualization options, so please start exploring and creating
-slices and dashboards of your own.
+おめでとうございます！Superset でデータのリンク、分析、視覚化が正常に完了しました。
+他にも豊富なテーブル設定と視覚化オプションがありますので、ぜひご自身のスライスやダッシュボードを試して作成してみてください。
 
-### Manage access to Dashboards
+### ダッシュボードへのアクセスを管理する
 
-Access to dashboards is managed via owners (users that have edit permissions to the dashboard).
+ダッシュボードへのアクセスは、オーナー（ダッシュボードの編集権限を持つユーザー）によって管理されます。
 
-Non-owner users access can be managed in two different ways. The dashboard needs to be published to be visible to other users.
+オーナー以外のユーザーのアクセスは、2 つの異なる方法で管理できます。ダッシュボードを他のユーザーに表示するには、公開する必要があります。
 
-1. Dataset permissions - if you add to the relevant role permissions to datasets it automatically grants implicit access to all dashboards that uses those permitted datasets.
-2. Dashboard roles - if you enable [**DASHBOARD_RBAC** feature flag](/docs/configuration/configuring-superset#feature-flags) then you will be able to manage which roles can access the dashboard
-   - Granting a role access to a dashboard will bypass dataset level checks. Having dashboard access implicitly grants read access to all the featured charts in the dashboard, and thereby also all the associated datasets.
-   - If no roles are specified for a dashboard, regular **Dataset permissions** will apply.
+1. データセット権限 - データセットに対する関連するロール権限を追加すると、許可されたデータセットを使用するすべてのダッシュボードへの暗黙的なアクセス権が自動的に付与されます。
+2. ダッシュボードのロール - [**DASHBOARD_RBAC** 機能フラグ](/docs/configuration/configuring-superset#feature-flags) を有効にすると、ダッシュボードにアクセスできるロールを管理できます。
+    - ダッシュボードへのロールアクセスを許可すると、データセットレベルのチェックがバイパスされます。ダッシュボードへのアクセス権限があると、ダッシュボード内のすべての注目チャートへの読み取りアクセス権が暗黙的に付与され、関連するすべてのデータセットへの読み取りアクセス権も付与されます。
+    - ダッシュボードにロールが指定されていない場合は、通常の**データセット権限** が適用されます。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_dashboard_access.png" )} />
 
-### Publishing a Dashboard
+### ダッシュボードの公開
 
-If you would like to make your dashboard available to other users, click on the `Draft` button next to the
-title of your dashboard.
+ダッシュボードを他のユーザーに公開したい場合は、ダッシュボードのタイトルの横にある `Draft` ボタンをクリックします。
 
 <img src={useBaseUrl("/img/tutorial/publish_button_dashboard.png" )} />
 
 :::warning
-Draft dashboards are only visible to the dashboard owners and admins. Published dashboards are visible to all users with access to the underlying datasets or if RBAC is enabled, to the roles that have been granted access to the dashboard.
+ドラフトダッシュボードはダッシュボードのオーナーと管理者にのみ表示されます。公開されたダッシュボードは、基盤となるデータセットにアクセスできるすべてのユーザー、またはRBACが有効になっている場合はダッシュボードへのアクセスを許可されたロールのユーザーに表示されます。
 :::
 
-### Mark a Dashboard as Favorite
+### ダッシュボードをお気に入りとしてマークする
 
-You can mark a dashboard as a favorite by clicking on the star icon next to the title of your dashboard. This makes it easier to find it in the list of dashboards or on the home page.
+ダッシュボードのタイトル横にある星アイコンをクリックすると、ダッシュボードをお気に入りとしてマークできます。これにより、ダッシュボードのリストやホームページで簡単に見つけられるようになります。
 
-### Customizing dashboard
+### ダッシュボードのカスタマイズ
 
-The following URL parameters can be used to modify how the dashboard is rendered:
+以下の URL パラメータを使用して、ダッシュボードのレンダリング方法を変更できます。
 
 - `standalone`:
-  - `0` (default): dashboard is displayed normally
-  - `1`: Top Navigation is hidden
-  - `2`: Top Navigation + title is hidden
-  - `3`: Top Navigation + title + top level tabs are hidden
+  - `0` (デフォルト): ダッシュボードは通常通り表示されます。
+  - `1`: トップナビゲーションは非表示になります。
+  - `2`: トップナビゲーションとタイトルは非表示になります。
+  - `3`: トップナビゲーションとタイトル、および最上位タブは非表示になります。
 - `show_filters`:
-  - `0`: render dashboard without Filter Bar
-  - `1` (default): render dashboard with Filter Bar if native filters are enabled
+  - `0`: フィルターバーなしでダッシュボードをレンダリングします。
+  - `1` (デフォルト): ネイティブフィルターが有効な場合、フィルターバー付きでダッシュボードをレンダリングします。
 - `expand_filters`:
-  - (default): render dashboard with Filter Bar expanded if there are native filters
-  - `0`: render dashboard with Filter Bar collapsed
-  - `1`: render dashboard with Filter Bar expanded
+- (デフォルト): ネイティブフィルターがある場合、フィルターバーを展開してダッシュボードをレンダリングします。
+  - `0`: フィルターバーを折りたたんでダッシュボードをレンダリングします。
+  - `1`: フィルターバーを展開してダッシュボードをレンダリングします。
 
-For example, when running the local development build, the following will disable the
-Top Nav and remove the Filter Bar:
+例えば、ローカル開発ビルドを実行する場合、以下のコマンドはトップナビゲーションを無効にし、フィルターバーを削除します。
 `http://localhost:8088/superset/dashboard/my-dashboard/?standalone=1&show_filters=0`

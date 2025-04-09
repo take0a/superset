@@ -1,5 +1,5 @@
 ---
-title: Exploring Data in Superset
+title: Superset でのデータの探索
 hide_title: true
 sidebar_position: 2
 version: 1
@@ -7,322 +7,270 @@ version: 1
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
-## Exploring Data in Superset
+## Superset でのデータの探索
 
-In this tutorial, we will introduce key concepts in Apache Superset through the exploration of a
-real dataset which contains the flights made by employees of a UK-based organization in 2011. The
-following information about each flight is given:
+このチュートリアルでは、2011年に英国を拠点とする組織の従業員が行ったフライトを含む実際のデータセットの調査を通じて、Apache Supersetの主要な概念を紹介します。
+各フライトについて、以下の情報が提供されます:
 
-- The traveler’s department. For the purposes of this tutorial the departments have been renamed
-  Orange, Yellow and Purple.
-- The cost of the ticket.
-- The travel class (Economy, Premium Economy, Business and First Class).
-- Whether the ticket was a single or return.
-- The date of travel.
-- Information about the origin and destination.
-- The distance between the origin and destination, in kilometers (km).
+- 旅行者の部門。このチュートリアルでは、部門名をオレンジ、イエロー、パープルに変更しています。
+- 航空券の料金。
+- 搭乗クラス（エコノミー、プレミアムエコノミー、ビジネス、ファーストクラス）。
+- 航空券が片道か往復か。
+- 旅行日。
+- 出発地と目的地に関する情報。
+- 出発地と目的地間の距離（キロメートル単位）。
 
-### Enabling Data Upload Functionality
+### データアップロード機能の有効化
 
-You may need to enable the functionality to upload a CSV or Excel file to your database. The following section
-explains how to enable this functionality for the examples database.
+CSV または Excel ファイルをデータベースにアップロードする機能を有効にする必要がある場合があります。
+次のセクションでは、サンプルデータベースでこの機能を有効にする方法について説明します。
 
-In the top menu, select **Settings ‣ Data ‣ Database Connections**. Find the **examples** database in the list and
-select the **Edit** button.
+上部のメニューで、 **Settings ‣ Data ‣ Database Connections** を選択します。リストから **examples** データベースを見つけて、**Edit** ボタンを選択します。
 
 <img src={useBaseUrl("/img/tutorial/edit-record.png" )} />
 
-In the resulting modal window, switch to the **Advanced** tab and open **Security** section.
-Then, tick the checkbox for **Allow file uploads to database**. End by clicking the **Finish** button.
+表示されるモーダルウィンドウで、**Advanced** タブに切り替え、 **Security** セクションを開きます。
+次に、**Allow file uploads to database** のチェックボックスをオンにします。最後に **Finish** ボタンをクリックします。
 
 <img src={useBaseUrl("/img/tutorial/allow-file-uploads.png" )} />
 
-### Loading CSV Data
+### CSVデータの読み込み
 
-Download the CSV dataset to your computer from
-[GitHub](https://raw.githubusercontent.com/apache-superset/examples-data/master/tutorial_flights.csv).
-In the top menu, select **Settings ‣ Data ‣ Database Connections**. Then, **Upload file to database ‣ Upload CSV**.
+[GitHub](https://raw.githubusercontent.com/apache-superset/examples-data/master/tutorial_flights.csv) からCSVデータセットをコンピューターにダウンロードします。
+上部のメニューで、 **Settings ‣ Data ‣ Database Connections** を選択します。次に、**Upload file to database ‣ Upload CSV** を選択します。
 
 <img src={useBaseUrl("/img/tutorial/upload_a_csv.png" )} />
 
-Then, select select the CSV file from your computer, select **Database** and **Schema**, and enter the **Table Name**
-as _tutorial_flights_.
+次に、コンピューターから CSV ファイルを選択し、**Database** と **Schema** を選択して、**Table Name** に _tutorial_flights_ と入力します。
 
 <img src={useBaseUrl("/img/tutorial/csv_to_database_configuration.png" )} />
 
-Next enter the text _Travel Date_ into the **File settings ‣ Columns to be parsed as dates** field.
+次に、**File settings ‣ Columns to be parsed as dates** フィールドに「_Travel Date_」というテキストを入力します。
 
 <img src={useBaseUrl("/img/tutorial/parse_dates_column.png" )} />
 
-Leaving all the other options in their default settings, select **Upload** at the bottom of the page.
+他のすべてのオプションをデフォルト設定のままにして、ページの下部にある **Upload** を選択します。
 
-### Table Visualization
+### Table の視覚化
 
-You should now see _tutorial_flights_ as a dataset in the **Datasets** tab. Click on the entry to
-launch an Explore workflow using this dataset.
+**Datasets** タブに、_tutorial_flights_ がデータセットとして表示されます。エントリをクリックすると、このデータセットを使用した Explore ワークフローが起動します。
 
-In this section, we'll create a table visualization
-to show the number of flights and cost per travel class.
+このセクションでは、フライト数と旅行クラスごとのコストを表示するテーブル ビジュアライゼーションを作成します。
 
-By default, Apache Superset only shows the last week of data. In our example, we want to visualize all
-of the data in the dataset. Click the **Time ‣ Time Range** section and change
-the **Range Type** to **No Filter**.
+Apache Superset はデフォルトで、過去 1 週間のデータのみを表示します。この例では、データセット内のすべてのデータを視覚化します。**Time ‣ Time Range**  セクションをクリックし、**Range Type** を **No Filter** に変更します。
 
 <img src={useBaseUrl("/img/tutorial/no_filter_on_time_filter.png" )} />
 
-Click **Apply** to save.
+**Apply** をクリックして保存します。
 
-Now, we want to specify the rows in our table by using the **Group by** option. Since in this
-example, we want to understand different Travel Classes, we select **Travel Class** in this menu.
+次に、**Group by** オプションを使用して、テーブル内の行を指定します。
 
-Next, we can specify the metrics we would like to see in our table with the **Metrics** option.
+この例では、異なる旅行クラスを把握したいため、このメニューで **Travel Class**  を選択します。
 
-- `COUNT(*)`, which represents the number of rows in the table
-(in this case, quantity of flights in each Travel Class)
-- `SUM(Cost)`, which represents the total cost spent by each Travel Class
+次に、**Metrics** オプションを使用して、テーブルに表示する指標を指定します。
+
+- `COUNT(*)` は、テーブル内の行数を表します（この場合は、各旅行クラスのフライト数）。
+- `SUM(Cost)` は、各旅行クラスで費やされた合計費用を表します。
 
 <img src={useBaseUrl("/img/tutorial/sum_cost_column.png" )} />
 
-Finally, select **Run Query** to see the results of the table.
+最後に、**Run Query** を選択してテーブルの結果を確認します。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_table.png" )} />
 
-To save the visualization, click on **Save** in the top left of the screen. In the following modal,
+ビジュアライゼーションを保存するには、画面左上の **Save** をクリックします。次のモーダルで、
 
-- Select the **Save as**
-option and enter the chart name as Tutorial Table (you will be able to find it again through the
-**Charts** screen, accessible in the top menu).
-- Select **Add To Dashboard** and enter
-Tutorial Dashboard. Finally, select **Save & Go To Dashboard**.
+- **Save as** オプションを選択し、チャート名に「Tutorial Table」と入力します（この名前は、上部メニューの **Charts** 画面で確認できます）。
+-  **Add To Dashboard** を選択し、「Tutorial Dashboard」と入力します。最後に、**Save & Go To Dashboard** を選択します。
 
 <img src={useBaseUrl("/img/tutorial/save_tutorial_table.png" )} />
 
-### Dashboard Basics
+### ダッシュボードの基本
 
-Next, we are going to explore the dashboard interface. If you’ve followed the previous section, you
-should already have the dashboard open. Otherwise, you can navigate to the dashboard by selecting
-Dashboards on the top menu, then Tutorial dashboard from the list of dashboards.
+次に、ダッシュボードインターフェースを見ていきましょう。
+前のセクションを既に実行している場合は、ダッシュボードがすでに開いているはずです。
+そうでない場合は、上部のメニューでダッシュボードを選択し、ダッシュボードのリストから Tutorial dashboard を選択してダッシュボードに移動できます。
 
-On this dashboard you should see the table you created in the previous section. Select **Edit
-dashboard** and then hover over the table. By selecting the bottom right hand corner of the table
-(the cursor will change too), you can resize it by dragging and dropping.
+このダッシュボードには、前のセクションで作成したテーブルが表示されます。
+**Edit dashboard** を選択し、テーブルにマウスを合わせます。
+テーブルの右下隅を選択すると（カーソルも変化します）、ドラッグ＆ドロップでサイズを変更できます。
 
 <img src={useBaseUrl("/img/tutorial/resize_tutorial_table_on_dashboard.png" )} />
 
-Finally, save your changes by selecting Save changes in the top right.
+最後に、右上の「Save changes」を選択して変更を保存します。
 
-### Pivot Table
+### ピボットテーブル
 
-In this section, we will extend our analysis using a more complex visualization, Pivot Table. By the
-end of this section, you will have created a table that shows the monthly spend on flights for the
-first six months, by department, by travel class.
+このセクションでは、より複雑な視覚化ツールであるピボットテーブルを使用して分析を拡張します。
+このセクションの最後には、最初の6か月間のフライトの月間支出を部門別、旅行クラス別に示す表が作成されます。
 
-Create a new chart by selecting **+ ‣ Chart** from the top right corner. Choose
-tutorial_flights again as a datasource, then click on the visualization type to get to the
-visualization menu. Select the **Pivot Table** visualization (you can filter by entering text in the
-search box) and then **Create New Chart**.
+右上隅の **+ ‣ Chart** を選択して、新しいチャートを作成します。
+データソースとして再度 tutorial_flights を選択し、視覚化の種類をクリックして視覚化メニューを開きます。
+ **Pivot Table** 視覚化を選択し（検索ボックスにテキストを入力してフィルタリングできます）、 **Create New Chart** を選択します。
 
 <img src={useBaseUrl("/img/tutorial/create_pivot.png" )} />
 
-In the **Time** section, keep the Time Column as Travel Date (this is selected automatically as we
-only have one time column in our dataset). Then select Time Grain to be month as having daily data
-would be too granular to see patterns from. Then select the time range to be the first six months of
-2011 by click on Last week in the Time Range section, then in Custom selecting a Start / end of 1st
-January 2011 and 30th June 2011 respectively by either entering directly the dates or using the
-calendar widget (by selecting the month name and then the year, you can move more quickly to far
-away dates).
+**Time** セクションでは、時間列を「旅行日」のままにします（データセットには時間列が1つしかないため、これは自動的に選択されます）。
+次に、日次データではパターンを確認するには細かすぎるため、「時間粒度」を「月」に設定します。次に、「時間範囲」セクションで「先週」をクリックして、2011年の最初の6か月間を選択します。次に、「カスタム」で開始日と終了日をそれぞれ2011年1月1日と2011年6月30日に設定します。日付を直接入力するか、カレンダーウィジェットを使用します（月名と年を選択すると、より遠い日付にすばやく移動できます）。
 
 <img src={useBaseUrl("/img/tutorial/select_dates_pivot_table.png" )} />
 
-Next, within the **Query** section, remove the default COUNT(\*) and add Cost, keeping the default
-SUM aggregate. Note that Apache Superset will indicate the type of the metric by the symbol on the
-left hand column of the list (ABC for string, # for number, a clock face for time, etc.).
+次に、**Query** セクションで、デフォルトの COUNT(\*) を削除し、デフォルトの SUM 集計をそのままにして Cost を追加します。
+Apache Superset では、リストの左側の列の記号でメトリックの種類が示されます（文字列の場合は ABC、数値の場合は #、時間の場合は時計の文字盤など）。
 
-In **Group by**, select **Time**: this will automatically use the Time Column and Time Grain
-selections we defined in the Time section.
+**Group by** で **Time** を選択します。これにより、時間セクションで定義した時間列と時間粒度の選択が自動的に使用されます。
 
-Within **Columns**, first select Department and then Travel Class. All set – let’s **Run Query** to
-see some data!
+**Columns** で、まず Department を選択し、次に Travel Class を選択します。準備完了です。**Run Query** してデータを確認しましょう。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_pivot_table.png" )} />
 
-You should see months in the rows and Department and Travel Class in the columns. Publish this chart
-to your existing Tutorial Dashboard you created earlier.
+行に月、列に部門と旅行クラスが表示されます。
+このチャートを、先ほど作成した既存のチュートリアルダッシュボードに公開します。
 
-### Line Chart
+### 折れ線グラフ
 
-In this section, we are going to create a line chart to understand the average price of a ticket by
-month across the entire dataset.
+このセクションでは、データセット全体における月ごとのチケットの平均価格を把握するための折れ線グラフを作成します。
 
-In the Time section, as before, keep the Time Column as Travel Date and Time Grain as month but this
-time for the Time range select No filter as we want to look at entire dataset.
+Time セクションでは、前述と同様に Time Column を Travel Date、Time Grain を month のままにしますが、今回はデータセット全体を表示するため、Time range には No filter を選択します。
 
-Within Metrics, remove the default `COUNT(*)` metric and instead add `AVG(Cost)`, to show the mean value.
+「メトリック」セクションでは、デフォルトの `COUNT(*)` メトリックを削除し、`AVG(Cost)` メトリックを追加して平均値を表示します。
 
 <img src={useBaseUrl("/img/tutorial/average_aggregate_for_cost.png" )} />
 
-Next, select **Run Query** to show the data on the chart.
+次に、**Run Query** を選択して、データをグラフに表示します。
 
-How does this look? Well, we can see that the average cost goes up in December. However, perhaps it
-doesn’t make sense to combine both single and return tickets, but rather show two separate lines for
-each ticket type.
+どのように見えるでしょうか？ 12月は平均価格が上昇していることがわかります。ただし、片道チケットと往復チケットをまとめて表示するのは意味がないので、チケットの種類ごとに2つの線を表示した方が良いかもしれません。
 
-Let’s do this by selecting Ticket Single or Return in the Group by box, and the selecting **Run
-Query** again. Nice! We can see that on average single tickets are cheaper than returns and that the
-big spike in December is caused by return tickets.
+「グループ化の基準」ボックスで「片道チケット」または「往復チケット」を選択し、もう一度 **Run Query** を選択して、これを行いましょう。
 
-Our chart is looking pretty good already, but let’s customize some more by going to the Customize
-tab on the left hand pane. Within this pane, try changing the Color Scheme, removing the range
-filter by selecting No in the Show Range Filter drop down and adding some labels using X Axis Label
-and Y Axis Label.
+いいですね！平均すると片道チケットの方が往復チケットよりも安く、12月の急上昇は往復チケットによるものであることがわかります。
+
+グラフはすでにかなり良い出来栄えですが、左側のペインの「カスタマイズ」タブに移動して、さらにカスタマイズしてみましょう。このペインで、配色を変更し、「範囲フィルターの表示」ドロップダウンで「いいえ」を選択して範囲フィルターを削除し、「X軸ラベル」と「Y軸ラベル」を使ってラベルを追加してみましょう。
 
 <img src={useBaseUrl("/img/tutorial/tutorial_line_chart.png" )} />
 
-Once you’re done, publish the chart in your Tutorial Dashboard.
+完了したら、チュートリアルダッシュボードでチャートを公開します。
 
-### Markup
+### マークアップ
 
-In this section, we will add some text to our dashboard. If you’re there already, you can navigate
-to the dashboard by selecting Dashboards on the top menu, then Tutorial dashboard from the list of
-dashboards. Got into edit mode by selecting **Edit dashboard**.
+このセクションでは、ダッシュボードにテキストを追加します。
+すでにダッシュボードにアクセスしている場合は、上部のメニューで「ダッシュボード」を選択し、ダッシュボードのリストから「チュートリアルダッシュボード」を選択してダッシュボードに移動できます。
+**Edit dashboard** を選択して編集モードに入ります。
 
-Within the Insert components pane, drag and drop a Markdown box on the dashboard. Look for the blue
-lines which indicate the anchor where the box will go.
+「コンポーネントの挿入」ペインで、Markdown ボックスをダッシュ​​ボードにドラッグ＆ドロップします。
+ボックスを配置するアンカーを示す青い線を探してください。
 
 <img src={useBaseUrl("/img/tutorial/blue_bar_insert_component.png" )} />
 
-Now, to edit the text, select the box. You can enter text, in markdown format (see
-[this Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for
-more information about this format). You can toggle between Edit and Preview using the menu on the
-top of the box.
+テキストを編集するには、ボックスを選択します。Markdown形式でテキストを入力できます（この形式の詳細については、[こちらのMarkdownチートシート](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)をご覧ください）。ボックス上部のメニューで「編集」と「プレビュー」を切り替えることができます。
 
 <img src={useBaseUrl("/img/tutorial/markdown.png" )} />
 
-To exit, select any other part of the dashboard. Finally, don’t forget to keep your changes using
-**Save changes**.
+終了するには、ダッシュボードの他の部分を選択してください。最後に、**Save changes** をクリックして変更内容を保存することを忘れないでください。
 
-### Publishing Your Dashboard
+### ダッシュボードを公開する
 
-If you have followed all of the steps outlined in the previous section, you should have a dashboard
-that looks like the below. If you would like, you can rearrange the elements of the dashboard by
-selecting **Edit dashboard** and dragging and dropping.
+前のセクションで説明した手順をすべて実行すると、ダッシュボードは以下のようになります。
+必要に応じて、**Edit dashboard** を選択してドラッグアンドドロップすることで、ダッシュボードの要素を並べ替えることができます。
 
-If you would like to make your dashboard available to other users, simply select Draft next to the
-title of your dashboard on the top left to change your dashboard to be in Published state. You can
-also favorite this dashboard by selecting the star.
+ダッシュボードを他のユーザーが利用できるようにしたい場合は、ダッシュボードのタイトルの横にある「下書き」を選択して、ダッシュボードを公開状態にします。
+また、星印を選択して、このダッシュボードをお気に入りに追加することもできます。
 
 <img src={useBaseUrl("/img/tutorial/publish_dashboard.png" )} />
 
-### Annotations
+### アノテーション
 
-Annotations allow you to add additional context to your chart. In this section, we will add an
-annotation to the Tutorial Line Chart we made in a previous section. Specifically, we will add the
-dates when some flights were cancelled by the UK’s Civil Aviation Authority in response to the
-eruption of the Grímsvötn volcano in Iceland (23-25 May 2011).
+アノテーションを使用すると、グラフにコンテキストを追加できます。
+このセクションでは、前のセクションで作成したチュートリアル折れ線グラフにアノテーションを追加します。
+具体的には、アイスランドのグリムスヴォトン火山の噴火（2011年5月23日～25日）を受けて、英国民間航空局が一部のフライトをキャンセルした日付を追加します。
 
-First, add an annotation layer by navigating to Manage ‣ Annotation Layers. Add a new annotation
-layer by selecting the green plus sign to add a new record. Enter the name Volcanic Eruptions and
-save. We can use this layer to refer to a number of different annotations.
+まず、「管理」‣「アノテーションレイヤー」に移動してアノテーションレイヤーを追加します。
+緑色のプラス記号を選択して新しいレコードを追加し、新しいアノテーションレイヤーを追加します。
+「火山噴火」という名前を入力して保存します。
+このレイヤーは、さまざまな注釈を参照するために使用できます。
 
-Next, add an annotation by navigating to Manage ‣ Annotations and then create a new annotation by
-selecting the green plus sign. Then, select the Volcanic Eruptions layer, add a short description
-Grímsvötn and the eruption dates (23-25 May 2011) before finally saving.
+次に、「管理」‣「アノテーション」に移動してアノテーションを追加し、緑色のプラス記号を選択して新しいアノテーションを作成します。
+次に、「Volcanic Eruptions」レイヤーを選択し、短い説明「Grímsvötn」と噴火日 (2011 年 5 月 23 ～ 25 日) を追加して、最後に保存します。
 
 <img src={useBaseUrl("/img/tutorial/edit_annotation.png" )} />
 
-Then, navigate to the line chart by going to Charts then selecting Tutorial Line Chart from the
-list. Next, go to the Annotations and Layers section and select Add Annotation Layer. Within this
-dialogue:
+次に、「チャート」に移動し、リストから「チュートリアル折れ線グラフ」を選択して、折れ線グラフに移動します。
+次に、「アノテーションとレイヤー」セクションに移動し、「アノテーションレイヤーの追加」を選択します。このダイアログで、以下の操作を行います。
 
-- Name the layer as Volcanic Eruptions
-- Change the Annotation Layer Type to Event
-- Set the Annotation Source as Superset annotation
-- Specify the Annotation Layer as Volcanic Eruptions
+- レイヤー名を「Volcanic Eruptions」と入力します。
+- アノテーションレイヤーの種類を「イベント」に変更します。
+- アノテーションソースを「Superset アノテーション」に設定します。
+- アノテーションレイヤーを「Volcanic Eruptions」と指定します。
 
 <img src={useBaseUrl("/img/tutorial/annotation_settings.png" )} />
 
-Select **Apply** to see your annotation shown on the chart.
+**Apply** を選択すると、グラフにアノテーションが表示されます。
 
 <img src={useBaseUrl("/img/tutorial/annotation.png" )} />
 
-If you wish, you can change how your annotation looks by changing the settings in the Display
-configuration section. Otherwise, select **OK** and finally **Save** to save your chart. If you keep
-the default selection to overwrite the chart, your annotation will be saved to the chart and also
-appear automatically in the Tutorial Dashboard.
+必要に応じて、「表示設定」セクションで設定を変更することで、注釈の表示方法を変更できます。
+変更しない場合は、**OK** を選択し、最後に **Save** を選択してチャートを保存します。デフォルトの選択（チャートを上書きする）のままにしておくと、アノテーションはチャートに保存され、チュートリアルダッシュボードにも自動的に表示されます。
 
-### Advanced Analytics
+### 高度な分析
 
-In this section, we are going to explore the Advanced Analytics feature of Apache Superset that
-allows you to apply additional transformations to your data. The three types of transformation are:
+このセクションでは、Apache Superset の高度な分析機能について解説します。この機能を使用すると、データに追加の変換を適用できます。変換には以下の 3 種類があります。
 
-**Setting up the base chart**
+**基本チャートの設定**
 
-In this section, we’re going to set up a base chart which we can then apply the different **Advanced
-Analytics** features to. Start off by creating a new chart using the same _tutorial_flights_
-datasource and the **Line Chart** visualization type. Within the Time section, set the Time Range as
-1st October 2011 and 31st October 2011.
+このセクションでは、さまざまな **高度な分析** 機能を適用できる基本チャートを設定します。
+まず、同じ _tutorial_flights_ データソースと **折れ線グラフ** の視覚化タイプを使用して、新しいチャートを作成します。「時間」セクションで、「期間」を 2011 年 10 月 1 日から 2011 年 10 月 31 日に設定します。
 
-Next, in the query section, change the Metrics to the sum of Cost. Select **Run Query** to show the
-chart. You should see the total cost per day for each month in October 2011.
+次に、「クエリ」セクションで、「指標」を「コストの合計」に変更します。
+「クエリを実行」を選択してチャートを表示します。
+2011 年 10 月の各月の 1 日あたりの総コストが表示されます。
 
 <img src={useBaseUrl("/img/tutorial/advanced_analytics_base.png" )} />
 
-Finally, save the visualization as Tutorial Advanced Analytics Base, adding it to the Tutorial
-Dashboard.
+最後に、視覚化を Tutorial Advanced Analytics Base として保存し、Tutorial Dashboard に追加します。
 
-### Rolling Mean
+### ローリング平均
 
-There is quite a lot of variation in the data, which makes it difficult to identify any trend. One
-approach we can take is to show instead a rolling average of the time series. To do this, in the
-**Moving Average** subsection of **Advanced Analytics**, select mean in the **Rolling** box and
-enter 7 into both Periods and Min Periods. The period is the length of the rolling period expressed
-as a multiple of the Time Grain. In our example, the Time Grain is day, so the rolling period is 7
-days, such that on the 7th October 2011 the value shown would correspond to the first seven days of
-October 2011. Lastly, by specifying Min Periods as 7, we ensure that our mean is always calculated
-on 7 days and we avoid any ramp up period.
+データにはかなり大きなばらつきがあるため、傾向を特定するのは困難です。
+時系列の移動平均を表示するという方法があります。
+これを行うには、**高度な分析** の **移動平均** サブセクションで、**ローリング** ボックスで平均を選択し、期間と最小期間の両方に 7 を入力します。
+期間は、時間粒度の倍数として表されるローリング期間の長さです。
+この例では、時間粒度が日なので、ローリング期間は 7 日間となり、2011 年 10 月 7 日に表示される値は 2011 年 10 月の最初の 7 日間に相当します。
+最後に、最小期間を 7 に指定することで、平均は常に 7 日間で計算され、増加期間が回避されます。
 
-After displaying the chart by selecting **Run Query** you will see that the data is less variable
-and that the series starts later as the ramp up period is excluded.
+**クエリを実行** を選択してグラフを表示すると、データの変動が少なくなり、増加期間が除外されるため、系列が遅く開始されていることがわかります。
 
 <img src={useBaseUrl("/img/tutorial/rolling_mean.png" )} />
 
-Save the chart as Tutorial Rolling Mean and add it to the Tutorial Dashboard.
+チャートを「Tutorial Rolling Mean」として保存し、Tutorial ダッシュボードに追加します。
 
-### Time Comparison
+### 時間比較
 
-In this section, we will compare values in our time series to the value a week before. Start off by
-opening the Tutorial Advanced Analytics Base chart, by going to **Charts** in the top menu and then
-selecting the visualization name in the list (alternatively, find the chart in the Tutorial
-Dashboard and select Explore chart from the menu for that visualization).
+このセクションでは、時系列の値を1週間前の値と比較します。まず、チュートリアルの高度な分析ベースチャートを開きます。上部メニューの「**チャート**」に移動し、リストからビジュアライゼーション名を選択します（または、チュートリアルダッシュボードでチャートを見つけ、そのビジュアライゼーションのメニューから「チャートの探索」を選択します）。
 
-Next, in the Time Comparison subsection of **Advanced Analytics**, enter the Time Shift by typing in
-“minus 1 week” (note this box accepts input in natural language). Run Query to see the new chart,
-which has an additional series with the same values, shifted a week back in time.
+次に、**高度な分析** の「時間比較」サブセクションで、「マイナス1週間」と入力して時間シフトを入力します（このボックスは自然言語での入力も受け付けます）。
+クエリを実行すると、同じ値を持つ追加の系列が1週間前に戻された新しいグラフが表示されます。
 
 <img src={useBaseUrl("/img/tutorial/time_comparison_two_series.png" )} />
 
-Then, change the **Calculation type** to Absolute difference and select **Run Query**. We can now
-see only one series again, this time showing the difference between the two series we saw
-previously.
+次に、**Calculation type** を「絶対差」に変更し、**Run Query** を選択します。
+今度は、先ほど表示した2つの系列の差が、再び1つの系列のみに表示されるようになりました。
 
 <img src={useBaseUrl("/img/tutorial/time_comparison_absolute_difference.png" )} />
 
-Save the chart as Tutorial Time Comparison and add it to the Tutorial Dashboard.
+チャートを「チュートリアル時間比較」として保存し、チュートリアルダッシュボードに追加します。
 
-### Resampling the data
+### データの再サンプリング
 
-In this section, we’ll resample the data so that rather than having daily data we have weekly data.
-As in the previous section, reopen the Tutorial Advanced Analytics Base chart.
+このセクションでは、日次データではなく週次データになるようにデータを再サンプリングします。
+前のセクションと同様に、チュートリアルの高度な分析ベースチャートを再度開きます。
 
-Next, in the Python Functions subsection of **Advanced Analytics**, enter 7D, corresponding to seven
-days, in the Rule and median as the Method and show the chart by selecting **Run Query**.
+次に、**Advanced Analytics** の Python 関数サブセクションで、ルールに7日間を表す「7D」を入力し、メソッドに「median」と入力し、**Run Query** を選択してチャートを表示します。
 
 <img src={useBaseUrl("/img/tutorial/resample.png" )} />
 
-Note that now we have a single data point every 7 days. In our case, the value showed corresponds to
-the median value within the seven daily data points. For more information on the meaning of the
-various options in this section, refer to the
-[Pandas documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html).
+これで、7日ごとに1つのデータポイントがあることに注意してください。
+この場合、表示されている値は、7つの日次データポイントの中央値に対応しています。
+このセクションのさまざまなオプションの意味の詳細については、[Pandasドキュメント](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html)を参照してください。
 
-Lastly, save your chart as Tutorial Resample and add it to the Tutorial Dashboard. Go to the
-tutorial dashboard to see the four charts side by side and compare the different outputs.
+最後に、チャートを「Tutorial Resample」という名前で保存し、チュートリアルダッシュボードに追加します。
+チュートリアルダッシュボードに移動して、4つのチャートを並べて表示し、異なる出力を比較してください。

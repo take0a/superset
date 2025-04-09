@@ -1,33 +1,30 @@
 ---
-title: SQL Templating
+title: SQLテンプレート
 hide_title: true
 sidebar_position: 5
 version: 1
 ---
 
-# SQL Templating
+# SQLテンプレート
 
-## Jinja Templates
+## Jinjaテンプレート
 
-SQL Lab and Explore supports [Jinja templating](https://jinja.palletsprojects.com/en/2.11.x/) in queries.
-To enable templating, the `ENABLE_TEMPLATE_PROCESSING` [feature flag](/docs/configuration/configuring-superset#feature-flags) needs to be enabled in
-`superset_config.py`. When templating is enabled, python code can be embedded in virtual datasets and
-in Custom SQL in the filter and metric controls in Explore. By default, the following variables are
-made available in the Jinja context:
+SQL LabとExploreは、クエリで[Jinjaテンプレート](https://jinja.palletsprojects.com/en/2.11.x/)をサポートしています。
+テンプレートを有効にするには、`superset_config.py`で`ENABLE_TEMPLATE_PROCESSING` [機能フラグ](/docs/configuration/configuring-superset#feature-flags)を有効にする必要があります。テンプレートを有効にすると、仮想データセットやExploreのフィルターおよびメトリックコントロールのカスタムSQLにPythonコードを埋め込むことができます。デフォルトでは、以下の変数がJinjaコンテキストで使用可能になります:
 
-- `columns`: columns which to group by in the query
-- `filter`: filters applied in the query
-- `from_dttm`: start `datetime` value from the selected time range (`None` if undefined) (deprecated beginning in version 5.0, use `get_time_filter` instead)
-- `to_dttm`: end `datetime` value from the selected time range (`None` if undefined). (deprecated beginning in version 5.0, use `get_time_filter` instead)
-- `groupby`: columns which to group by in the query (deprecated)
-- `metrics`: aggregate expressions in the query
-- `row_limit`: row limit of the query
-- `row_offset`: row offset of the query
-- `table_columns`: columns available in the dataset
-- `time_column`: temporal column of the query (`None` if undefined)
-- `time_grain`: selected time grain (`None` if undefined)
+- `columns`: クエリでグループ化する列
+- `filter`: クエリで適用するフィルター
+- `from_dttm`: 選択した時間範囲の開始 `datetime` 値（未定義の場合は `None`）（バージョン 5.0 以降では非推奨です。代わりに `get_time_filter` を使用してください）
+- `to_dttm`: 選択した時間範囲の終了 `datetime` 値（未定義の場合は `None`）。 (バージョン 5.0 以降では非推奨です。代わりに `get_time_filter` を使用してください)
+- `groupby`: クエリでグループ化する列 (非推奨)
+- `metrics`: クエリ内の集計式
+- `row_limit`: クエリの行数制限
+- `row_offset`: クエリの行オフセット
+- `table_columns`: データセットで使用可能な列
+- `time_column`: クエリのテンポラル列 (未定義の場合は `None`)
+- `time_grain`: 選択した時間粒度 (未定義の場合は `None`)
 
-For example, to add a time range to a virtual dataset, you can write the following:
+たとえば、仮想データセットに時間範囲を追加するには、次のように記述します:
 
 ```sql
 SELECT *
@@ -35,8 +32,7 @@ FROM tbl
 WHERE dttm_col > '{{ from_dttm }}' and dttm_col < '{{ to_dttm }}'
 ```
 
-You can also use [Jinja's logic](https://jinja.palletsprojects.com/en/2.11.x/templates/#tests)
-to make your query robust to clearing the timerange filter:
+また、[Jinja のロジック](https://jinja.palletsprojects.com/en/2.11.x/templates/#tests) を使用して、時間範囲フィルターのクリアに対してクエリを堅牢にすることもできます:
 
 ```sql
 SELECT *
@@ -52,16 +48,12 @@ WHERE (
 )
 ```
 
-The `1 = 1` at the end ensures a value is present for the `WHERE` clause even when
-the time filter is not set. For many database engines, this could be replaced with `true`.
+末尾の `1 = 1` は、時間フィルターが設定されていない場合でも、`WHERE` 句に値が存在することを保証します。多くのデータベースエンジンでは、これを `true` に置き換えることができます。
 
-Note that the Jinja parameters are called within _double_ brackets in the query and with
-_single_ brackets in the logic blocks.
+Jinja パラメータは、クエリ内では二重括弧で囲み、ロジックブロック内では一重括弧で囲んで呼び出されることに注意してください。
 
-To add custom functionality to the Jinja context, you need to overload the default Jinja
-context in your environment by defining the `JINJA_CONTEXT_ADDONS` in your superset configuration
-(`superset_config.py`). Objects referenced in this dictionary are made available for users to use
-where the Jinja context is made available.
+Jinja コンテキストにカスタム機能を追加するには、スーパーセット構成 (`superset_config.py`) で `JINJA_CONTEXT_ADDONS` を定義して、環境のデフォルトの Jinja コンテキストをオーバーロードする必要があります。
+このディクショナリで参照されるオブジェクトは、Jinja コンテキストが利用可能な場所でユーザーが使用できるようになります。
 
 ```python
 JINJA_CONTEXT_ADDONS = {
@@ -69,8 +61,7 @@ JINJA_CONTEXT_ADDONS = {
 }
 ```
 
-Default values for jinja templates can be specified via `Parameters` menu in the SQL Lab user interface.
-In the UI you can assign a set of parameters as JSON
+Jinja テンプレートのデフォルト値は、SQL Lab ユーザーインターフェースの「Parameters」メニューから指定できます。UIでは、パラメータセットをJSONとして割り当てることができます。
 
 ```json
 {
@@ -78,10 +69,10 @@ In the UI you can assign a set of parameters as JSON
 }
 ```
 
-The parameters become available in your SQL (example: `SELECT * FROM {{ my_table }}` ) by using Jinja templating syntax.
-SQL Lab template parameters are stored with the dataset as `TEMPLATE PARAMETERS`.
+Jinja テンプレート構文を使用することで、SQL でパラメータを使用できるようになります (例: `SELECT * FROM {{ my_table }}`)。
+SQL Lab テンプレートパラメータは、データセットとともに `TEMPLATE PARAMETERS` として保存されます。
 
-There is a special ``_filters`` parameter which can be used to test filters used in the jinja template.
+Jinja テンプレートで使用されるフィルターをテストするために使用できる特別なパラメータ ``_filters`` があります。
 
 ```json
 {
@@ -102,17 +93,14 @@ WHERE action in {{ filter_values('action_type')|where_in }}
 GROUP BY action
 ```
 
-Note ``_filters`` is not stored with the dataset. It's only used within the SQL Lab UI.
+注意: ``_filters`` はデータセットには保存されません。SQL Lab UI 内でのみ使用されます。
 
-Besides default Jinja templating, SQL lab also supports self-defined template processor by setting
-the `CUSTOM_TEMPLATE_PROCESSORS` in your superset configuration. The values in this dictionary
-overwrite the default Jinja template processors of the specified database engine. The example below
-configures a custom presto template processor which implements its own logic of processing macro
-template with regex parsing. It uses the `$` style macro instead of `{{ }}` style in Jinja
-templating.
+SQL lab は、デフォルトの Jinja テンプレートに加えて、スーパーセット構成で `CUSTOM_TEMPLATE_PROCESSORS` を設定することで、独自に定義したテンプレートプロセッサもサポートします。
+この辞書の値は、指定されたデータベースエンジンのデフォルトの Jinja テンプレートプロセッサを上書きします。
+以下の例では、正規表現解析を使用してマクロテンプレートを処理する独自のロジックを実装するカスタム Presto テンプレートプロセッサを構成しています。
+Jinja テンプレートの `{{ }}` スタイルではなく、 `$` スタイルのマクロを使用します。
 
-By configuring it with `CUSTOM_TEMPLATE_PROCESSORS`, a SQL template on a presto database is
-processed by the custom one rather than the default one.
+`CUSTOM_TEMPLATE_PROCESSORS` で構成することで、Presto データベース上の SQL テンプレートは、デフォルトのテンプレートではなくカスタムテンプレートによって処理されます。
 
 ```python
 def DATE(
@@ -156,9 +144,8 @@ CUSTOM_TEMPLATE_PROCESSORS = {
 }
 ```
 
-SQL Lab also includes a live query validation feature with pluggable backends. You can configure
-which validation implementation is used with which database engine by adding a block like the
-following to your configuration file:
+SQL Lab には、プラグイン可能なバックエンドを備えたライブクエリ検証機能も含まれています。
+設定ファイルに次のようなブロックを追加することで、どの検証実装をどのデータベースエンジンで使用するかを設定できます。
 
 ```python
 FEATURE_FLAGS = {
@@ -168,96 +155,89 @@ FEATURE_FLAGS = {
 }
 ```
 
-The available validators and names can be found in
-[sql_validators](https://github.com/apache/superset/tree/master/superset/sql_validators).
+利用可能なバリデータと名前は [sql_validators](https://github.com/apache/superset/tree/master/superset/sql_validators) で確認できます。
 
-## Available Macros
+## 利用可能なマクロ
 
-In this section, we'll walkthrough the pre-defined Jinja macros in Superset.
+このセクションでは、Superset で定義済みの Jinja マクロについて説明します。
 
-**Current Username**
+**現在のユーザー名**
 
-The `{{ current_username() }}` macro returns the `username` of the currently logged in user.
+`{{ current_username() }}` マクロは、現在ログインしているユーザーの `username` を返します。
 
-If you have caching enabled in your Superset configuration, then by default the `username` value will be used
-by Superset when calculating the cache key. A cache key is a unique identifier that determines if there's a
-cache hit in the future and Superset can retrieve cached data.
+Superset の設定でキャッシュが有効になっている場合、デフォルトでは、Superset はキャッシュキーを計算する際に `username` 値を使用します。
+キャッシュキーは、将来キャッシュヒットが発生し、Superset がキャッシュデータを取得できるかどうかを判断するための一意の識別子です。
 
-You can disable the inclusion of the `username` value in the calculation of the
-cache key by adding the following parameter to your Jinja code:
+Jinja コードに次のパラメータを追加することで、キャッシュキーの計算に `username` 値が含まれないようにすることができます。
 
 ```python
 {{ current_username(add_to_cache_keys=False) }}
 ```
 
-**Current User ID**
+**現在のユーザーID**
 
-The `{{ current_user_id() }}` macro returns the account ID of the currently logged in user.
+`{{ current_user_id() }}` マクロは、現在ログインしているユーザーのアカウントIDを返します。
 
-If you have caching enabled in your Superset configuration, then by default the account `id` value will be used
-by Superset when calculating the cache key. A cache key is a unique identifier that determines if there's a
-cache hit in the future and Superset can retrieve cached data.
+Superset 設定でキャッシュが有効になっている場合、デフォルトでは、Superset はキャッシュキーを計算する際にアカウントの `id` 値を使用します。
+キャッシュキーは、将来キャッシュヒットが発生し、Superset がキャッシュデータを取得できるかどうかを判断するための一意の識別子です。
 
-You can disable the inclusion of the account `id` value in the calculation of the
-cache key by adding the following parameter to your Jinja code:
+Jinja コードに次のパラメータを追加することで、キャッシュキーの計算にアカウントの `id` 値が含まれないようにすることができます。
 
 ```python
 {{ current_user_id(add_to_cache_keys=False) }}
 ```
 
-**Current User Email**
+**現在のユーザーのメールアドレス**
 
-The `{{ current_user_email() }}` macro returns the email address of the currently logged in user.
+`{{ current_user_email() }}` マクロは、現在ログインしているユーザーのメールアドレスを返します。
 
-If you have caching enabled in your Superset configuration, then by default the email address value will be used
-by Superset when calculating the cache key. A cache key is a unique identifier that determines if there's a
-cache hit in the future and Superset can retrieve cached data.
+Superset の設定でキャッシュが有効になっている場合、デフォルトでは、Superset はキャッシュキーを計算する際にメールアドレスの値を使用します。
+キャッシュキーは、将来キャッシュヒットが発生し、Superset がキャッシュデータを取得できるかどうかを判断するための一意の識別子です。
 
-You can disable the inclusion of the email value in the calculation of the
-cache key by adding the following parameter to your Jinja code:
+Jinja コードに次のパラメータを追加することで、キャッシュキーの計算にメールアドレスの値を含めないようにすることができます。
 
 ```python
 {{ current_user_email(add_to_cache_keys=False) }}
 ```
 
-**Current User Roles**
+**現在のユーザーロール**
 
-The `{{ current_user_roles() }}` macro returns an array of roles for the logged in user.
+`{{ current_user_roles() }}` マクロは、ログインしているユーザーのロールの配列を返します。
 
-If you have caching enabled in your Superset configuration, then by default the roles value will be used
-by Superset when calculating the cache key. A cache key is a unique identifier that determines if there's a
-cache hit in the future and Superset can retrieve cached data.
+Superset 設定でキャッシュが有効になっている場合、デフォルトでは、Superset はキャッシュキーを計算する際にロールの値を使用します。
+キャッシュキーは、将来キャッシュヒットが発生し、Superset がキャッシュデータを取得できるかどうかを判断するための一意の識別子です。
 
-You can disable the inclusion of the roles value in the calculation of the
-cache key by adding the following parameter to your Jinja code:
+Jinja コードに次のパラメータを追加することで、キャッシュキーの計算にロールの値を含めないようにすることができます。
 
 ```python
 {{ current_user_roles(add_to_cache_keys=False) }}
 ```
 
-You can json-stringify the array by adding `|tojson` to your Jinja code:
+Jinja コードに `|tojson` を追加することで、配列を JSON 文字列化できます:
+
 ```python
 {{ current_user_roles()|tojson }}
 ```
 
-You can use the `|where_in` filter to use your roles in a SQL statement. For example, if `current_user_roles()` returns `['admin', 'viewer']`, the following template:
+`|where_in` フィルターを使用すると、SQL 文でロールを使用できます。例えば、`current_user_roles()` が `['admin', 'viewer']` を返す場合、次のテンプレートを使用します:
+
 ```python
 SELECT * FROM users WHERE role IN {{ current_user_roles()|where_in }}
 ```
 
-Will be rendered as:
+次のように表示されます:
+
 ```sql
 SELECT * FROM users WHERE role IN ('admin', 'viewer')
 ```
 
-**Custom URL Parameters**
+**カスタム URL パラメータ**
 
-The `{{ url_param('custom_variable') }}` macro lets you define arbitrary URL
-parameters and reference them in your SQL code.
+`{{ url_param('custom_variable') }}` マクロを使用すると、任意の URL パラメータを定義し、SQL コード内で参照できます。
 
-Here's a concrete example:
+具体的な例を以下に示します。
 
-- You write the following query in SQL Lab:
+- SQL Lab で次のクエリを作成します。
 
   ```sql
   SELECT count(*)
@@ -265,10 +245,8 @@ Here's a concrete example:
   WHERE country_code = '{{ url_param('countrycode') }}'
   ```
 
-- You're hosting Superset at the domain www.example.com and you send your
-  coworker in Spain the following SQL Lab URL `www.example.com/superset/sqllab?countrycode=ES`
-  and your coworker in the USA the following SQL Lab URL `www.example.com/superset/sqllab?countrycode=US`
-- For your coworker in Spain, the SQL Lab query will be rendered as:
+- Superset をドメイン www.example.com でホスティングしており、スペインの同僚に SQL Lab の URL「www.example.com/superset/sqllab?countrycode=ES」を送信し、米国の同僚に SQL Lab の URL「www.example.com/superset/sqllab?countrycode=US」を送信します。
+- スペインの同僚にとって、SQL Lab クエリは次のように表示されます。
 
   ```sql
   SELECT count(*)
@@ -276,7 +254,7 @@ Here's a concrete example:
   WHERE country_code = 'ES'
   ```
 
-- For your coworker in the USA, the SQL Lab query will be rendered as:
+- 米国の同僚の場合、SQL Lab クエリは次のように表示されます:
 
   ```sql
   SELECT count(*)
@@ -284,28 +262,25 @@ Here's a concrete example:
   WHERE country_code = 'US'
   ```
 
-**Explicitly Including Values in Cache Key**
+**キャッシュキーに値を明示的に含める**
 
-The `{{ cache_key_wrapper() }}` function explicitly instructs Superset to add a value to the
-accumulated list of values used in the calculation of the cache key.
+`{{ cache_key_wrapper() }}` 関数は、キャッシュキーの計算に使用される値の累積リストに値を追加するよう、Superset に明示的に指示します。
 
-This function is only needed when you want to wrap your own custom function return values
-in the cache key. You can gain more context
-[here](https://github.com/apache/superset/blob/efd70077014cbed62e493372d33a2af5237eaadf/superset/jinja_context.py#L133-L148).
+この関数は、独自のカスタム関数の戻り値をキャッシュキーにラップする場合にのみ必要です。詳細については、
+[こちら](https://github.com/apache/superset/blob/efd70077014cbed62e493372d33a2af5237eaadf/superset/jinja_context.py#L133-L148) を参照してください。
 
-Note that this function powers the caching of the `user_id` and `username` values
-in the `current_user_id()` and `current_username()` function calls (if you have caching enabled).
+この関数は、`current_user_id()` 関数と `current_username()` 関数の呼び出しにおける `user_id` 値と `username` 値のキャッシュを可能にします（キャッシュが有効になっている場合）。
 
-**Filter Values**
+**フィルター値**
 
-You can retrieve the value for a specific filter as a list using `{{ filter_values() }}`.
+`{{ filter_values() }}` を使用すると、特定のフィルターの値をリストとして取得できます。
 
-This is useful if:
+これは、次のような場合に便利です。
 
-- You want to use a filter component to filter a query where the name of filter component column doesn't match the one in the select statement
-- You want to have the ability to filter inside the main query for performance purposes
+- フィルターコンポーネントを使用して、フィルターコンポーネントの列名が SELECT ステートメントの列名と一致しないクエリをフィルタリングしたい場合
+- パフォーマンス向上のため、メインクエリ内でフィルタリング機能を利用したい場合
 
-Here's a concrete example:
+具体的な例を以下に示します:
 
 ```sql
 SELECT action, count(*) as times
@@ -315,21 +290,20 @@ WHERE
 GROUP BY action
 ```
 
-There `where_in` filter converts the list of values from `filter_values('action_type')` into a string suitable for an `IN` expression.
+`where_in` フィルターは `filter_values('action_type')` からの値のリストを `IN` 式に適した文字列に変換します。
 
-**Filters for a Specific Column**
+**特定の列のフィルター**
 
-The `{{ get_filters() }}` macro returns the filters applied to a given column. In addition to
-returning the values (similar to how `filter_values()` does), the `get_filters()` macro
-returns the operator specified in the Explore UI.
+`{{ get_filters() }}` マクロは、指定された列に適用されたフィルターを返します。
+`filter_values()` と同様に値を返すだけでなく、`get_filters()` マクロは Explore UI で指定された演算子も返します。
 
-This is useful if:
+これは、次のような場合に便利です。
 
-- You want to handle more than the IN operator in your SQL clause
-- You want to handle generating custom SQL conditions for a filter
-- You want to have the ability to filter inside the main query for speed purposes
+- SQL 句で IN 演算子以外の演算子も処理したい場合
+- フィルター用のカスタム SQL 条件を生成したい場合
+- 処理速度向上のため、メインクエリ内でフィルター処理を実行したい場合
 
-Here's a concrete example:
+具体的な例を以下に示します:
 
 ```sql
  WITH RECURSIVE
@@ -379,34 +353,30 @@ Here's a concrete example:
     order by lineage, level
 ```
 
-**Time Filter**
+**時間フィルター**
 
-The `{{ get_time_filter() }}` macro returns the time filter applied to a specific column. This is useful if you want
-to handle time filters inside the virtual dataset, as by default the time filter is placed on the outer query. This can
-considerably improve performance, as many databases and query engines are able to optimize the query better
-if the temporal filter is placed on the inner query, as opposed to the outer query.
+`{{ get_time_filter() }}` マクロは、特定の列に適用された時間フィルターを返します。
+デフォルトでは時間フィルターは外部クエリに配置されるため、仮想データセット内で時間フィルターを処理する場合に便利です。
+多くのデータベースやクエリエンジンでは、時間フィルターを外部クエリではなく内部クエリに配置することでクエリをより適切に最適化できるため、これによりパフォーマンスが大幅に向上します。
 
-The macro takes the following parameters:
+このマクロは以下のパラメータを取ります。
 
-- `column`: Name of the temporal column. Leave undefined to reference the time range from a Dashboard Native Time Range
-  filter (when present).
-- `default`: The default value to fall back to if the time filter is not present, or has the value `No filter`
-- `target_type`: The target temporal type as recognized by the target  database (e.g. `TIMESTAMP`, `DATE` or
-  `DATETIME`). If `column` is defined, the format will default to the type of the column. This is used to produce
-  the format of the `from_expr` and `to_expr` properties of the returned `TimeFilter` object.
-- `strftime`: format using the `strftime` method of `datetime` for custom time formatting.
-  ([see docs for valid format codes](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes)).
-  When defined `target_type` will be ignored.
-- `remove_filter`: When set to true, mark the filter as processed, removing it from the outer query. Useful when a
-  filter should only apply to the inner query.
+- `column`: 時間列の名前。ダッシュボードのネイティブ時間範囲フィルター（存在する場合）の時間範囲を参照するには、未定義のままにしておきます。
+- `default`: 時間フィルターが存在しない場合、または値が「フィルターなし」の場合にフォールバックするデフォルト値。
+- `target_type`: ターゲットデータベースで認識されるターゲットの時間型（例: `TIMESTAMP`、`DATE`、`DATETIME`）。
+  `column` が定義されている場合、フォーマットはデフォルトで列の型になります。これは、返される `TimeFilter` オブジェクトの `from_expr` プロパティと `to_expr` プロパティのフォーマットを生成するために使用されます。
+- `strftime`: `datetime` の `strftime` メソッドを使用して、カスタム時間フォーマットを設定します。
+  ([有効なフォーマットコードについてはドキュメントを参照](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes))。
+  `target_type` が定義されている場合、無視されます。
+- `remove_filter`: true に設定すると、フィルターを処理済みとしてマークし、外側のクエリから削除します。フィルターを内側のクエリにのみ適用する場合に便利です。
 
-The return type has the following properties:
+戻り値の型には以下のプロパティがあります。
 
-- `from_expr`: the start of the time filter (if any)
-- `to_expr`: the end of the time filter (if any)
-- `time_range`: The applied time range
+- `from_expr`: 時間フィルターの開始位置（存在する場合）
+- `to_expr`: 時間フィルターの終了位置（存在する場合）
+- `time_range`: 適用された時間範囲
 
-Here's a concrete example using the `logs` table from the Superset metastore:
+Superset メタストアの `logs` テーブルを使用した具体的な例を以下に示します:
 
 ```
 {% set time_filter = get_time_filter("dttm", remove_filter=True) %}
@@ -423,9 +393,7 @@ FROM logs
 {% endif %}
 ```
 
-Assuming we are creating a table chart with a simple `COUNT(*)` as the metric with a time filter `Last week` on the
-`dttm` column, this would render the following query on Postgres (note the formatting of the temporal filters, and
-the absence of time filters on the outer query):
+`dttm` 列に時間フィルター `Last week` を持つメトリックとして単純な `COUNT(*)` を使用してテーブル チャートを作成していると仮定すると、Postgres で次のクエリがレンダリングされます (時間フィルターのフォーマットと、外部クエリに時間フィルターがないことに注意してください):
 
 ```
 SELECT COUNT(*) AS count
@@ -440,8 +408,7 @@ ORDER BY count DESC
 LIMIT 1000;
 ```
 
-When using the `default` parameter, the templated query can be simplified, as the endpoints will always be defined
-(to use a fixed time range, you can also use something like `default="2024-08-27 : 2024-09-03"`)
+`default` パラメータを使用すると、エンドポイントが常に定義されるため、テンプレート化されたクエリを簡素化できます (固定の時間範囲を使用するには、`default="2024-08-27 : 2024-09-03"` のようなものも使用できます)
 
 ```
 {% set time_filter = get_time_filter("dttm", default="Last week", remove_filter=True) %}
@@ -454,50 +421,50 @@ WHERE
   AND dttm < {{ time_filter.to_expr }}
 ```
 
-**Datasets**
+**データセット**
 
-It's possible to query physical and virtual datasets using the `dataset` macro. This is useful if you've defined computed columns and metrics on your datasets, and want to reuse the definition in adhoc SQL Lab queries.
+`dataset` マクロを使用して、物理データセットと仮想データセットをクエリできます。これは、データセットに計算列と指標を定義し、その定義をアドホック SQL Lab クエリで再利用したい場合に便利です。
 
-To use the macro, first you need to find the ID of the dataset. This can be done by going to the view showing all the datasets, hovering over the dataset you're interested in, and looking at its URL. For example, if the URL for a dataset is https://superset.example.org/explore/?dataset_type=table&dataset_id=42 its ID is 42.
+マクロを使用するには、まずデータセットの ID を見つける必要があります。これは、すべてのデータセットが表示されているビューに移動し、対象のデータセットにマウスオーバーして URL を確認することで確認できます。たとえば、データセットの URL が https://superset.example.org/explore/?dataset_type=table&dataset_id=42 の場合、その ID は 42 です。
 
-Once you have the ID you can query it as if it were a table:
+ID がわかれば、テーブルと同じようにクエリを実行できます:
 
 ```sql
 SELECT * FROM {{ dataset(42) }} LIMIT 10
 ```
 
-If you want to select the metric definitions as well, in addition to the columns, you need to pass an additional keyword argument:
+列に加えてメトリック定義も選択する場合は、追加のキーワード引数を渡す必要があります:
 
 ```sql
 SELECT * FROM {{ dataset(42, include_metrics=True) }} LIMIT 10
 ```
 
-Since metrics are aggregations, the resulting SQL expression will be grouped by all non-metric columns. You can specify a subset of columns to group by instead:
+指標は集計であるため、結果のSQL式は指標以外のすべての列でグループ化されます。代わりに、グループ化する列のサブセットを指定することもできます:
 
 ```sql
 SELECT * FROM {{ dataset(42, include_metrics=True, columns=["ds", "category"]) }} LIMIT 10
 ```
 
-**Metrics**
+**メトリクス**
 
-The `{{ metric('metric_key', dataset_id) }}` macro can be used to retrieve the metric SQL syntax from a dataset. This can be useful for different purposes:
+`{{ metric('metric_key', dataset_id) }}` マクロを使用すると、データセットからメトリクスの SQL 構文を取得できます。このマクロは、以下の様々な用途で役立ちます。
 
-- Override the metric label in the chart level
-- Combine multiple metrics in a calculation
-- Retrieve a metric syntax in SQL lab
-- Re-use metrics across datasets
+- チャートレベルでメトリクスのラベルを上書きする
+- 計算で複数のメトリクスを組み合わせる
+- SQL Lab でメトリクスの構文を取得する
+- データセット間でメトリクスを再利用する
 
-This macro avoids copy/paste, allowing users to centralize the metric definition in the dataset layer.
+このマクロを使用するとコピー＆ペーストが不要になり、データセットレイヤーでメトリクスの定義を一元管理できます。
 
-The `dataset_id` parameter is optional, and if not provided Superset will use the current dataset from context (for example, when using this macro in the Chart Builder, by default the `macro_key` will be searched in the dataset powering the chart).
-The parameter can be used in SQL Lab, or when fetching a metric from another dataset.
+`dataset_id` パラメータはオプションです。指定されていない場合、Superset はコンテキストから現在のデータセットを使用します（たとえば、チャートビルダーでこのマクロを使用する場合、デフォルトではチャートを生成するデータセット内で `macro_key` が検索されます）。
+このパラメータは、SQL Lab で、または別のデータセットからメトリクスを取得するときに使用できます。
 
-## Available Filters
+## 利用可能なフィルター
 
-Superset supports [builtin filters from the Jinja2 templating package](https://jinja.palletsprojects.com/en/stable/templates/#builtin-filters). Custom filters have also been implemented:
+Superset は [Jinja2 テンプレートパッケージの組み込みフィルター](https://jinja.palletsprojects.com/en/stable/templates/#builtin-filters) をサポートしています。カスタムフィルターも実装されています。
 
 **Where In**
-Parses a list into a SQL-compatible statement. This is useful with macros that return an array (for example the `filter_values` macro):
+リストを SQL 互換のステートメントに変換します。これは、配列を返すマクロ (例: `filter_values` マクロ) で便利です。
 
 ```
 Dashboard filter with "First", "Second" and "Third" options selected
@@ -505,7 +472,7 @@ Dashboard filter with "First", "Second" and "Third" options selected
 {{ filter_values('column')|where_in }} => ('First', 'Second', 'Third')
 ```
 
-By default, this filter returns `()` (as a string) in case the value is null. The `default_to_none` parameter can be se to `True` to return null in this case:
+デフォルトでは、このフィルターは値がnullの場合に `()` を（文字列として）返します。この場合、`default_to_none`パラメータを `True` に設定するとnullが返されます:
 
 ```
 Dashboard filter without any value applied
@@ -515,7 +482,8 @@ Dashboard filter without any value applied
 
 **To Datetime**
 
-Loads a string as a `datetime` object. This is useful when performing date operations. For example:
+文字列を `datetime` オブジェクトとして読み込みます。これは日付操作を行う際に便利です。例えば:
+
 ```
 {% set from_expr = get_time_filter("dttm", strftime="%Y-%m-%d").from_expr %}
 {% set to_expr = get_time_filter("dttm", strftime="%Y-%m-%d").to_expr %}
