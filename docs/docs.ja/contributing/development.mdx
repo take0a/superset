@@ -1,35 +1,30 @@
 ---
-title: Setting up a Development Environment
+title: 開発環境の構築
 sidebar_position: 3
 version: 1
 ---
-# Setting up a Development Environment
+# 開発環境の構築
 
-The documentation in this section is a bit of a patchwork of knowledge representing the
-multitude of ways that exist to run Superset (`docker compose`, just "docker", on "metal", using
-a Makefile).
+このセクションのドキュメントは、Superset (`docker compose`、単に "docker"、"metal" 上、Makefile を使用) を実行するためのさまざまな方法を表す知識の寄せ集めのようなものです。
 
 :::note
-Now we have evolved to recommend and support `docker compose` more actively as the main way
-to run Superset for development and preserve your sanity. **Most people should stick to
-the first few sections - ("Fork & Clone", "docker compose" and "Installing Dev Tools")**
+現在、私たちは開発環境におけるSupersetの実行方法として、より積極的に`docker compose`を推奨・サポートするようになりました。これは、皆さんの健全な精神を保つためです。**ほとんどの方は、最初の数セクション（「Fork & Clone」、「docker compose」、「開発ツールのインストール」）に注力してください。**
 :::
 
-## Fork and Clone
+## フォークとクローン
 
-First, [fork the repository on GitHub](https://help.github.com/articles/about-forks/),
-then clone it.
+まず、[GitHub でリポジトリをフォーク](https://help.github.com/articles/about-forks/)し、クローンを作成します。
 
-Second, you can clone the main repository directly, but you won't be able to send pull requests.
+次に、メインリポジトリを直接クローンすることもできますが、プルリクエストを送信することはできません。
 
 ```bash
 git clone git@github.com:your-username/superset.git
 cd superset
 ```
 
-## docker compose (recommended!)
+## docker compose (推奨!)
 
-Setting things up to squeeze a "hello world" into any part of Superset should be as simple as
+Superset の任意の場所に「Hello World」を組み込むための設定は、次のように簡単です。
 
 ```bash
 # getting docker compose to fire up services, and rebuilding if some docker layers have changed
@@ -37,79 +32,61 @@ Setting things up to squeeze a "hello world" into any part of Superset should be
 docker compose up --build
 ```
 
-Note that:
+以下の点にご注意ください:
 
-- this will pull/build docker images and run a cluster of services, including:
-  - A Superset **Flask web server**, mounting the local python repo/code
-  - A Superset **Celery worker**, also mounting the local python repo/code
-  - A Superset **Node service**, mounting, compiling and bundling the JS/TS assets
-  - A Superset **Node websocket service** to power the async backend
-  - **Postgres** as the metadata database and to store example datasets, charts and dashboards which
-    should be populated upon startup
-  - **Redis** as the message queue for our async backend and caching backend
-- It'll load up examples into the database upon the first startup
-- all other details and pointers available in
-  [docker-compose.yml](https://github.com/apache/superset/blob/master/docker-compose.yml)
-- The local repository is mounted within the services, meaning updating
-  the code on the host will be reflected in the docker images
-- Superset is served at localhost:9000/
-- You can login with admin/admin
+- これにより、Docker イメージがプル/ビルドされ、以下のサービスを含むクラスタが実行されます:
+  - Superset  **Flask Web サーバー**。ローカル Python リポジトリ/コードをマウントします。
+  - Superset  **Celery ワーカー**。ローカル Python リポジトリ/コードをマウントします。
+  - Superset  **Node サービス**。JS/TS アセットのマウント、コンパイル、バンドルを行います。
+  - Superset  **Node Websocket サービス**。非同期バックエンドの基盤となります。
+  - メタデータデータベースとして、また起動時に入力されるサンプルデータセット、チャート、ダッシュボードの保存用として **Postgres** を使用します。
+  - 非同期バックエンドとキャッシュバックエンドのメッセージキューとして **Redis** を使用します。
+- 初回起動時にデータベースにサンプルがロードされます。
+- その他の詳細とポインタは [docker-compose.yml](https://github.com/apache/superset/blob/master/docker-compose.yml) で参照できます。
+- ローカルリポジトリはサービス内にマウントされるため、ホスト上のコードを更新すると Docker イメージにも反映されます。
+- Superset は localhost:9000/ で提供されます。
+- admin/admin でログインできます。
 
 :::note
-Installing and building Node modules for Apache Superset inside `superset-node` can take a
-significant amount of time. This is normal due to the size of the dependencies. Please be
-patient while the process completes, as long wait times do not indicate an issue with your setup.
-If delays seem excessive, check your internet connection or system resources.
+`superset-node` 内での Apache Superset 用 Node モジュールのインストールとビルドには、かなりの時間がかかる場合があります。これは、依存関係のサイズが大きいため、正常な動作です。処理が完了するまでしばらくお待ちください。待ち時間が長くても、セットアップに問題があるわけではありません。
+遅延が長すぎると思われる場合は、インターネット接続またはシステムリソースを確認してください。
 :::
 
 :::caution
-Since `docker compose` is primarily designed to run a set of containers on **a single host**
-and can't credibly support **high availability** as a result, we do not support nor recommend
-using our `docker compose` constructs to support production-type use-cases. For single host
-environments, we recommend using [minikube](https://minikube.sigs.k8s.io/docs/start/) along
-our [installing on k8s](https://superset.apache.org/docs/installation/running-on-kubernetes)
-documentation.
-configured to be secure.
+`docker compose` は主に **単一ホスト** 上でコンテナセットを実行するように設計されており、結果として **高可用性** を確実にサポートできないため、本番環境のユースケースをサポートするために `docker compose` 構造を使用することはサポートも推奨もしていません。
+単一ホスト環境では、[k8s へのインストール](https://superset.apache.org/docs/installation/running-on-kubernetes) ドキュメントに沿って [minikube](https://minikube.sigs.k8s.io/docs/start/) を使用することをお勧めします。
+安全に構成されています。
 :::
 
-### Supported environment variables
+### サポートされている環境変数
 
-Affecting the Docker build process:
+Docker ビルドプロセスに影響するもの:
 
-- **SUPERSET_BUILD_TARGET (default=dev):** which --target to build, either `lean` or `dev` are commonly used
-- **INCLUDE_FIREFOX (default=false):** whether to include the Firefox headless browser in the build
-- **INCLUDE_CHROMIUM (default=false):** whether to include the Firefox headless browser in the build
-- **BUILD_TRANSLATIONS(default=false):** whether to compile the translations from the .po files available
-- **SUPERSET_LOAD_EXAMPLES (default=yes):** whether to load the examples into the database upon startup,
-  save some precious time on startup by `SUPERSET_LOAD_EXAMPLES=no docker compose up`
-- **SUPERSET_LOG_LEVEL (default=info)**: Can be set to debug, info, warning, error, critical
-  for more verbose logging
+- **SUPERSET_BUILD_TARGET (デフォルト=dev):** ビルドする --target。一般的には `lean` または `dev` が使用されます。
+- **INCLUDE_FIREFOX (デフォルト=false):** ビルドに Firefox のヘッドレスブラウザを含めるかどうか。
+- **INCLUDE_CHROMIUM (デフォルト=false):** ビルドに Firefox のヘッドレスブラウザを含めるかどうか。
+- **BUILD_TRANSLATIONS(デフォルト=false):** 利用可能な .po ファイルから翻訳をコンパイルするかどうか。
+- **SUPERSET_LOAD_EXAMPLES (デフォルト=yes):** 起動時にサンプルをデータベースにロードするかどうか。`SUPERSET_LOAD_EXAMPLES=no docker compose up` とすることで、起動時の貴重な時間を節約できます。
+- **SUPERSET_LOG_LEVEL (デフォルト=info)**: より詳細なログ出力を行うには、debug、info、warning、error、critical に設定できます。
 
-For more env vars that affect your configuration, see this
-[superset_config.py](https://github.com/apache/superset/blob/master/docker/pythonpath_dev/superset_config.py)
-used in the `docker compose` context to assign env vars to the superset configuration.
+構成に影響するその他の env 変数については、`docker compose` コンテキストで env 変数をスーパーセット構成に割り当てるために使用される [superset_config.py](https://github.com/apache/superset/blob/master/docker/pythonpath_dev/superset_config.py) を参照してください。
 
-### Accessing the postgres database
+### PostgreSQL データベースへのアクセス
 
-Sometimes it's useful to access the database in the docker container directly.
-You can enter a `psql` shell (the official Postgres client) by running the following command:
+Docker コンテナ内のデータベースに直接アクセスすると便利な場合があります。
+次のコマンドを実行すると、`p​​sql` シェル（公式 PostgreSQL クライアント）を起動できます。
 
 ```bash
 docker compose exec db psql -U superset
 ```
 
-Also note that the database is exposed on port 5432, so you can connect to it using your favorite
-Postgres client or even SQL Lab itselft directly in Superset by creating a new database connection
-to `localhost:5432`.
+また、データベースはポート 5432 で公開されているため、`localhost:5432` への新しいデータベース接続を作成することにより、お気に入りの Postgres クライアントまたは SQL Lab 自体を使用して Superset で直接データベースに接続できることにも注意してください。
 
-### Nuking the postgres database
+### PostgreSQL データベースの完全削除
 
-At times, it's possible to end up with your development database in a bad state, it's
-common while switching branches that contain migrations for instance, where the database
-version stamp that `alembic` manages is no longer available after switching branch.
+場合によっては、開発データベースの状態が悪化してしまうことがあります。例えば、マイグレーションを含むブランチを切り替える際によく発生します。この場合、`alembic` が管理するデータベースのバージョンスタンプが、ブランチ切り替え後に利用できなくなります。
 
-In that case, the easy solution is to nuke the postgres db and start fresh. Note that the full
-state of the database will be gone after doing this, so be cautious.
+このような場合、PostgreSQLデータベースを完全に削除して、最初からやり直すのが簡単な解決策です。ただし、これを行うとデータベースの状態が完全に失われるため、注意が必要です。
 
 ```bash
 # first stop docker-compose if it's running
@@ -120,97 +97,86 @@ docker volume rm superset_db_home
 docker-compose up
 ```
 
-## Installing Development Tools
+## 開発ツールのインストール
 
 :::note
-While `docker compose` simplifies a lot of the setup, there are still
-many things you'll want to set up locally to power your IDE, and things like
-**commit hooks**, **linters**, and **test-runners**. Note that you can do these
-things inside docker images with commands like `docker compose exec superset_app bash` for
-instance, but many people like to run that tooling from their host.
+`docker compose` はセットアップの多くを簡素化しますが、IDE を強化するためにローカルでセットアップする必要があるものもまだたくさんあります。**コミットフック**、**リンター**、**テストランナー** などです。これらの作業は、例えば `docker compose exec superset_app bash` コマンドを使って docker イメージ内で実行できますが、多くの人はホストからツールを実行することを好みます。
 :::
 
-### Python environment
+### Python 環境
 
-Assuming you already have a way to setup your python environments
-like `pyenv`, `virtualenv` or something else, all you should have to
-do is to install our dev, pinned python requirements bundle, after installing
-the prerequisites mentioned in [OS Dependencies](https://superset.apache.org/docs/installation/pypi/#os-dependencies)
+`pyenv`、`virtualenv` などの Python 環境を既にセットアップしている場合は、[OS 依存関係](https://superset.apache.org/docs/installation/pypi/#os-dependencies) に記載されている前提条件をインストールした後、固定された Python 要件バンドルである dev をインストールするだけです。
 
 ```bash
 pip install -r requirements/development.txt
 ```
 
-### Git Hooks
+### Git フック
 
-Superset uses Git pre-commit hooks courtesy of [pre-commit](https://pre-commit.com/).
-To install run the following:
+Superset は、[pre-commit](https://pre-commit.com/) が提供する Git 事前コミットフックを使用します。
+インストールするには、次のコマンドを実行します:
 
 ```bash
 pre-commit install
 ```
 
-This will install the hooks in your local repository. From now on, a series of checks will
-automatically run whenever you make a Git commit.
+これにより、ローカルリポジトリにフックがインストールされます。
+今後は、Git コミットを行うたびに、一連のチェックが自動的に実行されます。
 
-#### Running Pre-commit Manually
+#### 手動での pre-commit の実行
 
-You can also run the pre-commit checks manually in various ways:
+pre-commit チェックは、以下の方法で手動で実行することもできます。
 
-- **Run pre-commit on all files (same as CI):**
+- **すべてのファイルに対して pre-commit を実行する（CI と同じ）**
 
-  To run the pre-commit checks across all files in your repository, use the following command:
+  リポジトリ内のすべてのファイルに対してコミット前のチェックを実行するには、次のコマンドを使用します:
 
   ```bash
   pre-commit run --all-files
   ```
 
-  This is the same set of checks that will run during CI, ensuring your changes meet the project's standards.
+  これは CI 中に実行されるチェックと同じセットであり、変更がプロジェクトの標準を満たしていることを確認します。
 
-- **Run pre-commit on a specific file:**
+- **特定のファイルに対して事前コミットを実行します:**
 
-  If you want to check or fix a specific file, you can do so by specifying the file path:
+  特定のファイルを確認または修正したい場合は、ファイル パスを指定して実行できます:
 
   ```bash
   pre-commit run --files path/to/your/file.py
   ```
 
-  This will only run the checks on the file(s) you specify.
+  これにより、指定したファイルに対してのみチェックが実行されます。
 
-- **Run a specific pre-commit check:**
+- **特定のコミット前チェックを実行します:**
 
-  To run a specific check (hook) across all files or a particular file, use the following command:
+  すべてのファイルまたは特定のファイルに対して特定のチェック (フック) を実行するには、次のコマンドを使用します:
 
   ```bash
   pre-commit run <hook_id> --all-files
   ```
 
-  Or for a specific file:
+  または特定のファイルの場合:
 
   ```bash
   pre-commit run <hook_id> --files path/to/your/file.py
   ```
 
-  Replace `<hook_id>` with the ID of the specific hook you want to run. You can find the list
-  of available hooks in the `.pre-commit-config.yaml` file.
+  `<hook_id>` を、実行したいフックのIDに置き換えてください。利用可能なフックのリストは `.pre-commit-config.yaml` ファイルに記載されています。
 
-## Alternatives to `docker compose`
+## `docker compose` の代替
 
 :::caution
-This part of the documentation is a patchwork of information related to setting up
-development environments without `docker compose` and is documented/supported to varying
-degrees. It's been difficult to maintain this wide array of methods and insure they're
-functioning across environments.
+ドキュメントのこの部分は、`docker compose` を使わずに開発環境をセットアップする方法に関する情報が寄せ集めで、ドキュメント化やサポートの程度もまちまちです。このように多様な方法を維持し、複数の環境で確実に機能するようにすることは困難でした。
 :::
 
-### Flask server
+### Flask サーバー
 
 #### OS Dependencies
 
-Make sure your machine meets the [OS dependencies](https://superset.apache.org/docs/installation/pypi#os-dependencies) before following these steps.
-You also need to install MySQL.
+以下の手順を実行する前に、お使いのマシンが[OSの依存関係](https://superset.apache.org/docs/installation/pypi#os-dependencies)を満たしていることを確認してください。
+MySQLもインストールする必要があります。
 
-Ensure that you are using Python version 3.9, 3.10 or 3.11, then proceed with:
+Python バージョン 3.9、3.10、または 3.11 を使用していることを確認してから、次に進みます:
 
 ```bash
 # Create a virtual environment and activate it (recommended)
@@ -242,7 +208,7 @@ superset load-examples
 superset run -p 8088 --with-threads --reload --debugger --debug
 ```
 
-Or you can install it via our Makefile
+または、Makefile 経由でインストールすることもできます
 
 ```bash
 # Create a virtual environment and activate it (recommended)
@@ -259,15 +225,14 @@ $ make superset
 $ make pre-commit
 ```
 
-**Note: the FLASK_APP env var should not need to be set, as it's currently controlled
-via `.flaskenv`, however, if needed, it should be set to `superset.app:create_app()`**
+**注: FLASK_APP 環境変数は現在 `.flaskenv` で制御されているため、設定する必要はありません。ただし、必要な場合は `superset.app:create_app()` に設定してください。**
 
-If you have made changes to the FAB-managed templates, which are not built the same way as the newer, React-powered front-end assets, you need to start the app without the `--with-threads` argument like so:
+FAB 管理テンプレートに変更を加えた場合（FAB 管理テンプレートは、新しい React ベースのフロントエンドアセットとは異なる方法で構築されているため）、`--with-threads` 引数を省略してアプリを起動する必要があります。例:
 `superset run -p 8088 --reload --debugger --debug`
 
-#### Dependencies
+#### 依存関係
 
-If you add a new requirement or update an existing requirement (per the `install_requires` section in `setup.py`) you must recompile (freeze) the Python dependencies to ensure that for CI, testing, etc. the build is deterministic. This can be achieved via,
+新しい要件を追加したり、既存の要件を更新したりする場合（`setup.py` の `install_requires` セクションを参照）、CI やテストなどでビルドが確定的になるように、Python の依存関係を再コンパイル（フリーズ）する必要があります。これは、以下の方法で実現できます。
 
 ```bash
 python3 -m venv venv
@@ -276,23 +241,23 @@ python3 -m pip install -r requirements/development.txt
 ./scripts/uv-pip-compile.sh
 ```
 
-When upgrading the version number of a single package, you should run `./scripts/uv-pip-compile.sh` with the `-P` flag:
+単一のパッケージのバージョン番号をアップグレードする場合は、`-P` フラグを付けて `./scripts/uv-pip-compile.sh` を実行する必要があります。
 
 ```bash
 ./scripts/uv-pip-compile.sh -P some-package-to-upgrade
 ```
 
-To bring all dependencies up to date as per the restrictions defined in `setup.py` and `requirements/*.in`, run `./scripts/uv-pip-compile.sh --upgrade`
+`setup.py` と `requirements/*.in` で定義された制限に従ってすべての依存関係を最新の状態にするには、`./scripts/uv-pip-compile.sh --upgrade` を実行します。
 
 ```bash
 ./scripts/uv-pip-compile.sh --upgrade
 ```
 
-This should be done periodically, but it is recommended to do thorough manual testing of the application to ensure no breaking changes have been introduced that aren't caught by the unit and integration tests.
+これは定期的に実行する必要がありますが、ユニット テストと統合テストで検出されない重大な変更が導入されていないことを確認するために、アプリケーションの徹底的な手動テストを実行することをお勧めします。
 
-#### Logging to the browser console
+#### ブラウザコンソールへのログイン
 
-This feature is only available on Python 3. When debugging your application, you can have the server logs sent directly to the browser console using the [ConsoleLog](https://github.com/betodealmeida/consolelog) package. You need to mutate the app, by adding the following to your `config.py` or `superset_config.py`:
+この機能はPython 3でのみ利用可能です。アプリケーションのデバッグ時に、[ConsoleLog](https://github.com/betodealmeida/consolelog)パッケージを使用すると、サーバーログをブラウザコンソールに直接送信できます。`config.py`または`superset_config.py`に以下のコードを追加して、アプリを変更する必要があります:
 
 ```python
 from console_log import ConsoleLog
@@ -301,13 +266,13 @@ def FLASK_APP_MUTATOR(app):
     app.wsgi_app = ConsoleLog(app.wsgi_app, app.logger)
 ```
 
-Then make sure you run your WSGI server using the right worker type:
+次に、適切なワーカー タイプを使用して WSGI サーバーを実行していることを確認します。
 
 ```bash
 gunicorn "superset.app:create_app()" -k "geventwebsocket.gunicorn.workers.GeventWebSocketWorker" -b 127.0.0.1:8088 --reload
 ```
 
-You can log anything to the browser console, including objects:
+オブジェクトを含め、あらゆるものをブラウザ コンソールに記録できます:
 
 ```python
 from superset import app
@@ -315,20 +280,20 @@ app.logger.error('An exception occurred!')
 app.logger.info(form_data)
 ```
 
-### Frontend
+### フロントエンド
 
-Frontend assets (TypeScript, JavaScript, CSS, and images) must be compiled in order to properly display the web UI. The `superset-frontend` directory contains all NPM-managed frontend assets. Note that for some legacy pages there are additional frontend assets bundled with Flask-Appbuilder (e.g. jQuery and bootstrap). These are not managed by NPM and may be phased out in the future.
+ウェブUIを正しく表示するには、フロントエンドアセット（TypeScript、JavaScript、CSS、画像）をコンパイルする必要があります。`superset-frontend`ディレクトリには、NPMで管理されるすべてのフロントエンドアセットが含まれています。一部のレガシーページには、Flask-Appbuilderにバンドルされた追加のフロントエンドアセット（jQueryやbootstrapなど）が含まれていることに注意してください。これらはNPMでは管理されておらず、将来的に廃止される可能性があります。
 
-#### Prerequisite
+#### 前提条件
 
-##### nvm and node
+##### nvm と node
 
-First, be sure you are using the following versions of Node.js and npm:
+まず、次のバージョンの Node.js と npm を使用していることを確認してください:
 
 - `Node.js`: Version 20
 - `npm`: Version 10
 
-We recommend using [nvm](https://github.com/nvm-sh/nvm) to manage your node environment:
+ノード環境を管理するには、[nvm](https://github.com/nvm-sh/nvm) を使用することをお勧めします:
 
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh | bash
@@ -343,17 +308,17 @@ nvm install --lts
 nvm use --lts
 ```
 
-Or if you use the default macOS starting with Catalina shell `zsh`, try:
+または、Catalina シェル `zsh` で始まるデフォルトの macOS を使用する場合は、次を試してください:
 
 ```zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.0/install.sh)"
 ```
 
-For those interested, you may also try out [avn](https://github.com/nvm-sh/nvm#deeper-shell-integration) to automatically switch to the node version that is required to run Superset frontend.
+興味がある方は、[avn](https://github.com/nvm-sh/nvm#deeper-shell-integration) を試して、Superset フロントエンドの実行に必要なノード バージョンに自動的に切り替えることもできます。
 
-#### Install dependencies
+#### 依存関係をインストールする
 
-Install third-party dependencies listed in `package.json` via:
+`package.json` にリストされているサードパーティの依存関係を次のようにインストールします:
 
 ```bash
 # From the root of the repository
@@ -363,7 +328,7 @@ cd superset-frontend
 npm ci
 ```
 
-Note that Superset uses [Scarf](https://docs.scarf.sh) to capture telemetry/analytics about versions being installed, including the `scarf-js` npm package and an analytics pixel. As noted elsewhere in this documentation, Scarf gathers aggregated stats for the sake of security/release strategy and does not capture/retain PII. [You can read here](https://docs.scarf.sh/package-analytics/) about the `scarf-js` package, and various means to opt out of it, but you can opt out of the npm package _and_ the pixel by setting the `SCARF_ANALYTICS` environment variable to `false` or opt out of the pixel by adding this setting in `superset-frontent/package.json`:
+Superset は [Scarf](https://docs.scarf.sh) を使用して、`scarf-js` npm パッケージや分析ピクセルなど、インストールされているバージョンに関するテレメトリ/分析を取得します。このドキュメントの他の箇所でも説明されているように、Scarf はセキュリティ/リリース戦略のために集計統計情報を収集しますが、PII を取得/保持することはありません。[こちら](https://docs.scarf.sh/package-analytics/) で `scarf-js` パッケージと、それをオプトアウトするさまざまな方法について読むことができますが、`SCARF_ANALYTICS` 環境変数を `false` に設定することで npm パッケージ _と_ ピクセルをオプトアウトするか、`superset-frontent/package.json` に次の設定を追加することでピクセルをオプトアウトできます:
 
 ```json
 // your-package/package.json
@@ -376,67 +341,67 @@ Note that Superset uses [Scarf](https://docs.scarf.sh) to capture telemetry/anal
 }
 ```
 
-#### Build assets
+#### アセットをビルドする
 
-There are three types of assets you can build:
+ビルドできるアセットは3種類あります:
 
-1. `npm run build`: the production assets, CSS/JSS minified and optimized
-2. `npm run dev-server`: local development assets, with sourcemaps and hot refresh support
-3. `npm run build-instrumented`: instrumented application code for collecting code coverage from Cypress tests
+1. `npm run build`: CSS/JSSを縮小・最適化した本番環境用アセット
+2. `npm run dev-server`: ソースマップとホットリフレッシュに対応したローカル開発用アセット
+3. `npm run build-instrumented`: Cypressテストからコードカバレッジを収集するためのインストルメント化されたアプリケーションコード
 
-If while using the above commands you encounter an error related to the limit of file watchers:
+上記のコマンドの使用中に、ファイルウォッチャーの制限に関するエラーが発生した場合：
 
 ```bash
 Error: ENOSPC: System limit for number of file watchers reached
 ```
 
-The error is thrown because the number of files monitored by the system has reached the limit.
-You can address this error by increasing the number of inotify watchers.
+このエラーは、システムによって監視されているファイル数が上限に達したために発生します。
+inotify ウォッチャーの数を増やすことで、このエラーを解決できます。
 
-The current value of max watches can be checked with:
+現在の最大ウォッチャーの値は、次のコマンドで確認できます:
 
 ```bash
 cat /proc/sys/fs/inotify/max_user_watches
 ```
 
-Edit the file `/etc/sysctl.conf` to increase this value.
-The value needs to be decided based on the system memory [(see this StackOverflow answer for more context)](https://stackoverflow.com/questions/535768/what-is-a-reasonable-amount-of-inotify-watches-with-linux).
+この値を増やすには、`/etc/sysctl.conf` ファイルを編集してください。
+この値はシステムメモリに基づいて決定する必要があります [(詳細については、StackOverflow の回答を参照してください)](https://stackoverflow.com/questions/535768/what-is-a-reasonable-amount-of-inotify-watches-with-linux)。
 
-Open the file in an editor and add a line at the bottom specifying the max watches values.
+エディターでファイルを開き、末尾にウォッチの最大値を指定する行を追加してください。
 
 ```bash
 fs.inotify.max_user_watches=524288
 ```
 
-Save the file and exit the editor.
-To confirm that the change succeeded, run the following command to load the updated value of max_user_watches from `sysctl.conf`:
+ファイルを保存してエディターを終了します。
+変更が成功したことを確認するには、次のコマンドを実行して、`sysctl.conf` から更新された max_user_watches の値をロードします:
 
 ```bash
 sudo sysctl -p
 ```
 
-#### Webpack dev server
+#### Webpack 開発サーバー
 
-The dev server by default starts at `http://localhost:9000` and proxies the backend requests to `http://localhost:8088`.
+デフォルトでは、開発サーバーは `http://localhost:9000` で起動し、バックエンドリクエストを `http://localhost:8088` にプロキシします。
 
-So a typical development workflow is the following:
+一般的な開発ワークフローは以下のとおりです。
 
-1. [run Superset locally](#flask-server) using Flask, on port `8088` — but don't access it directly,<br/>
+1. Flask を使用して [Superset をローカルで実行](#flask-server) します。ポート `8088` を使用しますが、直接アクセスしないでください<br/>
 
    ```bash
    # Install Superset and dependencies, plus load your virtual environment first, as detailed above.
    superset run -p 8088 --with-threads --reload --debugger --debug
    ```
 
-2. in parallel, run the Webpack dev server locally on port `9000`,<br/>
+2. 並行して、Webpack開発サーバーをポート `9000` でローカルに実行します<br/>
 
    ```bash
    npm run dev-server
    ```
 
-3. access `http://localhost:9000` (the Webpack server, _not_ Flask) in your web browser. This will use the hot-reloading front-end assets from the Webpack development server while redirecting back-end queries to Flask/Superset: your changes on Superset codebase — either front or back-end — will then be reflected live in the browser.
+3. ウェブブラウザで `http://localhost:9000`（Webpackサーバー、Flaskではありません）にアクセスします。これにより、Webpack開発サーバーからホットリロードされたフロントエンドアセットが使用され、バックエンドクエリはFlask/Supersetにリダイレクトされます。Supersetコードベース（フロントエンドまたはバックエンド）への変更は、ブラウザにリアルタイムで反映されます。
 
-It's possible to change the Webpack server settings:
+Webpackサーバーの設定を変更することも可能です。
 
 ```bash
 # Start the dev server at http://localhost:9000
@@ -452,28 +417,26 @@ npm run dev-server -- --env=--supersetPort=8081
 npm run dev-server -- --env=--superset=https://superset-dev.example.com
 ```
 
-The `--superset=` option is useful in case you want to debug a production issue or have to setup Superset behind a firewall. It allows you to run Flask server in another environment while keep assets building locally for the best developer experience.
+`--superset=` オプションは、本番環境での問題をデバッグしたい場合や、ファイアウォールの内側に Superset をセットアップする必要がある場合に便利です。これにより、Flask サーバーを別の環境で実行しながら、アセットのビルドをローカルで維持し、最高の開発エクスペリエンスを実現できます。
 
-#### Other npm commands
+#### その他の npm コマンド
 
-Alternatively, there are other NPM commands you may find useful:
+他にも便利な NPM コマンドがあります。
 
-1. `npm run build-dev`: build assets in development mode.
-2. `npm run dev`: built dev assets in watch mode, will automatically rebuild when a file changes
+1. `npm run build-dev`: 開発モードでアセットをビルドします。
+2. `npm run dev`: 開発アセットをウォッチモードでビルドします。ファイルが変更されると自動的に再ビルドされます。
 
 #### Docker (docker compose)
 
-See docs [here](https://superset.apache.org/docs/installation/docker-compose)
+ドキュメントは[こちら](https://superset.apache.org/docs/installation/docker-compose)をご覧ください
 
-#### Updating NPM packages
+#### NPM パッケージの更新
 
-Use npm in the prescribed way, making sure that
-`superset-frontend/package-lock.json` is updated according to `npm`-prescribed
-best practices.
+npm を規定の方法で使用し、`superset-frontend/package-lock.json` が `npm` で規定されたベストプラクティスに従って更新されていることを確認してください。
 
-#### Feature flags
+#### 機能フラグ
 
-Superset supports a server-wide feature flag system, which eases the incremental development of features. To add a new feature flag, simply modify `superset_config.py` with something like the following:
+Superset はサーバー全体で利用可能な機能フラグシステムをサポートしており、機能の段階的な開発を容易にします。新しい機能フラグを追加するには、`superset_config.py` を以下のように変更するだけです:
 
 ```python
 FEATURE_FLAGS = {
@@ -481,7 +444,7 @@ FEATURE_FLAGS = {
 }
 ```
 
-If you want to use the same flag in the client code, also add it to the FeatureFlag TypeScript enum in [@superset-ui/core](https://github.com/apache/superset/blob/master/superset-frontend/packages/superset-ui-core/src/utils/featureFlags.ts). For example,
+クライアントコードで同じフラグを使用する場合は、[@superset-ui/core](https://github.com/apache/superset/blob/master/superset-frontend/packages/superset-ui-core/src/utils/featureFlags.ts) の FeatureFlag TypeScript 列挙型にも追加します。例えば、
 
 ```typescript
 export enum FeatureFlag {
@@ -489,99 +452,85 @@ export enum FeatureFlag {
 }
 ```
 
-`superset/config.py` contains `DEFAULT_FEATURE_FLAGS` which will be overwritten by
-those specified under FEATURE_FLAGS in `superset_config.py`. For example, `DEFAULT_FEATURE_FLAGS = { 'FOO': True, 'BAR': False }` in `superset/config.py` and `FEATURE_FLAGS = { 'BAR': True, 'BAZ': True }` in `superset_config.py` will result
-in combined feature flags of `{ 'FOO': True, 'BAR': True, 'BAZ': True }`.
+`superset/config.py` には `DEFAULT_FEATURE_FLAGS` が含まれていますが、これは `superset_config.py` の FEATURE_FLAGS で指定されたものによって上書きされます。
+例えば、`superset/config.py` で `DEFAULT_FEATURE_FLAGS = { 'FOO': True, 'BAR': False }` と `superset_config.py` で `FEATURE_FLAGS = { 'BAR': True, 'BAZ': True }` を指定すると、機能フラグは `{ 'FOO': True, 'BAR': True, 'BAZ': True }` と結合されます。
 
-The current status of the usability of each flag (stable vs testing, etc) can be found in `RESOURCES/FEATURE_FLAGS.md`.
+各フラグの現在の使用状況（安定版かテスト版かなど）は、`RESOURCES/FEATURE_FLAGS.md` で確認できます。
 
-## Git Hooks
+## Gitフック
 
-Superset uses Git pre-commit hooks courtesy of [pre-commit](https://pre-commit.com/). To install run the following:
+Supersetは、[pre-commit](https://pre-commit.com/) が提供するGitの事前コミットフックを使用します。インストールするには、以下のコマンドを実行してください:
 
 ```bash
 pip3 install -r requirements/development.txt
 pre-commit install
 ```
 
-A series of checks will now run when you make a git commit.
+git コミットを行うと、一連のチェックが実行されるようになりました。
 
-## Linting
+## リンティング
 
-See [how tos](/docs/contributing/howtos#linting)
+[ハウツー](/docs/contributing/howtos#linting) をご覧ください
 
-## GitHub Actions and `act`
+## GitHub Actions と `act`
 
 :::tip
-`act` compatibility of Superset's GHAs is not fully tested. Running `act` locally may or may not
-work for different actions, and may require fine tunning and local secret-handling.
-For those more intricate GHAs that are tricky to run locally, we recommend iterating
-directly on GHA's infrastructure, by pushing directly on a branch and monitoring GHA logs.
-For more targetted iteration, see the `gh workflow run --ref {BRANCH}` subcommand of the GitHub CLI.
+Superset の GHA の `act` 互換性は完全にはテストされていません。
+`act` をローカルで実行しても、アクションによっては動作しない可能性があり、微調整やローカルでのシークレット処理が必要になる場合があります。
+ローカルでの実行が難しい複雑な GHA の場合は、ブランチに直接プッシュして GHA のログを監視することで、GHA のインフラストラクチャ上で直接反復処理することをお勧めします。
+よりターゲットを絞った反復処理については、GitHub CLI の `gh workflow run --ref {BRANCH}` サブコマンドを参照してください。
 :::
 
-For automation and CI/CD, Superset makes extensive use of GitHub Actions (GHA). You
-can find all of the workflows and other assets under the `.github/` folder. This includes:
+Superset は自動化と CI/CD のために GitHub Actions (GHA) を広範に活用しています。
+すべてのワークフローとその他のアセットは `.github/` フォルダにあります。これには以下が含まれます。
 
-- running the backend unit test suites (`tests/`)
-- running the frontend test suites (`superset-frontend/src/**.*.test.*`)
-- running our Cypress end-to-end tests (`superset-frontend/cypress-base/`)
-- linting the codebase, including all Python, Typescript and Javascript, yaml and beyond
-- checking for all sorts of other rules conventions
+- バックエンドのユニットテストスイート (`tests/`) の実行
+- フロントエンドのテストスイート (`superset-frontend/src/**.*.test.*`) の実行
+- Cypress のエンドツーエンドテスト (`superset-frontend/cypress-base/`) の実行
+- Python、Typescript、Javascript、yaml などを含むコードベースの lint チェック
+- その他さまざまなルールや規約のチェック
 
-When you open a pull request (PR), the appropriate GitHub Actions (GHA) workflows will
-automatically run depending on the changes in your branch. It's perfectly reasonable
-(and required!) to rely on this automation. However, the downside is that it's mostly an
-all-or-nothing approach and doesn't provide much control to target specific tests or
-iterate quickly.
+プルリクエスト（PR）を開くと、ブランチの変更内容に応じて適切なGitHub Actions（GHA）ワークフローが自動的に実行されます。
+この自動化に頼るのは全く理にかなった（そして必須！）方法です。しかし、欠点は、ほぼ「オール・オア・ナッシング」のアプローチであり、特定のテストをターゲットにしたり、迅速に反復処理したりするための制御があまりできないことです。
 
-At times, it may be more convenient to run GHA workflows locally. For that purpose
-we use [act](https://github.com/nektos/act), a tool that allows you to run GitHub Actions (GHA)
-workflows locally. It simulates the GitHub Actions environment, enabling developers to
-test and debug workflows on their local machines before pushing changes to the repository. More
-on how to use it in the next section.
+GHAワークフローをローカルで実行する方が便利な場合もあります。
+そのために、GitHub Actions (GHA)ワークフローをローカルで実行できるツールである[act](https://github.com/nektos/act)を使用します。
+これはGitHub Actions環境をシミュレートし、開発者はリポジトリに変更をプッシュする前に、ローカルマシンでワークフローをテストおよびデバッグできます。
+使用方法については、次のセクションで詳しく説明します。
 
 :::note
-In both GHA and `act`, we can run a more complex matrix for our tests, executing against different
-database engines (PostgreSQL, MySQL, SQLite) and different versions of Python.
-This enables us to ensure compatibility and stability across various environments.
+GHAと`act`の両方で、より複雑なマトリックスでテストを実行し、異なるデータベースエンジン（PostgreSQL、MySQL、SQLite）と異なるバージョンのPythonに対して実行することができます。これにより、さまざまな環境間で互換性と安定性を確保できます。
 :::
 
-### Using `act`
+### `act` の使用
 
-First, install `act` -> https://nektosact.com/
+まず、`act` をインストールします -> https://nektosact.com/
 
-To list the workflows, simply:
+ワークフローを一覧表示するには、以下の手順を実行します。
 
 ```bash
 act --list
 ```
 
-To run a specific workflow:
+特定のワークフローを実行するには:
 
 ```bash
 act pull_request --job {workflow_name} --secret GITHUB_TOKEN=$GITHUB_TOKEN --container-architecture linux/amd64
 ```
 
-In the example above, notice that:
+上記の例では、以下の点に注意してください。
 
-- we target a specific workflow, using `--job`
-- we pass a secret using `--secret`, as many jobs require read access (public) to the repo
-- we simulate a `pull_request` event by specifying it as the first arg,
-  similarly, we could simulate a `push` event or something else
-- we specify `--container-architecture`, which tends to emulate GHA more reliably
+- `--job` を使用して特定のワークフローをターゲットにしています。
+- 多くのジョブはリポジトリへの読み取りアクセス（パブリック）を必要とするため、`--secret` を使用してシークレットを渡しています。
+- 最初の引数として `pull_request` イベントを指定してシミュレートしています。同様に、`push` イベントやその他のイベントをシミュレートすることもできます。
+- GHA をより確実にエミュレートするため、`--container-architecture` を指定しています。
 
 :::note
-`act` is a rich tool that offers all sorts of features, allowing you to simulate different
-events (pull_request, push, ...), semantics around passing secrets where required and much
-more. For more information, refer to [act's documentation](https://nektosact.com/)
+`act` は、様々な機能を備えたリッチなツールです。pull_request、push などの様々なイベントのシミュレーションや、必要に応じてシークレットを渡すセマンティクスなど、様々な機能を備えています。詳細については、[act のドキュメント](https://nektosact.com/) をご覧ください。
 :::
 
 :::note
-Some jobs require secrets to interact with external systems and accounts that you may
-not have in your possession. In those cases you may have to rely on remote CI or parameterize the
-job further to target a different environment/sandbox or your own alongside the related
-secrets.
+一部のジョブでは、外部システムやアカウントと連携するためにシークレットが必要になりますが、これらのシークレットはご自身では管理できない可能性があります。そのような場合は、リモートCIを利用するか、ジョブをさらにパラメータ化して、関連するシークレットに加えて、別の環境やサンドボックス、あるいは独自の環境やサンドボックスをターゲットとする必要があるかもしれません。
 :::
 
 ---

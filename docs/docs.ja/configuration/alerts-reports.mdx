@@ -14,89 +14,88 @@ version: 2
 
 アラートとレポートはデフォルトで無効になります。それらをオンにするには、ここで説明するセットアップを行う必要があります。
 
-## Requirements
+## 要件
 
 ### Commons
 
-#### In your `superset_config.py` or `superset_config_docker.py`
+#### `superset_config.py` または `superset_config_docker.py` で
 
-- `"ALERT_REPORTS"` [feature flag](/docs/configuration/configuring-superset#feature-flags) must be turned to True.
-- `beat_schedule` in CeleryConfig must contain schedule for `reports.scheduler`.
-- At least one of those must be configured, depending on what you want to use:
-  - emails: `SMTP_*` settings
-  - Slack messages: `SLACK_API_TOKEN`
-- Users can customize the email subject by including date code placeholders, which will automatically be replaced with the corresponding UTC date when the email is sent. To enable this functionality, activate the `"DATE_FORMAT_IN_EMAIL_SUBJECT"` [feature flag](/docs/configuration/configuring-superset#feature-flags). This enables date formatting in email subjects, preventing all reporting emails from being grouped into the same thread (optional for the reporting feature).
-    - Use date codes from [strftime.org](https://strftime.org/) to create the email subject.
-    - If no date code is provided, the original string will be used as the email subject.
+- `"ALERT_REPORTS"` [機能フラグ](/docs/configuration/configuring-superset#feature-flags) を True に設定する必要があります。
+- CeleryConfig の `beat_schedule` に `reports.scheduler` のスケジュールが含まれている必要があります。
+- 使用する内容に応じて、少なくとも 1 つを設定する必要があります。
+    - メール: `SMTP_*` 設定
+    - Slack メッセージ: `SLACK_API_TOKEN`
+- ユーザーは、日付コードのプレースホルダを追加することでメールの件名をカスタマイズできます。日付コードのプレースホルダは、メール送信時に自動的に対応するUTC日付に置き換えられます。この機能を有効にするには、`"DATE_FORMAT_IN_EMAIL_SUBJECT"` [機能フラグ](/docs/configuration/configuring-superset#feature-flags) を有効にしてください。これにより、メールの件名に日付フォーマットが有効になり、すべてのレポートメールが同じスレッドにグループ化されるのを防ぐことができます（レポート機能ではオプションです）。
+    - メールの件名を作成するには、[strftime.org](https://strftime.org/) の日付コードを使用します。
+    - 日付コードが指定されていない場合は、元の文字列がメールの件名として使用されます。
 
-##### Disable dry-run mode
+##### ドライランモードを無効にする
 
-Screenshots will be taken but no messages actually sent as long as `ALERT_REPORTS_NOTIFICATION_DRY_RUN = True`, its default value in `docker/pythonpath_dev/superset_config.py`.  To disable dry-run mode and start receiving email/Slack notifications, set `ALERT_REPORTS_NOTIFICATION_DRY_RUN` to `False` in [superset config](https://github.com/apache/superset/blob/master/docker/pythonpath_dev/superset_config.py).
+`ALERT_REPORTS_NOTIFICATION_DRY_RUN = True`（`docker/pythonpath_dev/superset_config.py` のデフォルト値）に設定されている場合、スクリーンショットは撮影されますが、メッセージは送信されません。ドライランモードを無効にしてメール/Slack 通知の受信を開始するには、[superset config](https://github.com/apache/superset/blob/master/docker/pythonpath_dev/superset_config.py) で `ALERT_REPORTS_NOTIFICATION_DRY_RUN` を `False` に設定してください。
 
-#### In your `Dockerfile`
+#### `Dockerfile` で
 
-- You must install a headless browser, for taking screenshots of the charts and dashboards. Only Firefox and Chrome are currently supported.
-  > If you choose Chrome, you must also change the value of `WEBDRIVER_TYPE` to `"chrome"` in your `superset_config.py`.
+- チャートとダッシュボードのスクリーンショットを撮るには、ヘッドレスブラウザをインストールする必要があります。現在サポートされているのはFirefoxとChromeのみです。
+  > Chrome を選択した場合は、`superset_config.py` で `WEBDRIVER_TYPE` の値を `"chrome"` に変更する必要もあります。
 
-Note: All the components required (Firefox headless browser, Redis, Postgres db, celery worker and celery beat) are present in the *dev* docker image if you are following [Installing Superset Locally](/docs/installation/docker-compose/).
-All you need to do is add the required config variables described in this guide (See `Detailed Config`).
+注: [Superset のローカルインストール](/docs/installation/docker-compose/) に従っている場合、必要なすべてのコンポーネント (Firefox ヘッドレス ブラウザー、Redis、Postgres db、celery ワーカー、celery beat) が *dev* docker イメージに存在します。
+このガイドで説明されている必要な設定変数を追加するだけです (「詳細設定」を参照)。
 
-If you are running a non-dev docker image, e.g., a stable release like `apache/superset:3.1.0`, that image does not include a headless browser.  Only the `superset_worker` container needs this headless browser to browse to the target chart or dashboard.
-You can either install and configure the headless browser - see "Custom Dockerfile" section below - or when deploying via `docker compose`, modify your `docker-compose.yml` file to use a dev image for the worker container and a stable release image for the `superset_app` container.
+開発版以外のDockerイメージ（例えば、安定版リリースの「apache/superset:3.1.0」）を実行している場合、そのイメージにはヘッドレスブラウザは含まれていません。このヘッドレスブラウザは、対象のチャートやダッシュボードを参照するために「superset_worker」コンテナのみで必要です。
+ヘッドレスブラウザをインストールして設定するか（以下の「カスタムDockerfile」セクションを参照）、または「docker compose」経由でデプロイする場合は、「docker-compose.yml」ファイルを変更して、ワーカーコンテナには開発版イメージを使用し、「superset_app」コンテナには安定版リリースイメージを使用するようにしてください。
 
-*Note*: In this context, a "dev image" is the same application software as its corresponding non-dev image, just bundled with additional tools.  So an image like `3.1.0-dev` is identical to `3.1.0` when it comes to stability, functionality, and running in production.  The actual "in-development" versions of Superset - cutting-edge and unstable - are not tagged with version numbers on Docker Hub and will display version `0.0.0-dev` within the Superset UI.
+*注*: ここでの「開発イメージ」とは、対応する非開発イメージと同じアプリケーションソフトウェアで、追加ツールがバンドルされているものを指します。つまり、「3.1.0-dev」のようなイメージは、安定性、機能性、本番環境での動作に関しては「3.1.0」と全く同じです。Supersetの実際の「開発中」バージョン（最先端かつ不安定版）は、Docker Hub上でバージョン番号がタグ付けされておらず、Superset UIではバージョン「0.0.0-dev」と表示されます。
 
-### Slack integration
+### Slack との統合
 
-To send alerts and reports to Slack channels, you need to create a new Slack Application on your workspace.
+Slack チャンネルにアラートやレポートを送信するには、ワークスペースに新しい Slack アプリケーションを作成する必要があります。
 
-1. Connect to your Slack workspace, then head to [https://api.slack.com/apps].
-2. Create a new app.
-3. Go to "OAuth & Permissions" section, and give the following scopes to your app:
+1. Slack ワークスペースに接続し、[https://api.slack.com/apps] にアクセスします。
+2. 新しいアプリを作成します。
+3. 「OAuth と権限」セクションに移動し、アプリに以下のスコープを設定します:
    - `incoming-webhook`
    - `files:write`
    - `chat:write`
    - `channels:read`
    - `groups:read`
-4. At the top of the "OAuth and Permissions" section, click "install to workspace".
-5. Select a default channel for your app and continue.
-   (You can post to any channel by inviting your Superset app into that channel).
-6. The app should now be installed in your workspace, and a "Bot User OAuth Access Token" should have been created. Copy that token in the `SLACK_API_TOKEN` variable of your `superset_config.py`.
-7. Ensure the feature flag `ALERT_REPORT_SLACK_V2` is set to True in `superset_config.py`
-8. Restart the service (or run `superset init`) to pull in the new configuration.
+4. 「OAuth と権限」セクションの上部にある「ワークスペースにインストール」をクリックします。
+5. アプリのデフォルトチャンネルを選択し、続行します。（Superset アプリをそのチャンネルに招待することで、どのチャンネルにも投稿できます。）
+6. これでアプリがワークスペースにインストールされ、「Bot User OAuth Access Token」が作成されているはずです。このトークンを `superset_config.py` の `SLACK_API_TOKEN` 変数にコピーします。
+7. `superset_config.py` で機能フラグ `ALERT_REPORT_SLACK_V2` が True に設定されていることを確認します。
+8. 新しい設定を反映させるため、サービスを再起動（または `superset init` を実行）します。
 
-Note: when you configure an alert or a report, the Slack channel list takes channel names without the leading '#' e.g. use `alerts` instead of `#alerts`.
+注意: アラートまたはレポートを構成する場合、Slack チャネル リストは先頭の '#' を除いたチャネル名を取得します。たとえば、`#alerts` ではなく `alerts` を使用します。
 
-### Kubernetes-specific
+### Kubernetes 固有の
 
-- You must have a `celery beat` pod running. If you're using the chart included in the GitHub repository under [helm/superset](https://github.com/apache/superset/tree/master/helm/superset), you need to put `supersetCeleryBeat.enabled = true` in your values override.
-- You can see the dedicated docs about [Kubernetes installation](/docs/installation/kubernetes) for more details.
+- `celery beat` ポッドが稼働している必要があります。GitHubリポジトリの [helm/superset](https://github.com/apache/superset/tree/master/helm/superset) に含まれるチャートを使用している場合は、値のオーバーライドに `supersetCeleryBeat.enabled = true` を追加する必要があります。
+- 詳細については、[Kubernetes のインストール](/docs/installation/kubernetes) に関する専用ドキュメントをご覧ください。
 
-### Docker Compose specific
+### Docker Compose 固有の
 
-#### You must have in your `docker-compose.yml`
+#### `docker-compose.yml`に以下を含める必要があります
 
-- A Redis message broker
-- PostgreSQL DB instead of SQLlite
-- One or more `celery worker`
-- A single `celery beat`
+- Redis メッセージブローカー
+- SQLlite の代わりに PostgreSQL データベース
+- 1 つ以上の `celery worker`
+- 1 つの `celery beat`
 
-This process also works in a Docker swarm environment, you would just need to add `Deploy:` to the Superset, Redis and Postgres services along with your specific configs for your swarm.
+このプロセスは Docker swarm 環境でも機能します。swarm の特定の構成とともに、Superset、Redis、および Postgres サービスに `Deploy:` を追加するだけです。
 
-### Detailed config
+### 詳細な設定
 
-The following configurations need to be added to the `superset_config.py` file. This file is loaded when the image runs, and any configurations in it will override the default configurations found in the `config.py`.
+以下の設定を `superset_config.py` ファイルに追加する必要があります。このファイルはイメージの実行時に読み込まれ、このファイル内の設定は `config.py` のデフォルト設定を上書きします。
 
-You can find documentation about each field in the default `config.py` in the GitHub repository under [superset/config.py](https://github.com/apache/superset/blob/master/superset/config.py).
+デフォルトの `config.py` の各フィールドに関するドキュメントは、GitHub リポジトリの [superset/config.py](https://github.com/apache/superset/blob/master/superset/config.py) にあります。
 
-You need to replace default values with your custom Redis, Slack and/or SMTP config.
+デフォルト値を、Redis、Slack、SMTP のカスタム設定に置き換える必要があります。
 
-Superset uses Celery beat and Celery worker(s) to send alerts and reports.
+Superset は、アラートとレポートの送信に Celery beat と Celery worker を使用します。
 
-- The beat is the scheduler that tells the worker when to perform its tasks. This schedule is defined when you create the alert or report.
-- The worker will process the  tasks that need to be performed when an alert or report is fired.
+- beat とは、worker にタスクを実行するタイミングを指示するスケジューラーです。このスケジュールは、アラートまたはレポートの作成時に定義されます。
+- worker は、アラートまたはレポートが発行されたときに実行する必要があるタスクを処理します。
 
-In the `CeleryConfig`, only the `beat_schedule` is relevant to this feature, the rest of the `CeleryConfig` can be changed for your needs.
+`CeleryConfig` では、`beat_schedule` のみがこの機能に関連し、`CeleryConfig` の残りの部分はニーズに合わせて変更できます。
 
 ```python
 from celery.schedules import crontab
@@ -172,13 +171,9 @@ WEBDRIVER_BASEURL = "http://superset:8088" # When running using docker compose u
 WEBDRIVER_BASEURL_USER_FRIENDLY = "http://localhost:8088"
 ```
 
-You also need
-to specify on behalf of which username to render the dashboards. In general, dashboards and charts
-are not accessible to unauthorized requests, that is why the worker needs to take over credentials
-of an existing user to take a snapshot.
+また、ダッシュボードをレンダリングするユーザー名も指定する必要があります。通常、ダッシュボードとチャートは不正なリクエストからはアクセスできないため、ワーカーはスナップショットを取得するために既存ユーザーの認証情報を引き継ぐ必要があります。
 
-By default, Alerts and Reports are executed as the owner of the alert/report object. To use a fixed user account,
-just change the config as follows (`admin` in this example):
+デフォルトでは、アラートとレポートはアラート/レポートオブジェクトの所有者として実行されます。固定ユーザーアカウントを使用するには、設定を次のように変更します（この例では「admin」）:
 
 ```python
 from superset.tasks.types import FixedExecutor
@@ -186,20 +181,16 @@ from superset.tasks.types import FixedExecutor
 ALERT_REPORTS_EXECUTORS = [FixedExecutor("admin")]
 ```
 
-Please refer to `ExecutorType` in the codebase for other executor types.
+その他のエグゼキュータータイプについては、コードベースの「ExecutorType」を参照してください。
 
-**Important notes**
+**重要事項**
 
-- Be mindful of the concurrency setting for celery (using `-c 4`). Selenium/webdriver instances can
-  consume a lot of CPU / memory on your servers.
-- In some cases, if you notice a lot of leaked geckodriver processes, try running your celery
-  processes with `celery worker --pool=prefork --max-tasks-per-child=128 ...`
-- It is recommended to run separate workers for the `sql_lab` and `email_reports` tasks. This can be
-  done using the `queue` field in `task_annotations`.
-- Adjust `WEBDRIVER_BASEURL` in your configuration file if celery workers can’t access Superset via
-  its default value of `http://0.0.0.0:8080/`.
+- Celery の同時実行設定（`-c 4` を使用）に注意してください。Selenium/WebDriver インスタンスは、サーバーの CPU / メモリを大量に消費する可能性があります。
+- 場合によっては、geckodriver プロセスが大量にリークしていることに気付いた場合は、`celery worker --pool=prefork --max-tasks-per-child=128 ...` を指定して Celery プロセスを実行してみてください。
+- `sql_lab` タスクと `email_reports` タスクには別々のワーカーを実行することをお勧めします。これは、`task_annotations` の `queue` フィールドを使用して実行できます。
+- Celery ワーカーがデフォルト値の `http://0.0.0.0:8080/` 経由で Superset にアクセスできない場合は、設定ファイルで `WEBDRIVER_BASEURL` を調整してください。
 
-It's also possible to specify a minimum interval between each report's execution through the config file:
+設定ファイルを使用して、各レポートの実行間隔の最小値を指定することもできます。
 
 ``` python
 # Set a minimum interval threshold between executions (for each Alert/Report)
@@ -208,7 +199,7 @@ ALERT_MINIMUM_INTERVAL = int(timedelta(minutes=10).total_seconds())
 REPORT_MINIMUM_INTERVAL = int(timedelta(minutes=5).total_seconds())
 ```
 
-Alternatively, you can assign a function to `ALERT_MINIMUM_INTERVAL` and/or `REPORT_MINIMUM_INTERVAL`. This is useful to dynamically retrieve a value as needed:
+あるいは、`ALERT_MINIMUM_INTERVAL` および/または `REPORT_MINIMUM_INTERVAL` に関数を割り当てることもできます。これは、必要に応じて動的に値を取得するのに便利です:
 
 ``` python
 def alert_dynamic_minimal_interval(**kwargs) -> int:
@@ -219,14 +210,14 @@ def alert_dynamic_minimal_interval(**kwargs) -> int:
 ALERT_MINIMUM_INTERVAL = alert_dynamic_minimal_interval
 ```
 
-## Custom Dockerfile
+## カスタム Dockerfile
 
-If you're running the dev version of a released Superset image, like `apache/superset:3.1.0-dev`, you should be set with the above.
+リリース済みの Superset イメージの開発版（例：`apache/superset:3.1.0-dev`）を実行している場合は、上記の設定で問題ありません。
 
-But if you're building your own image, or starting with a non-dev version, a webdriver (and headless browser) is needed to capture screenshots of the charts and dashboards which are then sent to the recipient.
-Here's how you can modify your Dockerfile to take the screenshots either with Firefox or Chrome.
+ただし、独自のイメージを構築する場合や、非開発版から始める場合は、チャートやダッシュボードのスクリーンショットをキャプチャして受信者に送信するために、Web ドライバー（およびヘッドレスブラウザ）が必要です。
+Firefox または Chrome でスクリーンショットを撮影できるように Dockerfile を変更する手順は次のとおりです。
 
-### Using Firefox
+### Firefox の使用
 
 ```docker
 FROM apache/superset:3.1.0
@@ -247,7 +238,7 @@ RUN pip install --no-cache gevent psycopg2 redis
 USER superset
 ```
 
-### Using Chrome
+### Chrome の使用
 
 ```docker
 FROM apache/superset:3.1.0
@@ -273,37 +264,37 @@ RUN pip install --no-cache gevent psycopg2 redis
 USER superset
 ```
 
-Don't forget to set `WEBDRIVER_TYPE` and `WEBDRIVER_OPTION_ARGS` in your config if you use Chrome.
+Chrome を使用する場合は、設定で `WEBDRIVER_TYPE` と `WEBDRIVER_OPTION_ARGS` を設定することを忘れないでください。
 
-## Troubleshooting
+## トラブルシューティング
 
-There are many reasons that reports might not be working.  Try these steps to check for specific issues.
+レポートが機能しない理由は様々です。具体的な問題がないか確認するには、以下の手順をお試しください。
 
-### Confirm feature flag is enabled and you have sufficient permissions
+### 機能フラグが有効になっており、十分な権限があることを確認してください。
 
-If you don't see "Alerts & Reports" under the *Manage* section of the Settings dropdown in the Superset UI, you need to enable the `ALERT_REPORTS` feature flag (see above). Enable another feature flag and check to see that it took effect, to verify that your config file is getting loaded.
+Superset UI の「設定」ドロップダウンの「*管理*」セクションに「アラートとレポート」が表示されない場合は、「ALERT_REPORTS」機能フラグを有効にする必要があります（上記参照）。別の機能フラグを有効にして、それが反映されているかどうかを確認し、構成ファイルが読み込まれていることを確認してください。
 
-Log in as an admin user to ensure you have adequate permissions.
+管理者ユーザーとしてログインし、十分な権限があることを確認してください。
 
-### Check the logs of your Celery worker
+### Celery ワーカーのログを確認してください。
 
-This is the best source of information about the problem.  In a docker compose deployment, you can do this with a command like `docker logs superset_worker --since 1h`.
+これは問題に関する最良の情報源です。docker compose デプロイメントでは、`docker logs superset_worker --since 1h` のようなコマンドで確認できます。
 
-### Check web browser and webdriver installation
+### Web ブラウザと WebDriver のインストールを確認してください。
 
-To take a screenshot, the worker visits the dashboard or chart using a headless browser, then takes a screenshot. If you are able to send a chart as CSV or text but can't send as PNG, your problem may lie with the browser.
+スクリーンショットを撮るには、ワーカーはヘッドレスブラウザを使ってダッシュボードまたはチャートにアクセスし、スクリーンショットを撮ります。チャートをCSVまたはテキストとして送信できるのにPNGとして送信できない場合は、ブラウザに問題がある可能性があります。
 
-Superset docker images that have a tag ending with `-dev` have the Firefox headless browser and geckodriver already installed. You can test that these are installed and in the proper path by entering your Superset worker and running `firefox --headless` and then `geckodriver`. Both commands should start those applications.
+`-dev`で終わるタグを持つSuperset Dockerイメージには、Firefoxヘッドレスブラウザとgeckodriverが既にインストールされています。Supersetワーカーに入り、`firefox --headless`と`geckodriver`を実行することで、これらがインストールされ、適切なパスにあることをテストできます。どちらのコマンドでも、これらのアプリケーションが起動するはずです。
 
-If you are handling the installation of that software on your own, or wish to use Chromium instead, do your own verification to ensure that the headless browser opens successfully in the worker environment.
+これらのソフトウェアを自分でインストールする場合、または代わりにChromiumを使用する場合は、ワーカー環境でヘッドレスブラウザが正常に開くことをご自身で確認してください。
 
-### Send a test email
+### テストメールを送信する
 
-One symptom of an invalid connection to an email server is receiving an error of `[Errno 110] Connection timed out` in your logs when the report tries to send.
+メールサーバーへの接続が無効であることを示す症状の一つとして、レポートの送信時にログに`[Errno 110] 接続タイムアウト` というエラーが表示されることが挙げられます。
 
-Confirm via testing that your outbound email configuration is correct.  Here is the simplest test, for an un-authenticated email SMTP email service running on port 25.  If you are sending over SSL, for instance, study how [Superset's codebase sends emails](https://github.com/apache/superset/blob/master/superset/utils/core.py#L818) and then test with those commands and arguments.
+テストを実施して、送信メールの設定が正しいことを確認してください。最も簡単なテストは、ポート25で実行されている認証されていないSMTPメールサービスです。例えばSSL経由で送信する場合は、[Supersetのコードベースがどのようにメールを送信するか](https://github.com/apache/superset/blob/master/superset/utils/core.py#L818)を調べ、それらのコマンドと引数でテストしてください。
 
-Start Python in your worker environment, replace all example values, and run:
+ワーカー環境でPythonを起動し、すべてのサンプル値を置き換えて、以下を実行します:
 
 ```python
 import smtplib
@@ -323,28 +314,26 @@ mailserver.sendmail(from_email, to_email, msg.as_string())
 mailserver.quit()
 ```
 
-This should send an email.
+これでメールが送信されるはずです。
 
-Possible fixes:
+考えられる解決策:
 
-- Some cloud hosts disable outgoing unauthenticated SMTP email to prevent spam.  For instance, [Azure blocks port 25 by default on some machines](https://learn.microsoft.com/en-us/azure/virtual-network/troubleshoot-outbound-smtp-connectivity). Enable that port or use another sending method.
-- Use another set of SMTP credentials that you verify works in this setup.
+- 一部のクラウドホストでは、スパム対策として、認証されていないSMTPメールの送信が無効になっています。たとえば、[Azure は一部のマシンでポート25をデフォルトでブロックしています](https://learn.microsoft.com/en-us/azure/virtual-network/troubleshoot-outbound-smtp-connectivity)。このポートを有効にするか、別の送信方法を使用してください。
+- この設定で正常に動作することを確認した別のSMTP認証情報を使用してください。
 
-### Browse to your report from the worker
+### ワーカーからレポートを参照する
 
-The worker may be unable to reach the report. It will use the value of `WEBDRIVER_BASEURL` to browse to the report.  If that route is invalid, or presents an authentication challenge that the worker can't pass, the report screenshot will fail.
+ワーカーがレポートにアクセスできない可能性があります。ワーカーはレポートを参照するために `WEBDRIVER_BASEURL` の値を使用します。このルートが無効であるか、ワーカーが通過できない認証チャレンジがある場合、レポートのスクリーンショットは失敗します。
 
-Check this by attempting to `curl` the URL of a report that you see in the error logs of your worker. For instance, from the worker environment, run `curl http://superset_app:8088/superset/dashboard/1/`. You may get different responses depending on whether the dashboard exists - for example, you may need to change the `1` in that URL. If there's a URL in your logs from a failed report screenshot, that's a good place to start. The goal is to determine a valid value for `WEBDRIVER_BASEURL` and determine if an issue like HTTPS or authentication is redirecting your worker.
+ワーカーのエラーログに表示されているレポートの URL を `curl` でアクセスして確認してみてください。例えば、ワーカー環境から `curl http://superset_app:8088/superset/dashboard/1/` を実行します。ダッシュボードが存在するかどうかによって、レスポンスが異なる場合があります。例えば、URL の `1` を変更する必要があるかもしれません。ログに失敗したレポートのスクリーンショットの URL がある場合は、そこから確認を始めるのが良いでしょう。目標は、`WEBDRIVER_BASEURL` の有効な値を特定し、HTTPS や認証などの問題によってワーカーがリダイレクトされているかどうかを確認することです。
 
-In a deployment with authentication measures enabled like HTTPS and Single Sign-On, it may make sense to have the worker navigate directly to the Superset application running in the same location, avoiding the need to sign in.  For instance, you could use `WEBDRIVER_BASEURL="http://superset_app:8088"` for a docker compose deployment, and set `"force_https": False,` in your `TALISMAN_CONFIG`.
+HTTPS やシングル サインオンなどの認証手段が有効になっているデプロイメントでは、サインインの必要性を回避し、ワーカーが同じ場所で実行されている Superset アプリケーションに直接移動できるようにすることが合理的です。たとえば、docker compose デプロイメントに `WEBDRIVER_BASEURL="http://superset_app:8088"` を使用し、`TALISMAN_CONFIG` で `"force_https": False,` を設定できます。
 
-## Scheduling Queries as Reports
+## クエリをレポートとしてスケジュールする
 
-You can optionally allow your users to schedule queries directly in SQL Lab. This is done by adding
-extra metadata to saved queries, which are then picked up by an external scheduled (like
-[Apache Airflow](https://airflow.apache.org/)).
+オプションで、ユーザーがSQL Labで直接クエリをスケジュールできるようにすることができます。これは、保存されたクエリにメタデータを追加することで実現します。メタデータは、外部のスケジュールされたクエリ（[Apache Airflow](https://airflow.apache.org/)など）によって取得されます。
 
-To allow scheduled queries, add the following to `SCHEDULED_QUERIES` in your configuration file:
+クエリのスケジュールを許可するには、設定ファイルの`SCHEDULED_QUERIES`に以下のコードを追加します:
 
 ```python
 SCHEDULED_QUERIES = {
@@ -426,11 +415,6 @@ SCHEDULED_QUERIES = {
 }
 ```
 
-This configuration is based on
-[react-jsonschema-form](https://github.com/mozilla-services/react-jsonschema-form) and will add a
-menu item called “Schedule” to SQL Lab. When the menu item is clicked, a modal will show up where
-the user can add the metadata required for scheduling the query.
+この設定は [react-jsonschema-form](https://github.com/mozilla-services/react-jsonschema-form) に基づいており、SQL Lab に「Schedule」というメニュー項目を追加します。メニュー項目をクリックすると、クエリのスケジュール設定に必要なメタデータを追加できるモーダルが表示されます。
 
-This information can then be retrieved from the endpoint `/api/v1/saved_query/` and used to
-schedule the queries that have `schedule_info` in their JSON metadata. For schedulers other than
-Airflow, additional fields can be easily added to the configuration file above.
+この情報はエンドポイント `/api/v1/saved_query/` から取得され、JSON メタデータに `schedule_info` が含まれるクエリのスケジュール設定に使用されます。Airflow 以外のスケジューラーの場合は、上記の設定ファイルに簡単にフィールドを追加できます。

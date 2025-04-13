@@ -1050,28 +1050,27 @@ PostgreSQL接続オプションの詳細については、[SQLAlchemy のドキ�
 
 #### Presto
 
-The [pyhive](https://pypi.org/project/PyHive/) library is the recommended way to connect to Presto through SQLAlchemy.
+SQLAlchemy 経由で Presto に接続するには、[pyhive](https://pypi.org/project/PyHive/) ライブラリの使用が推奨されます。
 
-The expected connection string is formatted as follows:
+想定される接続文字列の形式は次のとおりです:
 
 ```
 presto://{hostname}:{port}/{database}
 ```
 
-You can pass in a username and password as well:
+ユーザー名とパスワードも渡すことができます:
 
 ```
 presto://{username}:{password}@{hostname}:{port}/{database}
 ```
 
-Here is an example connection string with values:
+値を含む接続文字列の例を次に示します:
 
 ```
 presto://datascientist:securepassword@presto.example.com:8080/hive
 ```
 
-By default Superset assumes the most recent version of Presto is being used when querying the
-datasource. If you’re using an older version of Presto, you can configure it in the extra parameter:
+Superset はデフォルトで、データソースのクエリ時に最新バージョンの Presto が使用されているものと想定します。古いバージョンの Presto を使用している場合は、extra パラメータで設定できます:
 
 ```json
 {
@@ -1079,7 +1078,7 @@ datasource. If you’re using an older version of Presto, you can configure it i
 }
 ```
 
-SSL Secure extra add json config to extra connection information.
+SSL セキュア エクストラは、追加の接続情報に JSON 構成を追加します。
 
 ```json
    {
@@ -1092,10 +1091,9 @@ SSL Secure extra add json config to extra connection information.
 
 #### RisingWave
 
-The recommended connector library for RisingWave is
-[sqlalchemy-risingwave](https://github.com/risingwavelabs/sqlalchemy-risingwave).
+RisingWave に推奨されるコネクタライブラリは [sqlalchemy-risingwave](https://github.com/risingwavelabs/sqlalchemy-risingwave) です。
 
-The expected connection string is formatted as follows:
+想定される接続文字列の形式は次のとおりです:
 
 ```
 risingwave://root@{hostname}:{port}/{database}?sslmode=disable
@@ -1103,62 +1101,55 @@ risingwave://root@{hostname}:{port}/{database}?sslmode=disable
 
 #### Rockset
 
-The connection string for Rockset is:
+Rockset の接続文字列は次のとおりです:
 
 ```
 rockset://{api key}:@{api server}
 ```
 
-Get your API key from the [Rockset console](https://console.rockset.com/apikeys).
-Find your API server from the [API reference](https://rockset.com/docs/rest-api/#introduction). Omit the `https://` portion of the URL.
+APIキーは[Rocksetコンソール](https://console.rockset.com/apikeys)から取得してください。
+APIサーバーは[APIリファレンス](https://rockset.com/docs/rest-api/#introduction)から確認してください。URLの「https://」部分は省略してください。
 
-To target to a specific virtual instance, use this URI format:
+特定の仮想インスタンスをターゲットにするには、次のURI形式を使用します。
 
 ```
 rockset://{api key}:@{api server}/{VI ID}
 ```
 
-For more complete instructions, we recommend the [Rockset documentation](https://docs.rockset.com/apache-superset/).
+より詳細な手順については、[Rockset のドキュメント](https://docs.rockset.com/apache-superset/) を参照することをお勧めします。
 
 #### Snowflake
 
-##### Install Snowflake Driver
+##### Snowflakeドライバーをインストールする
 
-Follow the steps [here](/docs/configuration/databases#installing-database-drivers) about how to
-install new database drivers when setting up Superset locally via docker compose.
+docker compose を使用してローカルで Superset を設定するときに新しいデータベース ドライバーをインストールする方法については、[こちら](/docs/configuration/databases#installing-database-drivers) の手順に従ってください。
 
 ```bash
 echo "snowflake-sqlalchemy" >> ./docker/requirements-local.txt
 ```
 
-The recommended connector library for Snowflake is
-[snowflake-sqlalchemy](https://pypi.org/project/snowflake-sqlalchemy/).
+Snowflake に推奨されるコネクタライブラリは [snowflake-sqlalchemy](https://pypi.org/project/snowflake-sqlalchemy/) です。
 
-The connection string for Snowflake looks like this:
+Snowflake の接続文字列は次のようになります:
 
 ```
 snowflake://{user}:{password}@{account}.{region}/{database}?role={role}&warehouse={warehouse}
 ```
 
-The schema is not necessary in the connection string, as it is defined per table/query. The role and
-warehouse can be omitted if defaults are defined for the user, i.e.
+スキーマはテーブル/クエリごとに定義されるため、接続文字列には必要ありません。ロールとウェアハウスは、ユーザーにデフォルトが定義されている場合は省略できます。
 
 ```
 snowflake://{user}:{password}@{account}.{region}/{database}
 ```
 
-Make sure the user has privileges to access and use all required
-databases/schemas/tables/views/warehouses, as the Snowflake SQLAlchemy engine does not test for
-user/role rights during engine creation by default. However, when pressing the “Test Connection”
-button in the Create or Edit Database dialog, user/role credentials are validated by passing
-“validate_default_parameters”: True to the connect() method during engine creation. If the user/role
-is not authorized to access the database, an error is recorded in the Superset logs.
+Snowflake SQLAlchemyエンジンは、デフォルトではエンジン作成時にユーザー/ロールの権限をテストしないため、必要なすべてのデータベース/スキーマ/テーブル/ビュー/ウェアハウスへのアクセス権限と使用権限がユーザーにあることを確認してください。
+ただし、「データベースの作成」または「データベースの編集」ダイアログの「接続テスト」ボタンを押すと、エンジン作成時にconnect()メソッドに「validate_default_parameters」: Trueを渡すことで、ユーザー/ロールの資格情報が検証されます。
+ユーザー/ロールにデータベースへのアクセス権限がない場合、Supersetログにエラーが記録されます。
 
-And if you want connect Snowflake with [Key Pair Authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth.html#step-6-configure-the-snowflake-client-to-use-key-pair-authentication).
-Please make sure you have the key pair and the public key is registered in Snowflake.
-To connect Snowflake with Key Pair Authentication, you need to add the following parameters to "SECURE EXTRA" field.
+また、Snowflake を [キーペア認証](https://docs.snowflake.com/en/user-guide/key-pair-auth.html#step-6-configure-the-snowflake-client-to-use-key-pair-authentication) で接続する場合は、キーペアがあること、および公開鍵が Snowflake に登録されていることを確認してください。
+Snowflake をキーペア認証で接続するには、「SECURE EXTRA」フィールドに以下のパラメータを追加する必要があります。
 
-***Please note that you need to merge multi-line private key content to one line and insert `\n` between each line***
+***複数行に渡る秘密鍵の内容を 1 行にまとめ、各行の間に `\n` を挿入する必要があることに注意してください***
 
 ```json
 {
@@ -1170,7 +1161,7 @@ To connect Snowflake with Key Pair Authentication, you need to add the following
  }
 ```
 
-If your private key is stored on server, you can replace "privatekey_body" with “privatekey_path” in parameter.
+秘密鍵がサーバー上に保存されている場合は、パラメータ内の「privatekey_body」を「privatekey_path」に置き換えることができます。
 
 ```json
 {
@@ -1184,10 +1175,9 @@ If your private key is stored on server, you can replace "privatekey_body" with 
 
 #### Apache Solr
 
-The [sqlalchemy-solr](https://pypi.org/project/sqlalchemy-solr/) library provides a
-Python / SQLAlchemy interface to Apache Solr.
+[sqlalchemy-solr](https://pypi.org/project/sqlalchemy-solr/) ライブラリは、Apache Solr への Python / SQLAlchemy インターフェースを提供します。
 
-The connection string for Solr looks like this:
+Solr への接続文字列は次のようになります:
 
 ```
 solr://{username}:{password}@{host}:{port}/{server_path}/{collection}[/?use_ssl=true|false]
@@ -1195,9 +1185,9 @@ solr://{username}:{password}@{host}:{port}/{server_path}/{collection}[/?use_ssl=
 
 #### Apache Spark SQL
 
-The recommended connector library for Apache Spark SQL [pyhive](https://pypi.org/project/PyHive/).
+Apache Spark SQL の推奨コネクタライブラリ [pyhive](https://pypi.org/project/PyHive/)。
 
-The expected connection string is formatted as follows:
+想定される接続文字列の形式は次のとおりです:
 
 ```
 hive://hive@{hostname}:{port}/{database}
@@ -1205,17 +1195,17 @@ hive://hive@{hostname}:{port}/{database}
 
 #### SQL Server
 
-The recommended connector library for SQL Server is [pymssql](https://github.com/pymssql/pymssql).
+SQL Server に推奨されるコネクタライブラリは [pymssql](https://github.com/pymssql/pymssql) です。
 
-The connection string for SQL Server looks like this:
+SQL Server の接続文字列は次のようになります:
 
 ```
 mssql+pymssql://<Username>:<Password>@<Host>:<Port-default:1433>/<Database Name>
 ```
 
-It is also possible to connect using [pyodbc](https://pypi.org/project/pyodbc) with the parameter [odbc_connect](https://docs.sqlalchemy.org/en/14/dialects/mssql.html#pass-through-exact-pyodbc-string)
+[pyodbc](https://pypi.org/project/pyodbc) にパラメータ [odbc_connect](https://docs.sqlalchemy.org/en/14/dialects/mssql.html#pass-through-exact-pyodbc-string) を指定して接続することも可能です。
 
-The connection string for SQL Server looks like this:
+SQL Server の接続文字列は次のようになります:
 
 ```
 mssql+pyodbc:///?odbc_connect=Driver%3D%7BODBC+Driver+17+for+SQL+Server%7D%3BServer%3Dtcp%3A%3Cmy_server%3E%2C1433%3BDatabase%3Dmy_database%3BUid%3Dmy_user_name%3BPwd%3Dmy_password%3BEncrypt%3Dyes%3BConnection+Timeout%3D30
@@ -1223,10 +1213,9 @@ mssql+pyodbc:///?odbc_connect=Driver%3D%7BODBC+Driver+17+for+SQL+Server%7D%3BSer
 
 #### StarRocks
 
-The [sqlalchemy-starrocks](https://pypi.org/project/starrocks/) library is the recommended
-way to connect to StarRocks through SQLAlchemy.
+SQLAlchemy 経由で StarRocks に接続するには、[sqlalchemy-starrocks](https://pypi.org/project/starrocks/) ライブラリの使用が推奨されます。
 
-You'll need to the following setting values to form the connection string:
+接続文字列を作成するには、以下の設定値が必要です:
 
 - **User**: User Name
 - **Password**: DBPassword
@@ -1235,29 +1224,29 @@ You'll need to the following setting values to form the connection string:
 - **Database**: Database Name
 - **Port**: StarRocks FE port
 
-Here's what the connection string looks like:
+接続文字列は次のようになります:
 
 ```
 starrocks://<User>:<Password>@<Host>:<Port>/<Catalog>.<Database>
 ```
 
 :::note
-StarRocks maintains their Superset docuementation [here](https://docs.starrocks.io/docs/integrations/BI_integrations/Superset/).
+StarRocks は、Superset のドキュメントを [こちら](https://docs.starrocks.io/docs/integrations/BI_integrations/Superset/) で管理しています。
 :::
 
 #### TDengine
 
-[TDengine](https://www.tdengine.com) is a High-Performance, Scalable Time-Series Database for Industrial IoT and provides SQL-like query interface.
+[TDengine](https://www.tdengine.com) は、産業用 IoT 向けの高性能でスケーラブルな時系列データベースであり、SQL ライクなクエリインターフェースを提供します。
 
-The recommended connector library for TDengine is [taospy](https://pypi.org/project/taospy/) and [taos-ws-py](https://pypi.org/project/taos-ws-py/)
+TDengine に推奨されるコネクタライブラリは、[taospy](https://pypi.org/project/taospy/) と [taos-ws-py](https://pypi.org/project/taos-ws-py/) です。
 
-The expected connection string is formatted as follows:
+想定される接続文字列の形式は次のとおりです:
 
 ```
 taosws://<user>:<password>@<host>:<port>
 ```
 
-For example:
+たとえば:
 
 ```
 taosws://root:taosdata@127.0.0.1:6041
@@ -1265,10 +1254,9 @@ taosws://root:taosdata@127.0.0.1:6041
 
 #### Teradata
 
-The recommended connector library is
-[teradatasqlalchemy](https://pypi.org/project/teradatasqlalchemy/).
+推奨されるコネクタライブラリは [teradatasqlalchemy](https://pypi.org/project/teradatasqlalchemy/) です。
 
-The connection string for Teradata looks like this:
+Teradata の接続文字列は次のようになります:
 
 ```
 teradatasql://{user}:{password}@{host}
@@ -1276,31 +1264,25 @@ teradatasql://{user}:{password}@{host}
 
 #### ODBC Driver
 
-There's also an older connector named
- [sqlalchemy-teradata](https://github.com/Teradata/sqlalchemy-teradata) that
- requires the installation of ODBC drivers. The Teradata ODBC Drivers
- are available
-here: https://downloads.teradata.com/download/connectivity/odbc-driver/linux
+[sqlalchemy-teradata](https://github.com/Teradata/sqlalchemy-teradata) という古いコネクタもありますが、ODBC ドライバーのインストールが必要です。Teradata ODBC ドライバーは https://downloads.teradata.com/download/connectivity/odbc-driver/linux から入手できます。
 
-Here are the required environment variables:
+必要な環境変数は次のとおりです:
 
 ```bash
 export ODBCINI=/.../teradata/client/ODBC_64/odbc.ini
 export ODBCINST=/.../teradata/client/ODBC_64/odbcinst.ini
 ```
 
-We recommend using the first library because of the
- lack of requirement around ODBC drivers and
- because it's more regularly updated.
+ODBC ドライバーに関する要件が少なく、より定期的に更新されるため、最初のライブラリを使用することをお勧めします。
 
 #### TimescaleDB
 
-[TimescaleDB](https://www.timescale.com) is the open-source relational database for time-series and analytics to build powerful data-intensive applications.
-TimescaleDB is a PostgreSQL extension, and you can use the standard PostgreSQL connector library, [psycopg2](https://www.psycopg.org/docs/), to connect to the database.
+[TimescaleDB](https://www.timescale.com) は、時系列データや分析のためのオープンソースのリレーショナルデータベースであり、強力なデータ集約型アプリケーションを構築できます。
+TimescaleDB は PostgreSQL の拡張機能であり、標準の PostgreSQL コネクタライブラリである [psycopg2](https://www.psycopg.org/docs/) を使用してデータベースに接続できます。
 
-If you're using docker compose, psycopg2 comes out of the box with Superset.
+docker compose を使用している場合、Superset には psycopg2 が標準で付属しています。
 
-TimescaleDB sample connection parameters:
+TimescaleDB のサンプル接続パラメータ:
 
 - **User Name**: User
 - **Password**: Password
@@ -1312,33 +1294,33 @@ TimescaleDB sample connection parameters:
 - **Database Name**: Database Name
 - **Port**: default 5432 or Port number of the service
 
-The connection string looks like:
+接続文字列は次のようになります:
 
 ```
 postgresql://{username}:{password}@{host}:{port}/{database name}
 ```
 
-You can require SSL by adding `?sslmode=require` at the end (e.g. in case you use [Timescale Cloud](https://www.timescale.com/cloud)):
+最後に `?sslmode=require` を追加することで SSL を必須にすることができます (例: [Timescale Cloud](https://www.timescale.com/cloud) を使用する場合):
 
 ```
 postgresql://{username}:{password}@{host}:{port}/{database name}?sslmode=require
 ```
 
-[Learn more about TimescaleDB!](https://docs.timescale.com/)
+[TimescaleDB について詳しくはこちら!](https://docs.timescale.com/)
 
 #### Trino
 
-Supported trino version 352 and higher
+trinoバージョン352以上をサポート
 
 ##### Connection String
 
-The connection string format is as follows:
+接続文字列の形式は次のとおりです:
 
 ```
 trino://{username}:{password}@{hostname}:{port}/{catalog}
 ```
 
-If you are running Trino with docker on local machine, please use the following connection URL
+ローカルマシンでdockerを使ってTrinoを実行している場合は、次の接続URLを使用してください。
 
 ```
 trino://trino@host.docker.internal:8080
@@ -1348,15 +1330,15 @@ trino://trino@host.docker.internal:8080
 
 ###### 1. Basic Authentication
 
-You can provide `username`/`password` in the connection string or in the `Secure Extra` field at `Advanced / Security`
+接続文字列または「Advanced / Security」の「Secure Extra」フィールドに「ユーザー名」/「パスワード」を入力できます。
 
-- In Connection String
+- 接続文字列では
 
     ```
     trino://{username}:{password}@{hostname}:{port}/{catalog}
     ```
 
-- In `Secure Extra` field
+- `Secure Extra` フィールドでは
 
     ```json
     {
@@ -1368,11 +1350,11 @@ You can provide `username`/`password` in the connection string or in the `Secure
     }
     ```
 
-NOTE: if both are provided, `Secure Extra` always takes higher priority.
+注意: 両方が指定されている場合は、`Secure Extra` が常に優先されます。
 
 ###### 2. Kerberos Authentication
 
-In `Secure Extra` field, config as following example:
+「Secure Extra」フィールドで、次の例のように設定します:
 
 ```json
 {
@@ -1385,13 +1367,13 @@ In `Secure Extra` field, config as following example:
 }
 ```
 
-All fields in `auth_params` are passed directly to the [`KerberosAuthentication`](https://github.com/trinodb/trino-python-client/blob/0.306.0/trino/auth.py#L40) class.
+`auth_params` 内のすべてのフィールドは、[`KerberosAuthentication`](https://github.com/trinodb/trino-python-client/blob/0.306.0/trino/auth.py#L40) クラスに直接渡されます。
 
-NOTE: Kerberos authentication requires installing the [`trino-python-client`](https://github.com/trinodb/trino-python-client) locally with either the `all` or `kerberos` optional features, i.e., installing `trino[all]` or `trino[kerberos]` respectively.
+注: Kerberos 認証を使用するには、[`trino-python-client`](https://github.com/trinodb/trino-python-client) を `all` または `kerberos` オプション機能付きでローカルにインストールする必要があります。つまり、それぞれ `trino[all]` または `trino[kerberos]` をインストールする必要があります。
 
 ###### 3. Certificate Authentication
 
-In `Secure Extra` field, config as following example:
+「Secure Extra」フィールドで、次の例のように設定します:
 
 ```json
 {
@@ -1403,11 +1385,11 @@ In `Secure Extra` field, config as following example:
 }
 ```
 
-All fields in `auth_params` are passed directly to the [`CertificateAuthentication`](https://github.com/trinodb/trino-python-client/blob/0.315.0/trino/auth.py#L416) class.
+`auth_params` 内のすべてのフィールドは [`CertificateAuthentication`](https://github.com/trinodb/trino-python-client/blob/0.315.0/trino/auth.py#L416) クラスに直接渡されます。
 
 ###### 4. JWT Authentication
 
-Config `auth_method` and provide token in `Secure Extra` field
+`auth_method` を設定し、`Secure Extra` フィールドにトークンを入力します。
 
 ```json
 {
@@ -1420,8 +1402,7 @@ Config `auth_method` and provide token in `Secure Extra` field
 
 ###### 5. Custom Authentication
 
-To use custom authentication, first you need to add it into
-`ALLOWED_EXTRA_AUTHENTICATIONS` allow list in Superset config file:
+カスタム認証を使用するには、まず、Superset 構成ファイルの `ALLOWED_EXTRA_AUTHENTICATIONS` 許可リストにそれを追加する必要があります:
 
 ```python
 from your.module import AuthClass
@@ -1435,7 +1416,7 @@ ALLOWED_EXTRA_AUTHENTICATIONS: Dict[str, Dict[str, Callable[..., Any]]] = {
 }
 ```
 
-Then in `Secure Extra` field:
+次に、「Secure Extra」フィールドで次の操作を行います:
 
 ```json
 {
@@ -1446,20 +1427,18 @@ Then in `Secure Extra` field:
 }
 ```
 
-You can also use custom authentication by providing reference to your `trino.auth.Authentication` class
-or factory function (which returns an `Authentication` instance) to `auth_method`.
+`trino.auth.Authentication` クラスまたはファクトリー関数（`Authentication` インスタンスを返す）への参照を `auth_method` に渡すことで、カスタム認証を使用することもできます。
 
-All fields in `auth_params` are passed directly to your class/function.
+`auth_params` 内のすべてのフィールドは、クラス/関数に直接渡されます。
 
-**Reference**:
+**参考**:
 
 - [Trino-Superset-Podcast](https://trino.io/episodes/12.html)
 
 #### Vertica
 
-The recommended connector library is
-[sqlalchemy-vertica-python](https://pypi.org/project/sqlalchemy-vertica-python/). The
-[Vertica](http://www.vertica.com/) connection parameters are:
+推奨されるコネクタライブラリは[sqlalchemy-vertica-python](https://pypi.org/project/sqlalchemy-vertica-python/)です。
+[Vertica](http://www.vertica.com/)の接続パラメータは次のとおりです:
 
 - **User Name:** UserName
 - **Password:** DBPassword
@@ -1470,24 +1449,23 @@ The recommended connector library is
 - **Database Name:** Database Name
 - **Port:** default 5433
 
-The connection string is formatted as follows:
+接続文字列の形式は次のとおりです:
 
 ```
 vertica+vertica_python://{username}:{password}@{host}/{database}
 ```
 
-Other parameters:
+その他のパラメータ:
 
 - Load Balancer - Backup Host
 
 #### YDB
 
-The recommended connector library for [YDB](https://ydb.tech/) is
-[ydb-sqlalchemy](https://pypi.org/project/ydb-sqlalchemy/).
+[YDB](https://ydb.tech/) に推奨されるコネクタ ライブラリは [ydb-sqlalchemy](https://pypi.org/project/ydb-sqlalchemy/) です。
 
 ##### Connection String
 
-The connection string for YDB looks like this:
+YDB の接続文字列は次のようになります:
 
 ```
 ydb://{host}:{port}/{database_name}
@@ -1495,7 +1473,7 @@ ydb://{host}:{port}/{database_name}
 
 ##### Protocol
 
-You can specify `protocol` in the `Secure Extra` field at `Advanced / Security`:
+`Advanced / Security` の `Secure Extra` フィールドで `protocol` を指定できます:
 
 ```
 {
@@ -1503,13 +1481,13 @@ You can specify `protocol` in the `Secure Extra` field at `Advanced / Security`:
 }
 ```
 
-Default is `grpc`.
+デフォルトは `grpc` です。
 
 ##### Authentication Methods
 
 ###### Static Credentials
 
-To use `Static Credentials` you should provide `username`/`password` in the `Secure Extra` field at `Advanced / Security`:
+`Static Credentials` を使用するには、`Advanced / Security` の `Secure Extra`フィールドに `username`/`password` を入力する必要があります:
 
 ```
 {
@@ -1522,7 +1500,7 @@ To use `Static Credentials` you should provide `username`/`password` in the `Sec
 
 ###### Access Token Credentials
 
-To use `Access Token Credentials` you should provide `token` in the `Secure Extra` field at `Advanced / Security`:
+`Access Token Credentials` を使用するには、`Advanced / Security` の `Secure Extra` フィールドに `token` を入力する必要があります:
 
 ```
 {
@@ -1534,7 +1512,7 @@ To use `Access Token Credentials` you should provide `token` in the `Secure Extr
 
 ##### Service Account Credentials
 
-To use Service Account Credentials, you should provide `service_account_json` in the `Secure Extra` field at `Advanced / Security`:
+サービス アカウント認証情報を使用するには、`Advanced / Security` の `Secure Extra` フィールドに `service_account_json` を指定する必要があります:
 
 ```
 {
@@ -1553,37 +1531,35 @@ To use Service Account Credentials, you should provide `service_account_json` in
 
 #### YugabyteDB
 
-[YugabyteDB](https://www.yugabyte.com/) is a distributed SQL database built on top of PostgreSQL.
+[YugabyteDB](https://www.yugabyte.com/) は、PostgreSQL 上に構築された分散 SQL データベースです。
 
-Note that, if you're using docker compose, the
-Postgres connector library [psycopg2](https://www.psycopg.org/docs/)
-comes out of the box with Superset.
+docker compose を使用している場合は、Superset に Postgres コネクタライブラリ [psycopg2](https://www.psycopg.org/docs/) が標準で付属していることに注意してください。
 
-The connection string looks like:
+接続文字列は次のようになります:
 
 ```
 postgresql://{username}:{password}@{host}:{port}/{database}
 ```
 
-## Connecting through the UI
+## UI 経由で接続する
 
-Here is the documentation on how to leverage the new DB Connection UI. This will provide admins the ability to enhance the UX for users who want to connect to new databases.
+新しいDB接続UIを活用する方法については、こちらのドキュメントをご覧ください。これにより、管理者は新しいデータベースに接続したいユーザーのUXを向上させることができます。
 
 ![db-conn-docs](https://user-images.githubusercontent.com/27827808/125499607-94e300aa-1c0f-4c60-b199-3f9de41060a3.gif)
 
-There are now 3 steps when connecting to a database in the new UI:
+新しい UI では、データベースへの接続に 3 つのステップが設けられています。
 
-Step 1: First the admin must inform superset what engine they want to connect to. This page is powered by the `/available` endpoint which pulls on the engines currently installed in your environment, so that only supported databases are shown.
+ステップ 1: まず、管理者は superset に対して、接続するエンジンを指定する必要があります。このページは `/available` エンドポイントに基づいており、現在環境にインストールされているエンジンを参照することで、サポートされているデータベースのみが表示されます。
 
-Step 2: Next, the admin is prompted to enter database specific parameters. Depending on whether there is a dynamic form available for that specific engine, the admin will either see the new custom form or the legacy SQLAlchemy form. We currently have built dynamic forms for (Redshift, MySQL, Postgres, and BigQuery). The new form prompts the user for the parameters needed to connect (for example, username, password, host, port, etc.) and provides immediate feedback on errors.
+ステップ 2: 次に、管理者はデータベース固有のパラメータを入力するよう求められます。特定のエンジンで利用可能な動的フォームがあるかどうかに応じて、管理者には新しいカスタムフォームまたは従来の SQLAlchemy フォームが表示されます。現在、Redshift、MySQL、Postgres、BigQuery 用の動的フォームを構築済みです。新しいフォームでは、接続に必要なパラメータ（ユーザー名、パスワード、ホスト、ポートなど）の入力が求められ、エラーが発生した場合は即座にフィードバックが提供されます。
 
-Step 3: Finally, once the admin has connected to their DB using the dynamic form they have the opportunity to update any optional advanced settings.
+ステップ 3: 最後に、管理者が動的フォームを使用してデータベースに接続したら、必要に応じて詳細設定を更新できます。
 
-We hope this feature will help eliminate a huge bottleneck for users to get into the application and start crafting datasets.
+この機能により、ユーザーがアプリケーションにアクセスしてデータセットの作成を開始する際の大きなボトルネックが解消されることを期待しています。
 
-##### How to setup up preferred database options and images
+##### 優先データベースオプションと画像の設定方法
 
-We added a new configuration option where the admin can define their preferred databases, in order:
+管理者が優先データベースを次の順序で定義できる新しい構成オプションを追加しました:
 
 ```python
 # A list of preferred databases, in order. These databases will be
@@ -1598,11 +1574,11 @@ PREFERRED_DATABASES: list[str] = [
 ]
 ```
 
-For copyright reasons the logos for each database are not distributed with Superset.
+著作権上の理由により、各データベースのロゴは Superset では配布されません。
 
-##### Setting images
+##### 画像の設定
 
-- To set the images of your preferred database, admins must create a mapping in the `superset_text.yml` file with engine and location of the image. The image can be host locally inside your static/file directory or online (e.g. S3)
+- 優先データベースのイメージを設定するには、管理者は`superset_text.yml`ファイルにエンジンとイメージの場所のマッピングを作成する必要があります。イメージは、static/fileディレクトリ内のローカルホスト、またはオンライン（例：S3）にホストできます。
 
 ```python
 DB_IMAGES:
@@ -1611,58 +1587,53 @@ DB_IMAGES:
   snowflake: "path/to/image/snowflake.jpg"
 ```
 
-##### How to add new database engines to available endpoint
+##### 利用可能なエンドポイントに新しいデータベースエンジンを追加する方法
 
-Currently the new modal supports the following databases:
+現在、新しいモーダルは以下のデータベースをサポートしています:
 
 - Postgres
 - Redshift
 - MySQL
 - BigQuery
 
-When the user selects a database not in this list they will see the old dialog asking for the SQLAlchemy URI. New databases can be added gradually to the new flow. In order to support the rich configuration a DB engine spec needs to have the following attributes:
+ユーザーがこのリストにないデータベースを選択した場合、SQLAlchemy URIの入力を求める従来のダイアログが表示されます。新しいデータベースは、新しいフローに段階的に追加できます。豊富な設定をサポートするには、DBエンジン仕様に以下の属性が必要です。
 
-1. `parameters_schema`: a Marshmallow schema defining the parameters needed to configure the database. For Postgres this includes username, password, host, port, etc. ([see](https://github.com/apache/superset/blob/accee507c0819cd0d7bcfb5a3e1199bc81eeebf2/superset/db_engine_specs/base.py#L1309-L1320)).
-2. `default_driver`: the name of the recommended driver for the DB engine spec. Many SQLAlchemy dialects support multiple drivers, but usually one is the official recommendation. For Postgres we use "psycopg2".
-3. `sqlalchemy_uri_placeholder`: a string that helps the user in case they want to type the URI directly.
-4. `encryption_parameters`: parameters used to build the URI when the user opts for an encrypted connection. For Postgres this is `{"sslmode": "require"}`.
+1. `parameters_schema`: データベースの設定に必要なパラメータを定義する Marshmallow スキーマ。Postgres の場合、ユーザー名、パスワード、ホスト、ポートなどが含まれます ([参照](https://github.com/apache/superset/blob/accee507c0819cd0d7bcfb5a3e1199bc81eeebf2/superset/db_engine_specs/base.py#L1309-L1320))。
+2. `default_driver`: DB エンジン仕様で推奨されるドライバ名。多くの SQLAlchemy 方言は複数のドライバをサポートしていますが、通常はそのうちの 1 つが公式推奨です。Postgres の場合は "psycopg2" を使用します。
+3. `sqlalchemy_uri_placeholder`: ユーザーが URI を直接入力する場合に便利な文字列。
+4. `encryption_parameters`: ユーザーが暗号化接続を選択した場合にURIを構築するために使用するパラメータ。Postgresの場合、これは `{"sslmode": "require"}` です。
 
-In addition, the DB engine spec must implement these class methods:
+さらに、DBエンジン仕様では以下のクラスメソッドを実装する必要があります。
 
-- `build_sqlalchemy_uri(cls, parameters, encrypted_extra)`: this method receives the distinct parameters and builds the URI from them.
-- `get_parameters_from_uri(cls, uri, encrypted_extra)`: this method does the opposite, extracting the parameters from a given URI.
-- `validate_parameters(cls, parameters)`: this method is used for `onBlur` validation of the form. It should return a list of `SupersetError` indicating which parameters are missing, and which parameters are definitely incorrect ([example](https://github.com/apache/superset/blob/accee507c0819cd0d7bcfb5a3e1199bc81eeebf2/superset/db_engine_specs/base.py#L1404)).
+- `build_sqlalchemy_uri(cls, parameters, encrypted_extra)`: このメソッドは個別のパラメータを受け取り、それらからURIを構築します。
+- `get_parameters_from_uri(cls, uri, encrypted_extra)`: このメソッドは、指定されたURIからパラメータを抽出します。
+- `validate_parameters(cls, parameters)`: このメソッドは、フォームの`onBlur`検証に使用されます。不足しているパラメータと、明らかに間違っているパラメータを示す`SupersetError`のリストを返す必要があります（[例](https://github.com/apache/superset/blob/accee507c0819cd0d7bcfb5a3e1199bc81eeebf2/superset/db_engine_specs/base.py#L1404)）。
 
-For databases like MySQL and Postgres that use the standard format of `engine+driver://user:password@host:port/dbname` all you need to do is add the `BasicParametersMixin` to the DB engine spec, and then define the parameters 2-4 (`parameters_schema` is already present in the mixin).
+MySQLやPostgresなど、`engine+driver://user:password@host:port/dbname`という標準フォーマットを使用するデータベースの場合、DBエンジン仕様に`BasicParametersMixin`を追加し、パラメータ2～4を定義するだけです（`parameters_schema`は既にMixinに含まれています）。
 
-For other databases you need to implement these methods yourself. The BigQuery DB engine spec is a good example of how to do that.
+その他のデータベースの場合は、これらのメソッドを自分で実装する必要があります。BigQuery DBエンジン仕様は、その方法の良い例です。
 
-### Extra Database Settings
+### 追加のデータベース設定
 
-##### Deeper SQLAlchemy Integration
+##### より深い SQLAlchemy 統合
 
-It is possible to tweak the database connection information using the parameters exposed by
-SQLAlchemy. In the **Database edit** view, you can edit the **Extra** field as a JSON blob.
+SQLAlchemy が公開するパラメータを使用して、データベース接続情報を微調整することができます。
+**Database edit** ビューでは、**Extra** フィールドを JSON BLOB として編集できます。
 
-This JSON string contains extra configuration elements. The `engine_params` object gets unpacked
-into the `sqlalchemy.create_engine` call, while the `metadata_params` get unpacked into the
-`sqlalchemy.MetaData` call. Refer to the SQLAlchemy docs for more information.
+この JSON 文字列には追加の構成要素が含まれています。`engine_params` オブジェクトは `sqlalchemy.create_engine` 呼び出しに展開され、`metadata_params` は `sqlalchemy.MetaData` 呼び出しに展開されます。詳細については、SQLAlchemy のドキュメントを参照してください。
 
-##### Schemas
+##### スキーマ
 
-Databases like Postgres and Redshift use the **schema** as the logical entity on top of the
-**database**. For Superset to connect to a specific schema, you can set the **schema** parameter in
-the **Edit Tables** form (Sources > Tables > Edit record).
+PostgresやRedshiftなどのデータベースは、**データベース**の上位にある論理エンティティとして**スキーマ**を使用します。
+Supersetが特定のスキーマに接続するには、**Edit Tables** フォーム（[ソース] > [テーブル] > [レコードの編集]）で **schema** パラメータを設定できます。
 
-##### External Password Store for SQLAlchemy Connections
+##### SQLAlchemy 接続用の外部パスワードストア
 
-Superset can be configured to use an external store for database passwords. This is useful if you a
-running a custom secret distribution framework and do not wish to store secrets in Superset’s meta
-database.
+Superset は、データベースパスワードを外部ストアに保存するように設定できます。
+これは、カスタムのシークレット配布フレームワークを実行していて、Superset のメタデータにシークレットを保存したくない場合に便利です。
 
-Example: Write a function that takes a single argument of type `sqla.engine.url` and returns the
-password for the given connection string. Then set `SQLALCHEMY_CUSTOM_PASSWORD_STORE` in your config
-file to point to that function.
+例: `sqla.engine.url` 型の引数を1つ受け取り、指定された接続文字列のパスワードを返す関数を作成します。
+次に、設定ファイルで `SQLALCHEMY_CUSTOM_PASSWORD_STORE` を設定して、その関数を指定します。
 
 ```python
 def example_lookup_password(url):
@@ -1672,8 +1643,8 @@ def example_lookup_password(url):
 SQLALCHEMY_CUSTOM_PASSWORD_STORE = example_lookup_password
 ```
 
-A common pattern is to use environment variables to make secrets available.
-`SQLALCHEMY_CUSTOM_PASSWORD_STORE` can also be used for that purpose.
+一般的なパターンは、環境変数を使用してシークレットを利用できるようにすることです。
+`SQLALCHEMY_CUSTOM_PASSWORD_STORE` もこの目的に使用できます。
 
 ```python
 def example_password_as_env_var(url):
@@ -1684,9 +1655,9 @@ def example_password_as_env_var(url):
 SQLALCHEMY_CUSTOM_PASSWORD_STORE = example_password_as_env_var
 ```
 
-##### SSL Access to Databases
+##### データベースへの SSL アクセス
 
-You can use the `Extra` field in the **Edit Databases** form to configure SSL:
+**Edit Databases** フォームの `Extra` フィールドを使用して SSL を設定できます。
 
 ```JSON
 {
@@ -1700,45 +1671,56 @@ You can use the `Extra` field in the **Edit Databases** form to configure SSL:
 }
 ```
 
-## Misc
+## その他
 
-### Querying across databases
+### データベース間のクエリ
 
-Superset offers an experimental feature for querying across different databases. This is done via a special database called "Superset meta database" that uses the "superset://" SQLAlchemy URI. When using the database it's possible to query any table in any of the configured databases using the following syntax:
+Superset は、異なるデータベース間でクエリを実行するための実験的な機能を提供します。
+これは、「superset://」SQLAlchemy URI を使用する「Superset メタデータベース」と呼ばれる特別なデータベースを介して実行されます。
+このデータベースを使用すると、次の構文を使用して、設定されたデータベース内の任意のテーブルに対してクエリを実行できます:
 
 ```sql
 SELECT * FROM "database name.[[catalog.].schema].table name";
 ```
 
-For example:
+たとえば:
 
 ```sql
 SELECT * FROM "examples.birth_names";
 ```
 
-Spaces are allowed, but periods in the names must be replaced by `%2E`. Eg:
+スペースは使用できますが、名前内のピリオドは `%2E` に置き換える必要があります。例:
 
 ```sql
 SELECT * FROM "Superset meta database.examples%2Ebirth_names";
 ```
 
-The query above returns the same rows as `SELECT * FROM "examples.birth_names"`, and also shows that the meta database can query tables from any table — even itself!
+上記のクエリは、`SELECT * FROM "examples.birth_names"` と同じ行を返します。また、メタ データベースが任意のテーブル (さらにはメタ データベース自体) からテーブルをクエリできることも示しています。
 
-#### Considerations
+#### 考慮事項
 
-Before enabling this feature, there are a few considerations that you should have in mind. First, the meta database enforces permissions on the queried tables, so users should only have access via the database to tables that they originally have access to. Nevertheless, the meta database is a new surface for potential attacks, and bugs could allow users to see data they should not.
+この機能を有効にする前に、いくつか考慮すべき点があります。
+まず、メタデータベースはクエリ対象のテーブルに対して権限を適用するため、ユーザーはデータベース経由でアクセスできるのは、元々アクセス権を持っているテーブルのみとなります。
+しかしながら、メタデータベースは潜在的な攻撃の新たな標的となり、バグによってユーザーが本来閲覧すべきでないデータを閲覧できてしまう可能性があります。
 
-Second, there are performance considerations. The meta database will push any filtering, sorting, and limiting to the underlying databases, but any aggregations and joins will happen in memory in the process running the query. Because of this, it's recommended to run the database in async mode, so queries are executed in Celery workers, instead of the web workers. Additionally, it's possible to specify a hard limit on how many rows are returned from the underlying databases.
+次に、パフォーマンスに関する考慮事項があります。
+メタデータベースは、フィルタリング、並べ替え、制限を基盤となるデータベースにプッシュしますが、集計と結合はクエリ実行プロセス中のメモリ内で行われます。
+そのため、データベースを非同期モードで実行し、クエリがWebワーカーではなくCeleryワーカーで実行されるようにすることをお勧めします。
+さらに、基盤となるデータベースから返される行数にハードリミットを指定することも可能です。
 
-#### Enabling the meta database
+#### メタデータベースの有効化
 
-To enable the Superset meta database, first you need to set the `ENABLE_SUPERSET_META_DB` feature flag to true. Then, add a new database of type "Superset meta database" with the SQLAlchemy URI "superset://".
+Superset メタデータデータベースを有効にするには、まず `ENABLE_SUPERSET_META_DB` 機能フラグを true に設定する必要があります。
+次に、SQLAlchemy URI「superset://」を使用して、「Superset meta database」タイプの新しいデータベースを追加します。
 
-If you enable DML in the meta database users will be able to run DML queries on underlying databases **as long as DML is also enabled in them**. This allows users to run queries that move data across databases.
+メタデータデータベースで DML を有効にすると、**基盤となるデータベースでも DML が有効になっている限り**、ユーザーは DML クエリを実行できるようになります。
+これにより、ユーザーはデータベース間でデータを移動するクエリを実行できるようになります。
 
-Second, you might want to change the value of `SUPERSET_META_DB_LIMIT`. The default value is 1000, and defines how many are read from each database before any aggregations and joins are executed. You can also set this value `None` if you only have small tables.
+次に、`SUPERSET_META_DB_LIMIT` の値を変更することをおすすめします。
+デフォルト値は 1000 で、集計や結合を実行する前に各データベースから読み取るデータ数を定義します。
+小さなテーブルしかない場合は、この値を `None` に設定することもできます。
 
-Additionally, you might want to restrict the databases to with the meta database has access to. This can be done in the database configuration, under "Advanced" -> "Other" -> "ENGINE PARAMETERS" and adding:
+さらに、メタデータデータベースがアクセスできるデータベースを制限することもできます。これは、データベース構成の「Advanced」->「Other」->「ENGINE PARAMETERS」で、次の項目を追加することで実行できます。
 
 ```json
 {"allowed_dbs":["Google Sheets","examples"]}

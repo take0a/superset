@@ -1,14 +1,13 @@
 ---
-title: Contributing to Superset
+title: Superset への貢献
 sidebar_position: 1
 version: 1
 ---
 
-# Contributing to Superset
+# Superset への貢献
 
-Superset is an [Apache Software foundation](https://www.apache.org/theapacheway/index.html) project.
-The core contributors (or committers) to Superset communicate primarily in the following channels (
-which can be joined by anyone):
+Superset は [Apache Software Foundation](https://www.apache.org/theapacheway/index.html) プロジェクトです。
+Superset のコアコントリビューター（またはコミッター）は、主に以下のチャンネル（誰でも参加できます）でコミュニケーションを行っています:
 
 - [Mailing list](https://lists.apache.org/list.html?dev@superset.apache.org)
 - [Apache Superset Slack community](http://bit.ly/join-superset-slack)
@@ -17,122 +16,104 @@ which can be joined by anyone):
 - [GitHub discussions](https://github.com/apache/superset/discussions)
 - [Superset Community Calendar](https://superset.apache.org/community)
 
-More references:
+その他の参考資料:
 
 - [Superset Wiki (code guidelines and additional resources)](https://github.com/apache/superset/wiki)
 
-## Orientation
+## オリエンテーション
 
-Here's a list of repositories that contain Superset-related packages:
+Superset 関連パッケージを含むリポジトリの一覧は次のとおりです:
 
-- [apache/superset](https://github.com/apache/superset)
-  is the main repository containing the `apache_superset` Python package
-  distributed on
-  [pypi](https://pypi.org/project/apache_superset/). This repository
-  also includes Superset's main TypeScript/JavaScript bundles and react apps under
-  the [superset-frontend](https://github.com/apache/superset/tree/master/superset-frontend)
-  folder.
-- [github.com/apache-superset](https://github.com/apache-superset) is the
-  GitHub organization under which we manage Superset-related
-  small tools, forks and Superset-related experimental ideas.
+- [apache/superset](https://github.com/apache/superset) は、[pypi](https://pypi.org/project/apache_superset/) で配布されている `apache_superset` Python パッケージを含むメインリポジトリです。このリポジトリには、[superset-frontend](https://github.com/apache/superset/tree/master/superset-frontend) フォルダ以下に、Superset のメイン TypeScript/JavaScript バンドルと React アプリも含まれています。
+- [github.com/apache-superset](https://github.com/apache-superset) は、Superset 関連の小規模ツール、フォーク、実験的なアイデアを管理するための GitHub 組織です。
 
-## Types of Contributions
+## 貢献の種類
 
-### Report Bug
+### バグ報告
 
-The best way to report a bug is to file an issue on GitHub. Please include:
+バグを報告する最善の方法は、GitHub で問題を報告することです。以下の情報を含めてください。
 
-- Your operating system name and version.
-- Superset version.
-- Detailed steps to reproduce the bug.
-- Any details about your local setup that might be helpful in troubleshooting.
+- ご使用のオペレーティング システム名とバージョン。
+- スーパーセットのバージョン。
+- バグを再現するための詳細な手順。
+- トラブルシューティングに役立つ可能性のある、ローカル環境に関する詳細情報。
 
-When posting Python stack traces, please quote them using
-[Markdown blocks](https://help.github.com/articles/creating-and-highlighting-code-blocks/).
+Python のスタックトレースを投稿する際は、[Markdown ブロック](https://help.github.com/articles/creating-and-highlighting-code-blocks/) を使用して引用してください。
 
-_Please note that feature requests opened as GitHub Issues will be moved to Discussions._
+_GitHub Issues としてオープンされた機能リクエストは、ディスカッションに移動されますのでご注意ください。_
 
-### Submit Ideas or Feature Requests
+### アイデアや機能リクエストの提出
 
-The best way is to start an ["Ideas" Discussion thread](https://github.com/apache/superset/discussions/categories/ideas) on GitHub:
+GitHub で [アイデアに関するディスカッションスレッド](https://github.com/apache/superset/discussions/categories/ideas) を開始するのが最適です。
 
-- Explain in detail how it would work.
-- Keep the scope as narrow as possible, to make it easier to implement.
-- Remember that this is a volunteer-driven project, and that your contributions are as welcome as anyone's :)
+- どのように機能するかを詳しく説明してください。
+- 実装を容易にするため、スコープはできるだけ狭くしてください。
+- これはボランティア主導のプロジェクトであり、皆様の貢献は誰にとっても歓迎されるものであることを忘れないでください :)
 
-To propose large features or major changes to codebase, and help usher in those changes, please create a **Superset Improvement Proposal (SIP)**. See template from [SIP-0](https://github.com/apache/superset/issues/5602)
+大規模な機能やコードベースの大幅な変更を提案し、それらの変更を推進するには、**Superset Improvement Proposal (SIP)** を作成してください。[SIP-0](https://github.com/apache/superset/issues/5602) のテンプレートを参照してください。
 
-### Fix Bugs
+### バグを修正する
 
-Look through the GitHub issues. Issues tagged with `#bug` are
-open to whoever wants to implement them.
+GitHub の問題を確認してください。`#bug` タグが付けられた問題は、実装を希望するすべての人に公開されています。
 
-### Implement Features
+### 機能の実装
 
-Look through the GitHub issues. Issues tagged with
-`#feature` are open to whoever wants to implement them.
+GitHub の Issue を確認してください。`#feature` タグが付けられた Issue は、実装を希望するすべての人に公開されています。
 
-### Improve Documentation
+### ドキュメントの改善
 
-Superset could always use better documentation,
-whether as part of the official Superset docs,
-in docstrings, `docs/*.rst` or even on the web as blog posts or
-articles. See [Documentation](/docs/contributing/howtos#contributing-to-documentation) for more details.
+Superset には、Superset 公式ドキュメントの一部として、docstring、`docs/*.rst`、あるいはブログ投稿や記事といったウェブ上の形式で、より充実したドキュメントが常に必要です。詳細については、[ドキュメント](/docs/contributing/howtos#contributing-to-documentation) をご覧ください。
 
-### Add Translations
+### 翻訳の追加
 
-If you are proficient in a non-English language, you can help translate
-text strings from Superset's UI. You can jump into the existing
-language dictionaries at
-`superset/translations/<language_code>/LC_MESSAGES/messages.po`, or
-even create a dictionary for a new language altogether.
-See [Translating](howtos#contributing-translations) for more details.
+英語以外の言語に堪能な方は、Superset の UI からテキスト文字列の翻訳にご協力いただけます。`superset/translations/<language_code>/LC_MESSAGES/messages.po` にある既存の言語辞書を参照することも、新しい言語の辞書を作成することもできます。
+詳しくは [翻訳](howtos#contributing-translations) をご覧ください。
 
-### Ask Questions
+### 質問する
 
-There is a dedicated [`apache-superset` tag](https://stackoverflow.com/questions/tagged/apache-superset) on [StackOverflow](https://stackoverflow.com/). Please use it when asking questions.
+[StackOverflow](https://stackoverflow.com/)には専用の[`apache-superset`タグ](https://stackoverflow.com/questions/tagged/apache-superset)があります。質問の際は、このタグをご利用ください。
 
-## Types of Contributors
+## コントリビューターの種類
 
-Following the project governance model of the Apache Software Foundation (ASF), Apache Superset has a specific set of contributor roles:
+Apache Software Foundation (ASF) のプロジェクトガバナンスモデルに従い、Apache Superset には特定のコントリビューターの役割が設けられています。
 
-### PMC Member
+### PMCメンバー
 
-A Project Management Committee (PMC) member is a person who has been elected by the PMC to help manage the project. PMC members are responsible for the overall health of the project, including community development, release management, and project governance. PMC members are also responsible for the technical direction of the project.
+プロジェクト管理委員会（PMC）メンバーは、PMCによって選出され、プロジェクトの管理を支援するメンバーです。PMCメンバーは、コミュニティ開発、リリース管理、プロジェクトガバナンスなど、プロジェクト全体の健全性維持に責任を負います。また、プロジェクトの技術的な方向性についても責任を負います。
 
-For more information about Apache Project PMCs, please refer to https://www.apache.org/foundation/governance/pmcs.html
+ApacheプロジェクトのPMCの詳細については、https://www.apache.org/foundation/governance/pmcs.html をご覧ください。
 
-### Committer
+### コミッター
 
-A committer is a person who has been elected by the PMC to have write access (commit access) to the code repository. They can modify the code, documentation, and website and accept contributions from others.
+コミッターとは、PMCによって選出され、コードリポジトリへの書き込み権限（コミット権限）を持つ人物です。コミッターはコード、ドキュメント、ウェブサイトを変更し、他者からの貢献を受け入れることができます。
 
-The official list of committers and PMC members can be found [here](https://projects.apache.org/committee.html?superset).
+コミッターとPMCメンバーの公式リストは[こちら](https://projects.apache.org/committee.html?superset)でご覧いただけます。
 
-### Contributor
+### 貢献者
 
-A contributor is a person who has contributed to the project in any way, including but not limited to code, tests, documentation, issues, and discussions.
+貢献者とは、コード、テスト、ドキュメント、課題、議論など、あらゆる形でプロジェクトに貢献した人のことです。
 
-> You can also review the Superset project's guidelines for PMC member promotion here: https://github.com/apache/superset/wiki/Guidelines-for-promoting-Superset-Committers-to-the-Superset-PMC
+> SupersetプロジェクトのPMCメンバー昇格に関するガイドラインは、こちらでご確認いただけます: https://github.com/apache/superset/wiki/Guidelines-for-promoting-Superset-Committers-to-the-Superset-PMC
 
-### Security Team
+### セキュリティチーム
 
-The security team is a selected subset of PMC members, committers and non-committers who are responsible for handling security issues.
+セキュリティチームは、PMCメンバー、コミッター、非コミッターから選ばれたメンバーで構成され、セキュリティ問題への対応を担当します。
 
-New members of the security team are selected by the PMC members in a vote. You can request to be added to the team by sending a message to private@superset.apache.org. However, the team should be small and focused on solving security issues, so the requests will be evaluated on a case-by-case basis and the team size will be kept relatively small, limited to only actively security-focused contributors.
+セキュリティチームの新メンバーは、PMCメンバーによる投票によって選出されます。チームへの参加を希望される場合は、private@superset.apache.org までメッセージを送信してください。ただし、チームは小規模で、セキュリティ問題の解決に重点を置く必要があります。そのため、リクエストは個別に評価され、チームの規模は比較的小規模に抑えられ、セキュリティに積極的に取り組む貢献者のみで構成されます。
 
-This security team must follow the [ASF vulnerability handling process](https://apache.org/security/committers.html#asf-project-security-for-committers).
+このセキュリティチームは、[ASF脆弱性対応プロセス](https://apache.org/security/committers.html#asf-project-security-for-committers) に従う必要があります。
 
-Each new security issue is tracked as a JIRA ticket on the [ASF's JIRA Superset security project](https://issues.apache.org/jira/secure/RapidBoard.jspa?rapidView=588&projectKey=SUPERSETSEC)
+新しいセキュリティの問題はすべて、[ASF の JIRA スーパーセット セキュリティ プロジェクト](https://issues.apache.org/jira/secure/RapidBoard.jspa?rapidView=588&projectKey=SUPERSETSEC) で JIRA チケットとして追跡されます。
 
-Security team members must:
+セキュリティチームのメンバーは、以下の義務を負います:
 
-- Have an [ICLA](https://www.apache.org/licenses/contributor-agreements.html) signed with Apache Software Foundation.
-- Not reveal information about pending and unfixed security issues to anyone (including their employers) unless specifically authorised by the security team members, e.g., if the security team agrees that diagnosing and solving an issue requires the involvement of external experts.
+- Apache Software Foundation と締結した [ICLA](https://www.apache.org/licenses/contributor-agreements.html) を締結していること。
+- セキュリティチームメンバーから明示的に許可された場合を除き（例：セキュリティチームが問題の診断と解決に外部の専門家の関与が必要であると同意した場合など）、保留中または未修正のセキュリティ問題に関する情報を、いかなる者（雇用主を含む）にも開示しないこと。
 
-A release manager, the contributor overseeing the release of a specific version of Apache Superset, is by default a member of the security team.  However, they are not expected to be active in assessing, discussing, and fixing security issues.
+Apache Superset の特定バージョンのリリースを監督する貢献者であるリリースマネージャーは、デフォルトでセキュリティチームのメンバーとなります。ただし、セキュリティ問題の評価、議論、修正に積極的に関与することは期待されていません。
 
-Security team members should also follow these general expectations:
+セキュリティチームのメンバーは、以下の一般的な期待事項にも従う必要があります。
 
-- Actively participate in assessing, discussing, fixing, and releasing security issues in Superset.
-- Avoid discussing security fixes in public forums. Pull request (PR) descriptions should not contain any information about security issues. The corresponding JIRA ticket should contain a link to the PR.
-- Security team members who contribute to a fix may be listed as remediation developers in the CVE report, along with their job affiliation (if they choose to include it).
+- Superset におけるセキュリティ問題の評価、議論、修正、リリースに積極的に参加してください。
+- 公開フォーラムでセキュリティ修正について議論することは避けてください。プルリクエスト (PR) の説明には、セキュリティ問題に関する情報を含めないでください。対応する JIRA チケットには、PR へのリンクを含める必要があります。
+- 修正に貢献したセキュリティチームのメンバーは、CVE レポートに修正開発者として記載される場合があります。また、所属部署も記載する必要があります（所属部署の記載を希望する場合）。
