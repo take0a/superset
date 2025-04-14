@@ -1,189 +1,163 @@
 ---
-title: Security Configurations
+title: セキュリティ構成
 sidebar_position: 1
 ---
 
-Authentication and authorization in Superset is handled by Flask AppBuilder (FAB), an application development framework
-built on top of Flask. FAB provides authentication, user management, permissions and roles.
-Please read its [Security documentation](https://flask-appbuilder.readthedocs.io/en/latest/security.html).
+Superset における認証と認可は、Flask 上に構築されたアプリケーション開発フレームワークである Flask AppBuilder (FAB) によって処理されます。
+FAB は、認証、ユーザー管理、権限、ロールを提供します。
+[セキュリティに関するドキュメント](https://flask-appbuilder.readthedocs.io/en/latest/security.html) をお読みください。
 
-### Provided Roles
+### 提供される役割
 
-Superset ships with a set of roles that are handled by Superset itself. You can assume
-that these roles will stay up-to-date as Superset evolves (and as you update Superset versions).
+Superset には、Superset 自体が処理する一連のロールが付属しています。
+これらのロールは、Superset が進化しても（また、Superset のバージョンを更新しても）、最新の状態に保たれます。
 
-Even though **Admin** users have the ability, we don't recommend altering the
-permissions associated with each role (e.g. by removing or adding permissions to them). The permissions
-associated with each role will be re-synchronized to their original values when you run
-the **superset init** command (often done between Superset versions).
+**Admin** ユーザーは権限の変更が可能ですが、各ロールに関連付けられた権限の変更（権限の削除や追加など）は推奨しません。
+各ロールに関連付けられた権限は、**superset init** コマンドを実行すると（Superset のバージョン間でよく実行されます）、元の値に再同期されます。
 
-A table with the permissions for these roles can be found at [/RESOURCES/STANDARD_ROLES.md](https://github.com/apache/superset/blob/master/RESOURCES/STANDARD_ROLES.md).
+これらのロールの権限一覧表は、[/RESOURCES/STANDARD_ROLES.md](https://github.com/apache/superset/blob/master/RESOURCES/STANDARD_ROLES.md) にあります。
 
 ### Admin
 
-Admins have all possible rights, including granting or revoking rights from other
-users and altering other people’s slices and dashboards.
+管理者には、他のユーザーへの権限の付与や取り消し、他のユーザーのスライスやダッシュボードの変更など、あらゆる権限があります。
 
 ### Alpha
 
-Alpha users have access to all data sources, but they cannot grant or revoke access
-from other users. They are also limited to altering the objects that they own. Alpha users can add and alter data sources.
+Alphaユーザーはすべてのデータソースにアクセスできますが、他のユーザーからのアクセスを許可または取り消すことはできません。
+また、変更できるのは自分が所有するオブジェクトのみです。
+Alphaユーザーはデータソースの追加と変更が可能です。
 
 ### Gamma
 
-Gamma users have limited access. They can only consume data coming from data sources
-they have been given access to through another complementary role. They only have access to
-view the slices and dashboards made from data sources that they have access to. Currently Gamma
-users are not able to alter or add data sources. We assume that they are mostly content consumers, though they can create slices and dashboards.
+Gamma ユーザーのアクセスは制限されています。
+Gamma ユーザーは、別の補完的なロールを通じてアクセスを許可されたデータソースからのデータのみを使用できます。
+アクセス権限を持つデータソースから作成されたスライスとダッシュボードのみを表示できます。
+現在、Gamma ユーザーはデータソースを変更または追加できません。
+スライスとダッシュボードを作成することはできますが、Gamma ユーザーは主にコンテンツを利用するユーザーであると想定しています。
 
-Also note that when Gamma users look at the dashboards and slices list view, they will
-only see the objects that they have access to.
+また、Gamma ユーザーがダッシュボードとスライスのリストビューを表示すると、アクセス権限を持つオブジェクトのみが表示されます。
 
 ### sql_lab
 
-The **sql_lab** role grants access to SQL Lab. Note that while **Admin** users have access
-to all databases by default, both **Alpha** and **Gamma** users need to be given access on a per database basis.
+**sql_lab** ロールは SQL Lab へのアクセスを許可します。
+**Admin** ユーザーはデフォルトですべてのデータベースにアクセスできますが、**Alpha** ユーザーと **Gamma** ユーザーの両方にはデータベースごとにアクセス権限を付与する必要があることに注意してください。
 
 ### Public
 
-To allow logged-out users to access some Superset features, you can use the `PUBLIC_ROLE_LIKE` config setting and assign it to another role whose permissions you want passed to this role.
+ログアウトしたユーザーが Superset の一部の機能にアクセスできるようにするには、`PUBLIC_ROLE_LIKE` 設定を使用して、このロールに権限を付与する別のロールに割り当てます。
 
-For example, by setting `PUBLIC_ROLE_LIKE = "Gamma"` in your `superset_config.py` file, you grant
-public role the same set of permissions as for the **Gamma** role. This is useful if one
-wants to enable anonymous users to view dashboards. Explicit grant on specific datasets is
-still required, meaning that you need to edit the **Public** role and add the public data sources to the role manually.
+たとえば、`superset_config.py` ファイルで `PUBLIC_ROLE_LIKE = "Gamma"` を設定すると、**Gamma** ロールと同じ権限セットが public ロールに付与されます。
+これは、匿名ユーザーがダッシュボードを表示できるようにする場合に便利です。
+特定のデータセットに対する明示的な権限付与は依然として必要なため、**Public** ロールを編集し、パブリックデータソースを手動でロールに追加する必要があります。
 
-### Managing Data Source Access for Gamma Roles
+### Gamma ロールのデータソースアクセスの管理
 
-Here’s how to provide users access to only specific datasets. First make sure the users with
-limited access have [only] the Gamma role assigned to them. Second, create a new role (Menu -> Security -> List Roles) and click the + sign.
+ユーザーに特定のデータセットへのアクセスのみを許可する方法は次のとおりです。
+まず、アクセスが制限されているユーザーに Gamma ロールのみが割り当てられていることを確認します。次に、新しいロールを作成し（メニュー -> セキュリティ -> ロールの一覧表示）、+ 記号をクリックします。
 
-This new window allows you to give this new role a name, attribute it to users and select the
-tables in the **Permissions** dropdown. To select the data sources you want to associate with this role, simply click on the dropdown and use the typeahead to search for your table names.
+この新しいウィンドウで、新しいロールに名前を付け、ユーザーに割り当て、**Permissions** ドロップダウンからテーブルを選択できます。
+このロールに関連付けるデータソースを選択するには、ドロップダウンをクリックし、先行入力機能を使用してテーブル名を検索します。
 
-You can then confirm with users assigned to the **Gamma** role that they see the
-objects (dashboards and slices) associated with the tables you just extended them.
+その後、**Gamma** ロールに割り当てられたユーザーに、拡張したテーブルに関連付けられたオブジェクト（ダッシュボードとスライス）が表示されることを確認します。
 
-### REST API for user & role management
+### ユーザーとロールの管理のためのREST API
 
-Flask-AppBuilder supports a REST API for user CRUD,
-but this feature is in beta and is not enabled by default in Superset.
-To enable this feature, set the following in your Superset configuration:
+Flask-AppBuilder はユーザー CRUD 用の REST API をサポートしていますが、この機能はベータ版であり、Superset ではデフォルトで有効になっていません。
+この機能を有効にするには、Superset 構成で以下を設定します:
 
 ```python
 FAB_ADD_SECURITY_API = True
 ```
 
-Once configured, the documentation for additional "Security" endpoints will be visible in Swagger for you to explore.
+設定が完了すると、追加の「セキュリティ」エンドポイントのドキュメントが Swagger に表示され、確認できるようになります。
 
-### Customizing Permissions
+### 権限のカスタマイズ
 
-The permissions exposed by FAB are very granular and allow for a great level of
-customization. FAB creates many permissions automatically for each model that is
-created (can_add, can_delete, can_show, can_edit, …) as well as for each view.
-On top of that, Superset can expose more granular permissions like **all_datasource_access**.
+FAB によって公開される権限は非常に細かく、高度なカスタマイズが可能です。
+FAB は、作成されたモデルごとに多くの権限（can_add、can_delete、can_show、can_edit など）と各ビューに対して自動的に作成します。
+さらに、Superset は **all_datasource_access** のようなより詳細な権限を公開できます。
 
-**We do not recommend altering the 3 base roles as there are a set of assumptions that
-Superset is built upon**. It is possible though for you to create your own roles, and union them to existing ones.
+**Superset はいくつかの前提に基づいて構築されているため、3 つの基本ロールを変更することはお勧めしません**。
+ただし、独自のロールを作成し、既存のロールと統合することは可能です。
 
-### Permissions
+### 権限
 
-Roles are composed of a set of permissions, and Superset has many categories of
-permissions. Here are the different categories of permissions:
+ロールは一連の権限で構成され、Superset には多くの権限カテゴリがあります。
+権限には以下のカテゴリがあります。
 
-- Model & Action: models are entities like Dashboard, Slice, or User. Each model has
-  a fixed set of permissions, like **can_edit**, **can_show**, **can_delete**, **can_list**, **can_add**,
-  and so on. For example, you can allow a user to delete dashboards by adding **can_delete** on
-  Dashboard entity to a role and granting this user that role.
-- Views: views are individual web pages, like the Explore view or the SQL Lab view.
-  When granted to a user, they will see that view in its menu items, and be able to load that page.
-- Data source: For each data source, a permission is created. If the user does not have the
-  `all_datasource_access permission` granted, the user will only be able to see Slices or explore the data sources that are granted to them
-- Database: Granting access to a database allows for the user to access all
-  data sources within that database, and will enable the user to query that
-  database in SQL Lab, provided that the SQL Lab specific permission have been granted to the user
+- モデルとアクション: モデルは、ダッシュボード、スライス、ユーザーなどのエンティティです。
+  各モデルには、**can_edit**、**can_show**、**can_delete**、**can_list**、*can_add** などの固定の権限セットがあります。
+  例えば、ダッシュボードエンティティに対する **can_delete** をロールに追加し、そのユーザーにそのロールを付与することで、ユーザーがダッシュボードを削除できるようにすることができます。
+- ビュー: ビューは、Explore ビューや SQL Lab ビューなどの個別の Web ページです。
+  ユーザーに権限が付与されると、そのビューがメニュー項目に表示され、ページを読み込むことができるようになります。
+- データソース: データソースごとに権限が作成されます。
+  ユーザーに「all_datasource_access」権限が付与されていない場合、ユーザーはスライスの表示や、付与されたデータソースの参照のみが可能になります。
+- データベース：データベースへのアクセスを許可すると、ユーザーはそのデータベース内のすべてのデータソースにアクセスできるようになり、SQL Lab でそのデータベースに対してクエリを実行できるようになります（SQL Lab 固有の権限が付与されている場合）。
 
-### Restricting Access to a Subset of Data Sources
+### データソースのサブセットへのアクセスの制限
 
-We recommend giving a user the **Gamma** role plus any other roles that would add
-access to specific data sources. We recommend that you create individual roles for
-each access profile. For example, the users on the Finance team might have access to a set of
-databases and data sources; these permissions can be consolidated in a single role.
-Users with this profile then need to be assigned the **Gamma** role as a foundation to
-the models and views they can access, and that Finance role that is a collection of permissions to data objects.
+ユーザーには、**Gamma** ロールに加えて、特定のデータソースへのアクセス権限を追加するその他のロールを付与することをお勧めします。
+アクセスプロファイルごとに個別のロールを作成することをお勧めします。
+たとえば、財務チームのユーザーには、一連のデータベースとデータソースへのアクセス権が付与される場合があります。これらの権限は 1 つのロールに統合できます。
+このプロファイルを持つユーザーには、アクセスできるモデルとビューの基盤として **Gamma** ロールを割り当て、さらにデータオブジェクトへの権限の集合である財務ロールを割り当てる必要があります。
 
-A user can have multiple roles associated with them. For example, an executive on the Finance
-team could be granted **Gamma**, **Finance**, and the **Executive** roles. The **Executive**
-role could provide access to a set of data sources and dashboards made available only to executives.
-In the **Dashboards** view, a user can only see the ones they have access to
-based on the roles and permissions that were attributed.
+ユーザーには複数のロールを関連付けることができます。たとえば、財務チームの幹部には、**Gamma**、**Finance**、および **Executive** ロールを付与できます。**Executive** ロールは、幹部のみが利用できる一連のデータソースとダッシュボードへのアクセス権限を提供できます。
+**Dashboards** ビューでは、ユーザーは割り当てられたロールと権限に基づいて、アクセスできるダッシュボードのみを表示できます。
 
-### Row Level Security
+### 行レベルのセキュリティ
 
-Using Row Level Security filters (under the **Security** menu) you can create filters
-that are assigned to a particular table, as well as a set of roles.
-If you want members of the Finance team to only have access to
-rows where `department = "finance"`, you could:
+行レベルセキュリティフィルター（**セキュリティ** メニュー内）を使用すると、特定のテーブルやロールセットに割り当てられたフィルターを作成できます。
+財務チームのメンバーが `department = "finance"` の行にのみアクセスできるようにするには、次の操作を実行します。
 
-- Create a Row Level Security filter with that clause (`department = "finance"`)
-- Then assign the clause to the **Finance** role and the table it applies to
+- 該当する句 (`department = "finance"`) を含む行レベルセキュリティフィルターを作成します。
+- 次に、その句を **Finance** ロールと、それが適用されるテーブルに割り当てます。
 
-The **clause** field, which can contain arbitrary text, is then added to the generated
-SQL statement’s WHERE clause. So you could even do something like create a filter
-for the last 30 days and apply it to a specific role, with a clause
-like `date_field > DATE_SUB(NOW(), INTERVAL 30 DAY)`. It can also support
-multiple conditions: `client_id = 6` AND `advertiser="foo"`, etc.
+任意のテキストを格納できる **clause** フィールドは、生成された SQL ステートメントの WHERE 句に追加されます。
+つまり、`date_field > DATE_SUB(NOW(), INTERVAL 30 DAY)` のような句を使用して、過去 30 日間のフィルターを作成し、特定のロールに適用するといったことも可能です。
+また、複数の条件（「client_id = 6」AND「advertiser="foo"」など）もサポートできます。
 
-All relevant Row level security filters will be combined together (under the hood,
-the different SQL clauses are combined using AND statements). This means it's
-possible to create a situation where two roles conflict in such a way as to limit a table subset to empty.
+関連するすべての行レベルセキュリティフィルターは結合されます（内部的には、異なるSQL句がANDステートメントを使用して結合されます）。
+つまり、2つのロールが競合し、テーブルのサブセットが空に制限される状況が発生する可能性があります。
 
-For example, the filters `client_id=4` and `client_id=5`, applied to a role,
-will result in users of that role having `client_id=4` AND `client_id=5`
-added to their query, which can never be true.
+例えば、あるロールに「client_id=4」と「client_id=5」というフィルターを適用すると、そのロールのユーザーのクエリには「client_id=4」AND「client_id=5」が追加されますが、これは決して真にはなりません。
 
-### User Sessions
+### ユーザーセッション
 
-Superset uses [Flask](https://pypi.org/project/Flask/)
-and [Flask-Login](https://pypi.org/project/Flask-Login/) for user session management.
+Superset は、ユーザーセッション管理に [Flask](https://pypi.org/project/Flask/) と [Flask-Login](https://pypi.org/project/Flask-Login/) を使用します。
 
-Session cookies are used to maintain session info and user state between requests,
-although they do not contain personal user information they serve the purpose of identifying
-a user session on the server side.
-The session cookie is encrypted with the application `SECRET_KEY` and cannot be read by the client.
-So it's very important to keep the `SECRET_KEY` secret and set to a secure unique complex random value.
+セッション Cookie は、リクエスト間でセッション情報とユーザー状態を維持するために使用されます。ユーザーの個人情報は含まれませんが、サーバー側でユーザーセッションを識別するために使用されます。
+セッション Cookie はアプリケーションの `SECRET_KEY` で暗号化され、クライアントからは読み取ることができません。
+そのため、`SECRET_KEY` を秘密に保ち、安全で一意の複雑なランダム値に設定することが非常に重要です。
 
-Flask and Flask-Login offer a number of configuration options to control session behavior.
+Flask と Flask-Login は、セッションの動作を制御するためのさまざまな設定オプションを提供しています。
 
-- Relevant Flask settings:
+- 関連する Flask 設定:
 
-`SESSION_COOKIE_HTTPONLY`: (default: `False`): Controls if cookies should be set with the `HttpOnly` flag.
+`SESSION_COOKIE_HTTPONLY`: (デフォルト: `False`): Cookie に `HttpOnly` フラグを設定するかどうかを制御します。
 
-`SESSION_COOKIE_SECURE`: (default: `False`) Browsers will only send cookies with requests over
-HTTPS if the cookie is marked “secure”. The application must be served over HTTPS for this to make sense.
+`SESSION_COOKIE_SECURE`: (デフォルト: `False`) ブラウザは、Cookie が「セキュア」とマークされている場合にのみ、HTTPS 経由のリクエストで Cookie を送信します。この動作が意味を成すためには、アプリケーションが HTTPS 経由で提供されていなければなりません。
 
-`SESSION_COOKIE_SAMESITE`: (default: "Lax") Prevents the browser from sending this cookie along with cross-site requests.
+`SESSION_COOKIE_SAMESITE`: (デフォルト: "Lax") ブラウザがこの Cookie をクロスサイトリクエストと共に送信しないようにします。
 
-`PERMANENT_SESSION_LIFETIME`: (default: "31 days") The lifetime of a permanent session as a `datetime.timedelta` object.
+`PERMANENT_SESSION_LIFETIME`: (デフォルト: "31 日") 永続セッションの有効期間を `datetime.timedelta` オブジェクトで表します。
 
-#### Switching to server side sessions
+#### サーバー側セッションへの切り替え
 
-Server side sessions offer benefits over client side sessions on security and performance.
-By enabling server side sessions, the session data is stored server side and only a session ID
-is sent to the client. When a user logs in, a session is created server side and the session ID
-is sent to the client in a cookie. The client will send the session ID with each request and the
-server will use it to retrieve the session data.
-On logout, the session is destroyed server side and the session cookie is deleted on the client side.
-This reduces the risk for replay attacks and session hijacking.
+サーバーサイドセッションは、クライアントサイドセッションよりもセキュリティとパフォーマンスの面で優れています。
+サーバーサイドセッションを有効にすると、セッションデータはサーバー側に保存され、クライアントにはセッションIDのみが送信されます。
+ユーザーがログインすると、サーバー側でセッションが作成され、セッションIDがCookieでクライアントに送信されます。
+クライアントはリクエストごとにセッションIDを送信し、サーバーはそれを使用してセッションデータを取得します。
+ログアウトすると、サーバー側でセッションが破棄され、クライアント側でセッションCookieが削除されます。
+これにより、リプレイ攻撃やセッションハイジャックのリスクが軽減されます。
 
-Superset uses [Flask-Session](https://flask-session.readthedocs.io/en/latest/) to manage server side sessions.
-To enable this extension you have to set:
+Supersetは、サーバーサイドセッションの管理に[Flask-Session](https://flask-session.readthedocs.io/en/latest/)を使用します。
+この拡張機能を有効にするには、以下を設定する必要があります。
 
 ``` python
 SESSION_SERVER_SIDE = True
 ```
 
-Flask-Session offers multiple backend session interfaces for Flask, here's an example for Redis:
+Flask-Session は Flask 用の複数のバックエンド セッション インターフェイスを提供します。以下は Redis の例です:
 
 ``` python
 from redis import Redis
@@ -194,45 +168,37 @@ SESSION_REDIS = Redis(host="redis", port=6379, db=0)
 SESSION_USE_SIGNER = True
 ```
 
-### Content Security Policy (CSP)
+### コンテンツセキュリティポリシー（CSP）
 
-Superset uses the [Talisman](https://pypi.org/project/flask-talisman/) extension to enable implementation of a
-[Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP), an added
-layer of security that helps to detect and mitigate certain types of attacks, including
-Cross-Site Scripting (XSS) and data injection attacks.
+Superset は [Talisman](https://pypi.org/project/flask-talisman/) 拡張機能を使用して [コンテンツセキュリティポリシー (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) の実装を可能にします。これは、クロスサイトスクリプティング (XSS) やデータインジェクション攻撃などの特定の種類の攻撃を検出し、軽減するのに役立つ追加のセキュリティレイヤーです。
 
-A CSP makes it possible for server administrators to reduce or eliminate the vectors by which XSS can
-occur by specifying the domains that the browser should consider to be valid sources of executable scripts.
-A CSP-compatible browser will then only execute scripts loaded in source files received from those allowed domains,
-ignoring all other scripts (including inline scripts and event-handling HTML attributes).
+CSP を使用すると、サーバー管理者は、ブラウザが実行可能スクリプトの有効なソースと見なすべきドメインを指定することにより、XSS が発生する可能性のあるベクトルを削減または排除できます。
+CSP 対応ブラウザは、許可されたドメインから受信したソースファイルに読み込まれたスクリプトのみを実行し、その他のすべてのスクリプト (インラインスクリプトやイベント処理 HTML 属性を含む) は無視します。
 
-A policy is described using a series of policy directives, each of which describes the policy for
-a certain resource type or policy area. You can check possible directives
-[here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy).
+ポリシーは、一連のポリシーディレクティブを使用して記述されます。各ポリシーディレクティブは、特定のリソースタイプまたはポリシー領域のポリシーを記述します。
+使用可能なディレクティブについては、[こちら](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy) で確認できます。
 
-It's extremely important to correctly configure a Content Security Policy when deploying Superset to
-prevent many types of attacks. Superset provides two variables in `config.py` for deploying a CSP:
+Superset をデプロイする際には、様々な種類の攻撃を防ぐためにコンテンツセキュリティポリシーを正しく設定することが非常に重要です。
+Superset は、CSP をデプロイするための `config.py` に 2 つの変数を提供しています。
 
-- `TALISMAN_ENABLED` defaults to `True`; set this to `False` in order to disable CSP
-- `TALISMAN_CONFIG` holds the actual the policy definition (*see example below*) as well as any
-other arguments to be passed to Talisman.
+- `TALISMAN_ENABLED` はデフォルトで `True` です。CSP を無効にするには、これを `False` に設定してください。
+- `TALISMAN_CONFIG` は、実際のポリシー定義（* 下記例を参照*）と、Talisman に渡すその他の引数を保持します。
 
-When running in production mode, Superset will check at startup for the presence
-of a CSP. If one is not found, it will issue a warning with the security risks. For environments
-where CSP policies are defined outside of Superset using other software, administrators can disable
-this warning using the `CONTENT_SECURITY_POLICY_WARNING` key in `config.py`.
+本番環境で実行する場合、Superset は起動時に CSP の有無を確認します。
+CSP が見つからない場合、セキュリティリスクに関する警告を発します。
+CSP ポリシーが Superset の外部で他のソフトウェアを使用して定義されている環境では、管理者は `config.py` の `CONTENT_SECURITY_POLICY_WARNING` キーを使用してこの警告を無効にすることができます。
 
-#### CSP Requirements
+#### CSP の要件
 
-- Superset needs the `style-src unsafe-inline` CSP directive in order to operate.
+- Superset が動作するには、`style-src unsafe-inline` CSP ディレクティブが必要です。
 
   ```
   style-src 'self' 'unsafe-inline'
   ```
 
-- Only scripts marked with a [nonce](https://content-security-policy.com/nonce/) can be loaded and executed.
-Nonce is a random string automatically generated by Talisman on each page load.
-You can get current nonce value by calling jinja macro `csp_nonce()`.
+- [nonce](https://content-security-policy.com/nonce/) でマークされたスクリプトのみが読み込まれ、実行されます。
+nonce は、ページが読み込まれるたびに Talisman によって自動的に生成されるランダムな文字列です。
+現在の nonce 値は、jinja マクロ `csp_nonce()` を呼び出すことで取得できます。
 
   ```html
   <script nonce="{{ csp_nonce() }}">
@@ -240,39 +206,34 @@ You can get current nonce value by calling jinja macro `csp_nonce()`.
   </script>
   ```
 
-- Some dashboards load images using data URIs and require `data:` in their `img-src`
+- 一部のダッシュボードはデータURIを使用して画像を読み込み、`img-src`に`data:`が必要です
 
   ```
   img-src 'self' data:
   ```
 
-- MapBox charts use workers and need to connect to MapBox servers in addition to the Superset origin
+- MapBox チャートはワーカーを使用するため、Superset のオリジンに加えてMapBoxサーバーに接続する必要があります。
 
   ```
   worker-src 'self' blob:
   connect-src 'self' https://api.mapbox.com https://events.mapbox.com
   ```
 
-- Cartodiagram charts request map data (image and json) from external resources that can be edited by users,
-and therefore either require a list of allowed domains to request from or a wildcard (`'*'`) for `img-src` and `connect-src`.
+- Cartodiagram チャートは、ユーザーが編集できる外部リソースからマップ データ (画像と JSON) を要求するため、要求元の許可されたドメインのリスト、または `img-src` と `connect-src` のワイルドカード (`'*'`) が必要です。
 
-- Other CSP directives default to `'self'` to limit content to the same origin as the Superset server.
+- その他のCSPディレクティブはデフォルトで「'self'」に設定され、コンテンツをSupersetサーバーと同じオリジンに制限します。
 
-In order to adjust provided CSP configuration to your needs, follow the instructions and examples provided in
-[Content Security Policy Reference](https://content-security-policy.com/)
+提供されているCSP設定をニーズに合わせて調整するには、[コンテンツセキュリティポリシーリファレンス](https://content-security-policy.com/)に記載されている手順と例に従ってください。
 
-#### Other Talisman security considerations
+#### タリスマンのセキュリティに関するその他の考慮事項
 
-Setting `TALISMAN_ENABLED = True` will invoke Talisman's protection with its default arguments,
-of which `content_security_policy` is only one. Those can be found in the
-[Talisman documentation](https://pypi.org/project/flask-talisman/) under *Options*.
-These generally improve security, but administrators should be aware of their existence.
+`TALISMAN_ENABLED = True` を設定すると、Talisman の保護がデフォルトの引数で呼び出されます。`content_security_policy` はその引数の 1 つにすぎません。
+これらの引数は [Talisman のドキュメント](https://pypi.org/project/flask-talisman/) の *オプション* に記載されています。
+これらの引数は一般的にセキュリティを向上させますが、管理者はこれらの引数の存在を認識しておく必要があります。
 
-In particular, the option of `force_https = True` (`False` by default) may break Superset's Alerts & Reports
-if workers are configured to access charts via a `WEBDRIVER_BASEURL` beginning
-with `http://`.  As long as a Superset deployment enforces https upstream, e.g.,
-through a load balancer or application gateway, it should be acceptable to keep this
-option disabled. Otherwise, you may want to enable `force_https` like this:
+特に、ワーカーが `http://` で始まる `WEBDRIVER_BASEURL` 経由でチャートにアクセスするように設定されている場合、`force_https = True` オプション（デフォルトは `False`）は Superset のアラートとレポートに不具合をもたらす可能性があります。
+Superset のデプロイメントで、ロードバランサーやアプリケーションゲートウェイなどを通じてアップストリームに https を強制している限り、このオプションを無効のままにしておくことは問題ありません。
+そうでない場合は、次のように `force_https` を有効にすることもできます:
 
 ```python
 TALISMAN_CONFIG = {
@@ -280,11 +241,11 @@ TALISMAN_CONFIG = {
     "content_security_policy": { ...
 ```
 
-#### Configuring Talisman in Superset
+#### Superset での Talisman の設定
 
-Talisman settings in Superset can be modified using superset_config.py. If you need to adjust security policies, you can override the default configuration.
+Superset の Talisman 設定は、superset_config.py を使用して変更できます。セキュリティポリシーを調整する必要がある場合は、デフォルト設定をオーバーライドできます。
 
-Example: Overriding Talisman Configuration in superset_config.py for loading images form s3 or other external sources.
+例: superset_config.py で Talisman 設定をオーバーライドし、S3 やその他の外部ソースから画像を読み込む。
 
 ```python
 TALISMAN_CONFIG = {
@@ -320,23 +281,18 @@ TALISMAN_CONFIG = {
 }
 ```
 
-# For more information on setting up Talisman, please refer to
+# タリスマンの設定の詳細については、
 https://superset.apache.org/docs/configuration/networking-settings/#changing-flask-talisman-csp
 
-### Reporting Security Vulnerabilities
+### セキュリティ脆弱性の報告
 
-Apache Software Foundation takes a rigorous standpoint in annihilating the security issues in its
-software projects. Apache Superset is highly sensitive and forthcoming to issues pertaining to its
-features and functionality.
+Apache Software Foundation は、ソフトウェアプロジェクトにおけるセキュリティ問題の撲滅に厳格な姿勢で取り組んでいます。
+Apache Superset は、その機能に関する問題に非常に敏感であり、率直に報告します。
 
-If you have apprehensions regarding Superset security or you discover vulnerability or potential
-threat, don’t hesitate to get in touch with the Apache Security Team by dropping a mail at
-security@apache.org. In the mail, specify the project name Superset with the description of the
-issue or potential threat. You are also urged to recommend the way to reproduce and replicate the
-issue. The security team and the Superset community will get back to you after assessing and
-analysing the findings.
+Superset のセキュリティに関して懸念がある場合、または脆弱性や潜在的な脅威を発見した場合は、Apache セキュリティチーム（security@apache.org）までお気軽にメールでご連絡ください。
+メールには、プロジェクト名「Superset」と、問題または潜在的な脅威の説明を明記してください。
+また、問題の再現方法もご提示ください。
+セキュリティチームと Superset コミュニティは、調査結果を評価・分析した後、ご連絡いたします。
 
-PLEASE PAY ATTENTION to report the security issue on the security email before disclosing it on
-public domain. The ASF Security Team maintains a page with the description of how vulnerabilities
-and potential threats are handled, check [their web page](https://apache.org/security/committers.html)
-for more details.
+セキュリティ問題を公開する前に、セキュリティ関連のメールで報告するようお願いいたします。
+ASF セキュリティ チームは、脆弱性と潜在的な脅威の処理方法を説明したページを管理しています。詳細については、[Web ページ](https://apache.org/security/committers.html) を確認してください。
